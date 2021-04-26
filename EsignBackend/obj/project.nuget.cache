@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0mWMm6Dk2mid7fr5Uj4PkiMIwrlAbusFg63Nf5GgbpiErZ4yguEm3ffw1TUm7gqYuy7xS0QN+RVizNS77v8aBg==",
+  "dgSpecHash": "rD2AfAVkZCypG38fRbGwQcMGHbHYoLi/1MDWM9l8jNKFrSPflsSUXaQMy8Q409/qIDO+t3oixZggW9B4Hj3X4Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\saarm\\source\\repos\\EsignBackend\\EsignBackend\\EsignBackend.csproj",
+  "projectFilePath": "C:\\Users\\saarm\\source\\repos\\EsignBackend - Copy\\EsignBackend\\EsignBackend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\saarm\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\saarm\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

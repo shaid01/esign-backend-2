@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\saarm\\source\\repos\\EsignBackend\\EsignBackend\\EsignBackend.csproj": {}
+    "C:\\Users\\saarm\\source\\repos\\EsignBackend - Copy\\EsignBackend\\EsignBackend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\saarm\\source\\repos\\EsignBackend\\EsignBackend\\EsignBackend.csproj": {
+    "C:\\Users\\saarm\\source\\repos\\EsignBackend - Copy\\EsignBackend\\EsignBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\saarm\\source\\repos\\EsignBackend\\EsignBackend\\EsignBackend.csproj",
+        "projectUniqueName": "C:\\Users\\saarm\\source\\repos\\EsignBackend - Copy\\EsignBackend\\EsignBackend.csproj",
         "projectName": "EsignBackend",
-        "projectPath": "C:\\Users\\saarm\\source\\repos\\EsignBackend\\EsignBackend\\EsignBackend.csproj",
+        "projectPath": "C:\\Users\\saarm\\source\\repos\\EsignBackend - Copy\\EsignBackend\\EsignBackend.csproj",
         "packagesPath": "C:\\Users\\saarm\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\saarm\\source\\repos\\EsignBackend\\EsignBackend\\obj\\",
+        "outputPath": "C:\\Users\\saarm\\source\\repos\\EsignBackend - Copy\\EsignBackend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\saarm\\AppData\\Roaming\\NuGet\\NuGet.Config",
