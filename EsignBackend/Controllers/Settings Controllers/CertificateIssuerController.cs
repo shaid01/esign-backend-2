@@ -1,0 +1,52 @@
+﻿using EsignBackend.Models;
+using EsignBackend.Services.SettingsService.CertificateIssuer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EsignBackend.Controllers.Settings_Controllers
+{
+    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [ApiController]
+    [Route("[controller]")]
+    public class CertificateIssuerController : ControllerBase
+    {
+        private readonly ICertificateIssuerService _certificateIssuerService;
+        public CertificateIssuerController(ICertificateIssuerService certificateIssuerService)
+        {
+            _certificateIssuerService = certificateIssuerService;
+        }
+
+        [HttpGet("GetCertificateIssuers")]
+        public async Task<IActionResult> GetCertificateIssuers(int skip, int take)
+        {
+            return Ok(await _certificateIssuerService.GetCertificateIssuers(skip, take));
+        }
+        [HttpGet("GetAmountOfCertificateIssuers")]
+        public async Task<IActionResult> GetAmountOfCertificateIssuers()
+        {
+            return Ok(await _certificateIssuerService.GetAmountOfCertificateIssuers());
+        }
+        [Authorize(Roles = "אדמין,מנהל")]
+        [HttpPut("UpdateCertificateIssuer")]
+        public async Task<IActionResult> UpdateCustomerIdentifer(Isscert updatedCertificateIssuer)
+        {
+            return Ok(await _certificateIssuerService.UpdateCertificateIssuer(updatedCertificateIssuer));
+        }
+        [Authorize(Roles = "אדמין,מנהל")]
+        [HttpPost("AddNewCertificateIssuer")]
+        public async Task<IActionResult> AddNewCertificatesStatus(Isscert certificateIssuer)
+        {
+            return Ok(await _certificateIssuerService.AddNewCertificateIssuer(certificateIssuer));
+        }
+
+        [HttpGet("GetAllCertificateIssuers")]
+        public async Task<IActionResult> GetAllCertificateIssuers()
+        {
+            return Ok(await _certificateIssuerService.GetAllCertificateIssuers());
+        }
+    }
+}
