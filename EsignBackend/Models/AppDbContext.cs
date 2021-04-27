@@ -19,7 +19,7 @@ namespace EsignBackend.Models
         }
 
         public virtual DbSet<Attachment> Attachments { get; set; }
-        public virtual DbSet<Blog> Blogs { get; set; }
+       // public virtual DbSet<Blog> Blogs { get; set; }
         public virtual DbSet<Budesign> Budesigns { get; set; }
         public virtual DbSet<Bulanguage> Bulanguages { get; set; }
         public virtual DbSet<Bumodule> Bumodules { get; set; }
@@ -41,7 +41,7 @@ namespace EsignBackend.Models
         public virtual DbSet<Expirationtype> Expirationtypes { get; set; }
         public virtual DbSet<Isscert> Isscerts { get; set; }
         public virtual DbSet<Issplace> Issplaces { get; set; }
-        public virtual DbSet<Post> Posts { get; set; }
+        //public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Progressreport> Progressreports { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<Securityquestion> Securityquestions { get; set; }
@@ -88,13 +88,13 @@ namespace EsignBackend.Models
                     .HasColumnName("title")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
-
+/*
             modelBuilder.Entity<Blog>(entity =>
             {
                 entity.Property(e => e.Name).HasMaxLength(200);
 
                 entity.Property(e => e.Url).HasMaxLength(200);
-            });
+            });*/
 
             modelBuilder.Entity<Budesign>(entity =>
             {
@@ -947,7 +947,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Post>(entity =>
+           /* modelBuilder.Entity<Post>(entity =>
             {
                 entity.Property(e => e.Content).HasColumnType("ntext");
 
@@ -957,7 +957,7 @@ namespace EsignBackend.Models
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.BlogId)
                     .HasConstraintName("FK_dbo.Posts_dbo.Blogs_BlogId");
-            });
+            });*/
 
             modelBuilder.Entity<Progressreport>(entity =>
             {

@@ -1,5 +1,4 @@
-﻿using EsignBackend.Dtos.Character;
-using EsignBackend.Models;
+﻿using EsignBackend.Models;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
