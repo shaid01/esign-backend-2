@@ -37,6 +37,10 @@ using EsignBackend.Middlewares;
 using Microsoft.OpenApi.Models;
 using System.IO;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Hangfire;
+using Hangfire.SqlServer;
+using Hangfire.MemoryStorage;
 
 namespace EsignBackend
 {
@@ -53,6 +57,17 @@ namespace EsignBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHangfire(config =>
+            {
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseDefaultTypeSerializer()
+                .UseMemoryStorage(); 
+            });
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
             // services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -115,9 +130,9 @@ namespace EsignBackend
             services.AddValidation();
             services.AddSwaggerGen();
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, ICertificatesService certificatesService , IRecurringJobManager recurringJobManager, IBackgroundJobClient backgroundJobs, IWebHostEnvironment env)
         {
 
             if (env.IsDevelopment())
@@ -150,6 +165,7 @@ namespace EsignBackend
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHangfireDashboard();
             });
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -157,6 +173,11 @@ namespace EsignBackend
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 c.RoutePrefix = string.Empty;
             });
+
+            app.UseHangfireDashboard();
+            backgroundJobs.Enqueue(() => certificatesService.UpdateExpiredCertificates());
+            recurringJobManager.AddOrUpdate("#Hangfire update expire certificates", () => certificatesService.UpdateExpiredCertificates(),
+            Cron.HourInterval(8));           
         }
     }
 }

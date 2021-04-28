@@ -27,6 +27,10 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.1",
           "EntityFramework": "6.4.4",
           "FluentValidation.AspNetCore": "10.0.0",
+          "Hangfire": "1.7.22",
+          "Hangfire.Core": "1.7.22",
+          "Hangfire.MemoryStorage": "1.7.0",
+          "Hangfire.SqlServer": "1.7.22",
           "Microsoft.AspNet.WebApi.Cors": "5.2.7",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "3.1.12",
           "Microsoft.AspNetCore.Cors": "2.2.0",
@@ -413,6 +417,108 @@
         },
         "compile": {
           "lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.dll": {}
+        }
+      },
+      "Hangfire/1.7.22": {
+        "dependencies": {
+          "Hangfire.AspNetCore": "1.7.22",
+          "Hangfire.Core": "1.7.22",
+          "Hangfire.SqlServer": "1.7.22"
+        }
+      },
+      "Hangfire.AspNetCore/1.7.22": {
+        "dependencies": {
+          "Hangfire.Core": "1.7.22"
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/Hangfire.AspNetCore.dll": {
+            "assemblyVersion": "1.7.22.0",
+            "fileVersion": "1.7.22.0"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp3.0/Hangfire.AspNetCore.dll": {}
+        }
+      },
+      "Hangfire.Core/1.7.22": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Hangfire.Core.dll": {
+            "assemblyVersion": "1.7.22.0",
+            "fileVersion": "1.7.22.0"
+          }
+        },
+        "resources": {
+          "lib/netstandard2.0/ca/Hangfire.Core.resources.dll": {
+            "locale": "ca"
+          },
+          "lib/netstandard2.0/de/Hangfire.Core.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard2.0/es/Hangfire.Core.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard2.0/fa/Hangfire.Core.resources.dll": {
+            "locale": "fa"
+          },
+          "lib/netstandard2.0/fr/Hangfire.Core.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard2.0/nb/Hangfire.Core.resources.dll": {
+            "locale": "nb"
+          },
+          "lib/netstandard2.0/nl/Hangfire.Core.resources.dll": {
+            "locale": "nl"
+          },
+          "lib/netstandard2.0/pt-BR/Hangfire.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard2.0/pt-PT/Hangfire.Core.resources.dll": {
+            "locale": "pt-PT"
+          },
+          "lib/netstandard2.0/pt/Hangfire.Core.resources.dll": {
+            "locale": "pt"
+          },
+          "lib/netstandard2.0/zh-TW/Hangfire.Core.resources.dll": {
+            "locale": "zh-TW"
+          },
+          "lib/netstandard2.0/zh/Hangfire.Core.resources.dll": {
+            "locale": "zh"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Hangfire.Core.dll": {}
+        }
+      },
+      "Hangfire.MemoryStorage/1.7.0": {
+        "dependencies": {
+          "Hangfire.Core": "1.7.22"
+        },
+        "runtime": {
+          "lib/netstandard1.3/Hangfire.MemoryStorage.dll": {
+            "assemblyVersion": "1.7.0.0",
+            "fileVersion": "1.7.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard1.3/Hangfire.MemoryStorage.dll": {}
+        }
+      },
+      "Hangfire.SqlServer/1.7.22": {
+        "dependencies": {
+          "Hangfire.Core": "1.7.22",
+          "System.Data.SqlClient": "4.8.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Hangfire.SqlServer.dll": {
+            "assemblyVersion": "1.7.22.0",
+            "fileVersion": "1.7.22.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Hangfire.SqlServer.dll": {}
         }
       },
       "Humanizer.Core/2.8.26": {
@@ -4457,6 +4563,41 @@
       "sha512": "sha512-J/6dnwbf+mL34SiDYl9udH3z6gduYuhENW6a2EY9LYJKqk7JDysaKpWAzDz3wULpm3zBM98PxWmk5stoqc7p2A==",
       "path": "fluentvalidation.dependencyinjectionextensions/10.0.0",
       "hashPath": "fluentvalidation.dependencyinjectionextensions.10.0.0.nupkg.sha512"
+    },
+    "Hangfire/1.7.22": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-IhlAJiScA1ybMixSWLK/vURceSmdMWafeiYXxVNbMjNSaloMkeLVe3U17wU2Zt/q56q8Zp1PQwTeqdFeppIadw==",
+      "path": "hangfire/1.7.22",
+      "hashPath": "hangfire.1.7.22.nupkg.sha512"
+    },
+    "Hangfire.AspNetCore/1.7.22": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ancD5a4CrQRaRf2pBEWOQGyNEh5I0Oja1wbuSlTL6Xb9AKX7d03AImG69S0Yi/llUyABzIobOrvMdd1GPRFFTQ==",
+      "path": "hangfire.aspnetcore/1.7.22",
+      "hashPath": "hangfire.aspnetcore.1.7.22.nupkg.sha512"
+    },
+    "Hangfire.Core/1.7.22": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-f8fm18BN+hBgq9ZFT8JVLnqU2dtgg1HNFFqth3P4MCwRjhqrQhliMY5bbkK51Dxkf8yVfNT9spFsuXztXno+8Q==",
+      "path": "hangfire.core/1.7.22",
+      "hashPath": "hangfire.core.1.7.22.nupkg.sha512"
+    },
+    "Hangfire.MemoryStorage/1.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-g4hBdD8CaePScNWDOtRlR0GCxRyCK3KaItPcmABurlUZ8hs0YrpGUAYWgSWUSw6RXuPf1ZUK0l4REpV+sKYm/w==",
+      "path": "hangfire.memorystorage/1.7.0",
+      "hashPath": "hangfire.memorystorage.1.7.0.nupkg.sha512"
+    },
+    "Hangfire.SqlServer/1.7.22": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2CtIDTHkPUURfUoj0yNJbT5CHMvajheKpHgvQv2s/BT6JDsaQXs5QGaUyRR0hRea6qrBp8NrUgPXAiiOyWiPcw==",
+      "path": "hangfire.sqlserver/1.7.22",
+      "hashPath": "hangfire.sqlserver.1.7.22.nupkg.sha512"
     },
     "Humanizer.Core/2.8.26": {
       "type": "package",

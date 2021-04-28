@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "rD2AfAVkZCypG38fRbGwQcMGHbHYoLi/1MDWM9l8jNKFrSPflsSUXaQMy8Q409/qIDO+t3oixZggW9B4Hj3X4Q==",
+  "dgSpecHash": "yVZNXuYz7qopQmshhPO157MWmQyJ4Y73TBuMT5iuGEBiPzdgPaqOIAiS10Cyh6wlY6QMw3qyIudlLF9Nd+nQow==",
   "success": true,
   "projectFilePath": "C:\\Users\\saarm\\source\\repos\\EsignBackend - Copy\\EsignBackend\\EsignBackend.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,11 @@
     "C:\\Users\\saarm\\.nuget\\packages\\fluentvalidation\\10.0.0\\fluentvalidation.10.0.0.nupkg.sha512",
     "C:\\Users\\saarm\\.nuget\\packages\\fluentvalidation.aspnetcore\\10.0.0\\fluentvalidation.aspnetcore.10.0.0.nupkg.sha512",
     "C:\\Users\\saarm\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\10.0.0\\fluentvalidation.dependencyinjectionextensions.10.0.0.nupkg.sha512",
+    "C:\\Users\\saarm\\.nuget\\packages\\hangfire\\1.7.22\\hangfire.1.7.22.nupkg.sha512",
+    "C:\\Users\\saarm\\.nuget\\packages\\hangfire.aspnetcore\\1.7.22\\hangfire.aspnetcore.1.7.22.nupkg.sha512",
+    "C:\\Users\\saarm\\.nuget\\packages\\hangfire.core\\1.7.22\\hangfire.core.1.7.22.nupkg.sha512",
+    "C:\\Users\\saarm\\.nuget\\packages\\hangfire.memorystorage\\1.7.0\\hangfire.memorystorage.1.7.0.nupkg.sha512",
+    "C:\\Users\\saarm\\.nuget\\packages\\hangfire.sqlserver\\1.7.22\\hangfire.sqlserver.1.7.22.nupkg.sha512",
     "C:\\Users\\saarm\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\saarm\\.nuget\\packages\\microsoft.aspnet.cors\\5.2.7\\microsoft.aspnet.cors.5.2.7.nupkg.sha512",
     "C:\\Users\\saarm\\.nuget\\packages\\microsoft.aspnet.webapi.client\\5.2.7\\microsoft.aspnet.webapi.client.5.2.7.nupkg.sha512",
