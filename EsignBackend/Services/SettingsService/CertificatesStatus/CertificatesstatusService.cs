@@ -88,7 +88,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                 var newcertificatesStatusInDb = _context.Certificatesstatuses.Add(certificatestatus);
                 try
                 {
-                    _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     serviceRespone.Data = newcertificatesStatusInDb.Entity.Id;
                     return serviceRespone;
                 }

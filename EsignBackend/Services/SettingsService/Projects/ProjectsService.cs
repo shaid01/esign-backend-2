@@ -132,7 +132,7 @@ namespace EsignBackend.Services.SettingsService
                 var newProjectInDb = _context.Projects.Add(newProject);
                 try
                 {
-                    _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     serviceRespone.Data = newProjectInDb.Entity.Id;
                     return serviceRespone;
                 }
@@ -164,7 +164,7 @@ namespace EsignBackend.Services.SettingsService
                 var newSubprojectInDb = _context.Subprojects.Add(newSubproject);
                 try
                 {
-                    _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     serviceRespone.Data = newSubprojectInDb.Entity.Id;
                     return serviceRespone;
                 }
