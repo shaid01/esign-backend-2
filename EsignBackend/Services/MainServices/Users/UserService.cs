@@ -144,10 +144,10 @@ namespace EsignBackend.Services.CharacterService
             && ((userAdvancedSearch.LastName == null) || EF.Functions.Like(user.Lastname, $"%{userAdvancedSearch.LastName}%"))
             && ((userAdvancedSearch.Email == null) || EF.Functions.Like(user.Email, $"%{userAdvancedSearch.Email}%"))
             && ((userAdvancedSearch.UserGroup == null) || EF.Functions.Like(user.Usergroup, userAdvancedSearch.UserGroup))
-            ).Skip(skip).Take(take).ToListAsync();
-            //serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
-            serviceRespone.Data = dbUsers;
+            ).ToListAsync();
             serviceRespone.Message = dbUsers.Count().ToString();
+            //serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
+            serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
             return serviceRespone;
         }
 

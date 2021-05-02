@@ -112,11 +112,11 @@ namespace EsignBackend.Services.CharacterService
             && ((customerAdvancedSearch.Company == null) || EF.Functions.Like(customer.Company, $"%{customerAdvancedSearch.Company}%"))
             && (((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Phone1, $"%{customerAdvancedSearch.Phone}%"))
             || ((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Mobile1, $"%{customerAdvancedSearch.Phone}%")))
-            ).Skip(skip).Take(take).ToListAsync();
+            ).ToListAsync();
+            serviceRespone.Message = dbUsers.Count().ToString();
 
             //serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
-            serviceRespone.Data = dbUsers;
-            serviceRespone.Message = dbUsers.Count().ToString();
+            serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
             return serviceRespone;
         }
         public async Task<ServiceResponse<int>> AddNewCustomer(Customer customer)

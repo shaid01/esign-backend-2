@@ -44,5 +44,11 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _customerIdentifierService.AddNewCustomerIdentifier(customerIdentifer));
         }
+       
+        [HttpGet("GetAllCustomerIdentifiers")]
+        public async Task<IActionResult> GetAllCustomerIdentifiers()
+        {
+            return Ok(await _customerIdentifierService.GetAllCustomerIdentifiers());
+        }
     }
 }

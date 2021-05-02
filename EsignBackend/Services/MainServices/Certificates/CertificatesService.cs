@@ -91,7 +91,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             foreach (var certificateDetail in certificateDeatails)
             {
                 // Fetching customer identifier.
-                var identifier = _context.Isscerts.Where(x => x.Id == certificateDetail.CustomerIdentifierId).FirstOrDefault();
+                var identifier = _context.Custidents.Where(x => x.Id == certificateDetail.CustomerIdentifierId).FirstOrDefault();
 
                 var newCd = new CertificateDetails();
                 // Original fields.

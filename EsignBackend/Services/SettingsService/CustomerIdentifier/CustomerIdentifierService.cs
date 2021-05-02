@@ -99,5 +99,14 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 return serviceResponse;
             }
         }
+
+        public async Task<ServiceResponse<List<Custident>>> GetAllCustomerIdentifiers()
+        {
+            _logger.Debug("GetAllCustomerIdentifiers");
+            var serviceResponse = new ServiceResponse<List<Custident>>();
+            serviceResponse.Data = _context.Custidents.ToList();
+            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            return serviceResponse;
+        }
     }
 }

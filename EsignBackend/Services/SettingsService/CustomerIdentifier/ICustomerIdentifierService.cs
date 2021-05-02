@@ -12,5 +12,6 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
         Task<ServiceResponse<int>> GetAmountOfCustomersIdentifiers();
         Task<ServiceResponse<int>> UpdateCustomerIdentifer(Custident updatedCustomerIdentifer);
         Task<ServiceResponse<int>> AddNewCustomerIdentifier(Custident customerIdentifer);
+        Task<ServiceResponse<List<Custident>>> GetAllCustomerIdentifiers();
     }
 }
