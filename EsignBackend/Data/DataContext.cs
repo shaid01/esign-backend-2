@@ -7,19 +7,21 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Data
 {
-    public class DataContext : DbContext
+ /*   public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
                 
         }
 
-    /*    public DbSet<Character> characters { get; set; }
-        public DbSet<Issplace> issplace { get; set; }*/
-/*        public DbSet<User> buusers { get; set; }
-*/
+        public DbSet<Character> characters { get; set; }
+
+        *//*    public DbSet<Character> characters { get; set; }
+            public DbSet<Issplace> issplace { get; set; }*/
+        /*        public DbSet<User> buusers { get; set; }
+        *//*
 
 
 
-    }
+    }*/
 }

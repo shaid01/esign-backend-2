@@ -11,6 +11,7 @@ namespace EsignBackend.Models
     {
         public AppDbContext()
         {
+
         }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -18,8 +19,10 @@ namespace EsignBackend.Models
         {
         }
 
+        public virtual DbSet<Person> Persons { get; set; }
+
         public virtual DbSet<Attachment> Attachments { get; set; }
-       // public virtual DbSet<Blog> Blogs { get; set; }
+        // public virtual DbSet<Blog> Blogs { get; set; }
         public virtual DbSet<Budesign> Budesigns { get; set; }
         public virtual DbSet<Bulanguage> Bulanguages { get; set; }
         public virtual DbSet<Bumodule> Bumodules { get; set; }
@@ -65,8 +68,8 @@ namespace EsignBackend.Models
 
             modelBuilder.Entity<Attachment>(entity =>
             {
-                entity.HasNoKey();              
-                
+                entity.HasNoKey();
+
 
                 entity.ToTable("attachments");
 
@@ -88,13 +91,13 @@ namespace EsignBackend.Models
                     .HasColumnName("title")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
-/*
-            modelBuilder.Entity<Blog>(entity =>
-            {
-                entity.Property(e => e.Name).HasMaxLength(200);
+            /*
+                        modelBuilder.Entity<Blog>(entity =>
+                        {
+                            entity.Property(e => e.Name).HasMaxLength(200);
 
-                entity.Property(e => e.Url).HasMaxLength(200);
-            });*/
+                            entity.Property(e => e.Url).HasMaxLength(200);
+                        });*/
 
             modelBuilder.Entity<Budesign>(entity =>
             {
@@ -460,7 +463,7 @@ namespace EsignBackend.Models
                     .HasMaxLength(30)
                     .HasColumnName("firstname")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
-                
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Lastname)
@@ -751,7 +754,7 @@ namespace EsignBackend.Models
 
             modelBuilder.Entity<Certificatesstatus>(entity =>
             {
-               // entity.HasNoKey();
+                // entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
 
 
@@ -864,7 +867,7 @@ namespace EsignBackend.Models
 
             modelBuilder.Entity<Departmant>(entity =>
             {
-               // entity.HasNoKey();
+                // entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
 
                 entity.ToTable("departmants");
@@ -947,17 +950,17 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-           /* modelBuilder.Entity<Post>(entity =>
-            {
-                entity.Property(e => e.Content).HasColumnType("ntext");
+            /* modelBuilder.Entity<Post>(entity =>
+             {
+                 entity.Property(e => e.Content).HasColumnType("ntext");
 
-                entity.Property(e => e.Title).HasMaxLength(200);
+                 entity.Property(e => e.Title).HasMaxLength(200);
 
-                entity.HasOne(d => d.Blog)
-                    .WithMany(p => p.Posts)
-                    .HasForeignKey(d => d.BlogId)
-                    .HasConstraintName("FK_dbo.Posts_dbo.Blogs_BlogId");
-            });*/
+                 entity.HasOne(d => d.Blog)
+                     .WithMany(p => p.Posts)
+                     .HasForeignKey(d => d.BlogId)
+                     .HasConstraintName("FK_dbo.Posts_dbo.Blogs_BlogId");
+             });*/
 
             modelBuilder.Entity<Progressreport>(entity =>
             {
@@ -998,7 +1001,7 @@ namespace EsignBackend.Models
             modelBuilder.Entity<Securityquestion>(entity =>
             {
                 //entity.HasNoKey();
-                entity.HasKey(en => new { en.Id});
+                entity.HasKey(en => new { en.Id });
 
                 entity.ToTable("securityquestions");
 
@@ -1133,4 +1136,5 @@ namespace EsignBackend.Models
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
+
 }

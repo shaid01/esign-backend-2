@@ -68,13 +68,13 @@ namespace EsignBackend
             // Add the processing server as IHostedService
             services.AddHangfireServer();
 
-            // services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.
             GetConnectionString("DefaultConnection")));
-            
+
 
             services.AddControllers();
 
