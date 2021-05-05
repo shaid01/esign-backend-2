@@ -8,7 +8,9 @@ namespace EsignBackend.Models
     public partial class Certificate
     {
         public int Id { get; set; }
-        public double? Project { get; set; }
+        public int Project { get; set; }
+        public virtual Project RelatedProject { get; set; }
+
         public string Company { get; set; }
         public string Hpnumber { get; set; }
         public string Email { get; set; }
@@ -18,7 +20,9 @@ namespace EsignBackend.Models
         public double? Smartobject { get; set; }
         public double? Certificatestatus { get; set; }
         public double? Customerid { get; set; }
-        public double? Subproject { get; set; }
+        public int? Subproject { get; set; }
+        public virtual Subproject RelatedSubProject { get; set; }
+
         public double? Docstype { get; set; }
         public string Passportid { get; set; }
         public string Licenceid { get; set; }
@@ -28,8 +32,11 @@ namespace EsignBackend.Models
         public string Remarksdesc { get; set; }
         public string Job { get; set; }
         public double? Identify { get; set; }
-        public double? Certificateissuer { get; set; }
-        public double? Issuerplace { get; set; }
+        public int? Certificateissuer { get; set; }
+        public virtual Isscert? RelatedCertificateissuer { get; set; }
+
+        public int? Issuerplace { get; set; }
+        public virtual Issplace? RelatedIssuerPlace { get; set; }
         public string Remarks { get; set; }
     }
 }

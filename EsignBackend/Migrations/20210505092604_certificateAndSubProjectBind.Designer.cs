@@ -4,14 +4,16 @@ using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210505092604_certificateAndSubProjectBind")]
+    partial class certificateAndSubProjectBind
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -628,8 +630,8 @@ namespace EsignBackend.Migrations
                         .HasColumnName("id")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("Certificateissuer")
-                        .HasColumnType("int")
+                    b.Property<double?>("Certificateissuer")
+                        .HasColumnType("float")
                         .HasColumnName("certificateissuer");
 
                     b.Property<double?>("Certificatestatus")
@@ -680,8 +682,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("issuedate");
 
-                    b.Property<int?>("Issuerplace")
-                        .HasColumnType("int")
+                    b.Property<double?>("Issuerplace")
+                        .HasColumnType("float")
                         .HasColumnName("issuerplace");
 
                     b.Property<string>("Job")
@@ -729,10 +731,6 @@ namespace EsignBackend.Migrations
                         .HasColumnName("subproject");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Certificateissuer");
-
-                    b.HasIndex("Issuerplace");
 
                     b.HasIndex("Project");
 
@@ -1371,14 +1369,6 @@ namespace EsignBackend.Migrations
 
             modelBuilder.Entity("EsignBackend.Models.Certificate", b =>
                 {
-                    b.HasOne("EsignBackend.Models.Isscert", "RelatedCertificateissuer")
-                        .WithMany("Certificates")
-                        .HasForeignKey("Certificateissuer");
-
-                    b.HasOne("EsignBackend.Models.Issplace", "RelatedIssuerPlace")
-                        .WithMany("Certificates")
-                        .HasForeignKey("Issuerplace");
-
                     b.HasOne("EsignBackend.Models.Project", "RelatedProject")
                         .WithMany("Certificates")
                         .HasForeignKey("Project")
@@ -1388,10 +1378,6 @@ namespace EsignBackend.Migrations
                     b.HasOne("EsignBackend.Models.Subproject", "RelatedSubProject")
                         .WithMany("Certificates")
                         .HasForeignKey("Subproject");
-
-                    b.Navigation("RelatedCertificateissuer");
-
-                    b.Navigation("RelatedIssuerPlace");
 
                     b.Navigation("RelatedProject");
 
@@ -1407,16 +1393,6 @@ namespace EsignBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("RelatedProject");
-                });
-
-            modelBuilder.Entity("EsignBackend.Models.Isscert", b =>
-                {
-                    b.Navigation("Certificates");
-                });
-
-            modelBuilder.Entity("EsignBackend.Models.Issplace", b =>
-                {
-                    b.Navigation("Certificates");
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Project", b =>

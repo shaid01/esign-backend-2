@@ -1045,6 +1045,19 @@ namespace EsignBackend.Models
             modelBuilder.Entity<Subproject>().HasOne<Project>(sp => sp.RelatedProject).
                 WithMany(p => p.Subprojects).HasForeignKey(sp => sp.Project);
 
+            modelBuilder.Entity<Certificate>().HasOne<Project>(c => c.RelatedProject).
+                WithMany(pr => pr.Certificates).HasForeignKey(c => c.Project);
+
+            modelBuilder.Entity<Certificate>().HasOne<Subproject>(c => c.RelatedSubProject).
+                WithMany(sp => sp.Certificates).HasForeignKey(c => c.Subproject);
+
+            modelBuilder.Entity<Certificate>().HasOne<Issplace>(c => c.RelatedIssuerPlace).
+                WithMany(ip => ip.Certificates).HasForeignKey(c => c.Issuerplace);
+
+            modelBuilder.Entity<Certificate>().HasOne<Isscert>(c => c.RelatedCertificateissuer).
+                WithMany(ci => ci.Certificates).HasForeignKey(c => c.Certificateissuer);
+
+
             modelBuilder.Entity<Ticket>(entity =>
             {
                 entity.HasNoKey();

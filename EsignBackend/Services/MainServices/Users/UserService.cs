@@ -146,8 +146,8 @@ namespace EsignBackend.Services.CharacterService
             && ((userAdvancedSearch.Email == null) || EF.Functions.Like(user.Email, $"%{userAdvancedSearch.Email}%"))
             && ((userAdvancedSearch.UserGroup == null) || EF.Functions.Like(user.Usergroup, userAdvancedSearch.UserGroup))
             ).ToListAsync();
-            serviceRespone.Message = dbUsers.Count().ToString();
-            //serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
+            //serviceRespone.Message = dbUsers.Count().ToString();
+            serviceRespone.Amount = dbUsers.Count();
             serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
             return serviceRespone;
         }
