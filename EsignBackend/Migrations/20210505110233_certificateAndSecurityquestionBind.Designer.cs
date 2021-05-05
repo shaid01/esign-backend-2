@@ -4,14 +4,16 @@ using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210505110233_certificateAndSecurityquestionBind")]
+    partial class certificateAndSecurityquestionBind
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -645,8 +647,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("customerid");
 
-                    b.Property<int?>("Docstype")
-                        .HasColumnType("int")
+                    b.Property<double?>("Docstype")
+                        .HasColumnType("float")
                         .HasColumnName("docstype");
 
                     b.Property<string>("Email")
@@ -735,8 +737,6 @@ namespace EsignBackend.Migrations
                     b.HasIndex("Certificatestatus");
 
                     b.HasIndex("Customerid");
-
-                    b.HasIndex("Docstype");
 
                     b.HasIndex("Expire");
 
@@ -1399,10 +1399,6 @@ namespace EsignBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EsignBackend.Models.Docstype", "RelatedDocsType")
-                        .WithMany("Certificates")
-                        .HasForeignKey("Docstype");
-
                     b.HasOne("EsignBackend.Models.Expirationtype", "RelatedExpiration")
                         .WithMany("Certificates")
                         .HasForeignKey("Expire");
@@ -1441,8 +1437,6 @@ namespace EsignBackend.Migrations
 
                     b.Navigation("RelatedCustomerIdentifier");
 
-                    b.Navigation("RelatedDocsType");
-
                     b.Navigation("RelatedExpiration");
 
                     b.Navigation("RelatedIssuerPlace");
@@ -1480,11 +1474,6 @@ namespace EsignBackend.Migrations
             modelBuilder.Entity("EsignBackend.Models.Customer", b =>
                 {
                     b.Navigation("CustomerCertificates");
-                });
-
-            modelBuilder.Entity("EsignBackend.Models.Docstype", b =>
-                {
-                    b.Navigation("Certificates");
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Expirationtype", b =>

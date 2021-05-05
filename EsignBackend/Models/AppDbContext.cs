@@ -1057,6 +1057,27 @@ namespace EsignBackend.Models
             modelBuilder.Entity<Certificate>().HasOne<Isscert>(c => c.RelatedCertificateissuer).
                 WithMany(ci => ci.Certificates).HasForeignKey(c => c.Certificateissuer);
 
+            modelBuilder.Entity<Certificate>().HasOne<Custident>(c => c.RelatedCustomerIdentifier).
+                WithMany(ci => ci.Certificates).HasForeignKey(c => c.Identify);
+
+            modelBuilder.Entity<Certificate>().HasOne<Customer>(c => c.RelatedCustomer).
+                WithMany(customer => customer.CustomerCertificates).HasForeignKey(c => c.Customerid);
+
+            modelBuilder.Entity<Certificate>().HasOne<Certificatesstatus>(c => c.RelatedCertificatesstatus).
+                WithMany(cerStatus => cerStatus.Certificates).HasForeignKey(c => c.Certificatestatus);
+
+            modelBuilder.Entity<Certificate>().HasOne<Smartobject>(c => c.RelatedSmartObject).
+                WithMany(so => so.Certificates).HasForeignKey(c => c.Smartobject);
+
+            modelBuilder.Entity<Certificate>().HasOne<Expirationtype>(c => c.RelatedExpiration).
+                WithMany(et => et.Certificates).HasForeignKey(c => c.Expire);
+
+            modelBuilder.Entity<Certificate>().HasOne<Securityquestion>(c => c.RelatedSecurityquestion).
+                WithMany(sq => sq.Certificates).HasForeignKey(c => c.Securityquestion);
+
+            modelBuilder.Entity<Certificate>().HasOne<Docstype>(c => c.RelatedDocsType).
+                WithMany(dt => dt.Certificates).HasForeignKey(c => c.Docstype);
+
 
             modelBuilder.Entity<Ticket>(entity =>
             {

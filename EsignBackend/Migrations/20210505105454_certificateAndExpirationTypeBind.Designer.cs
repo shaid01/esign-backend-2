@@ -4,14 +4,16 @@ using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210505105454_certificateAndExpirationTypeBind")]
+    partial class certificateAndExpirationTypeBind
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -645,8 +647,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("customerid");
 
-                    b.Property<int?>("Docstype")
-                        .HasColumnType("int")
+                    b.Property<double?>("Docstype")
+                        .HasColumnType("float")
                         .HasColumnName("docstype");
 
                     b.Property<string>("Email")
@@ -716,8 +718,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("securityansware");
 
-                    b.Property<int?>("Securityquestion")
-                        .HasColumnType("int")
+                    b.Property<double?>("Securityquestion")
+                        .HasColumnType("float")
                         .HasColumnName("securityquestion");
 
                     b.Property<int?>("Smartobject")
@@ -736,8 +738,6 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("Customerid");
 
-                    b.HasIndex("Docstype");
-
                     b.HasIndex("Expire");
 
                     b.HasIndex("Identify");
@@ -745,8 +745,6 @@ namespace EsignBackend.Migrations
                     b.HasIndex("Issuerplace");
 
                     b.HasIndex("Project");
-
-                    b.HasIndex("Securityquestion");
 
                     b.HasIndex("Smartobject");
 
@@ -1399,10 +1397,6 @@ namespace EsignBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EsignBackend.Models.Docstype", "RelatedDocsType")
-                        .WithMany("Certificates")
-                        .HasForeignKey("Docstype");
-
                     b.HasOne("EsignBackend.Models.Expirationtype", "RelatedExpiration")
                         .WithMany("Certificates")
                         .HasForeignKey("Expire");
@@ -1421,10 +1415,6 @@ namespace EsignBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
-                        .WithMany("Certificates")
-                        .HasForeignKey("Securityquestion");
-
                     b.HasOne("EsignBackend.Models.Smartobject", "RelatedSmartObject")
                         .WithMany("Certificates")
                         .HasForeignKey("Smartobject");
@@ -1441,15 +1431,11 @@ namespace EsignBackend.Migrations
 
                     b.Navigation("RelatedCustomerIdentifier");
 
-                    b.Navigation("RelatedDocsType");
-
                     b.Navigation("RelatedExpiration");
 
                     b.Navigation("RelatedIssuerPlace");
 
                     b.Navigation("RelatedProject");
-
-                    b.Navigation("RelatedSecurityquestion");
 
                     b.Navigation("RelatedSmartObject");
 
@@ -1482,11 +1468,6 @@ namespace EsignBackend.Migrations
                     b.Navigation("CustomerCertificates");
                 });
 
-            modelBuilder.Entity("EsignBackend.Models.Docstype", b =>
-                {
-                    b.Navigation("Certificates");
-                });
-
             modelBuilder.Entity("EsignBackend.Models.Expirationtype", b =>
                 {
                     b.Navigation("Certificates");
@@ -1507,11 +1488,6 @@ namespace EsignBackend.Migrations
                     b.Navigation("Certificates");
 
                     b.Navigation("Subprojects");
-                });
-
-            modelBuilder.Entity("EsignBackend.Models.Securityquestion", b =>
-                {
-                    b.Navigation("Certificates");
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Smartobject", b =>

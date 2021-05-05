@@ -41,12 +41,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.MemoryStorage;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Text.Json;
 
 namespace EsignBackend
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration,  IWebHostEnvironment _env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment _env)
         {
             Configuration = configuration;
             env = _env;
@@ -62,8 +64,9 @@ namespace EsignBackend
                 config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseDefaultTypeSerializer()
-                .UseMemoryStorage(); 
+                .UseMemoryStorage();
             });
+      
 
             // Add the processing server as IHostedService
             services.AddHangfireServer();
@@ -75,11 +78,16 @@ namespace EsignBackend
             options.UseSqlServer(Configuration.
             GetConnectionString("DefaultConnection")));
 
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             services.AddControllers();
 
+
             services.AddAutoMapper(typeof(Startup));
-            
+
             services.AddRazorPages();
 
 
@@ -97,7 +105,7 @@ namespace EsignBackend
                     };
                 });
             services.AddHttpContextAccessor();
-            
+
             // services.AddScoped<ICharacterService, CharacterService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUsersService, UserService>();
@@ -130,9 +138,9 @@ namespace EsignBackend
             services.AddValidation();
             services.AddSwaggerGen();
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, ICertificatesService certificatesService , IRecurringJobManager recurringJobManager, IBackgroundJobClient backgroundJobs, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, ICertificatesService certificatesService, IRecurringJobManager recurringJobManager, IBackgroundJobClient backgroundJobs, IWebHostEnvironment env)
         {
 
             if (env.IsDevelopment())
@@ -143,17 +151,17 @@ namespace EsignBackend
             {
                 app.UseHsts();
             }
-          
+
             app.UseCors(builder =>
             {
                 builder.WithOrigins("http://localhost:4200");
                 //builder.AllowAnyOrigin();
                 builder.AllowAnyMethod();
-                builder.AllowAnyHeader();                
+                builder.AllowAnyHeader();
                 builder.AllowCredentials();
             });
 
-            
+
 
             app.UseRouting();
             app.UseHttpsRedirection();
@@ -177,7 +185,7 @@ namespace EsignBackend
             app.UseHangfireDashboard();
             backgroundJobs.Enqueue(() => certificatesService.UpdateExpiredCertificates());
             recurringJobManager.AddOrUpdate("#Hangfire update expire certificates", () => certificatesService.UpdateExpiredCertificates(),
-            Cron.HourInterval(8));           
+            Cron.HourInterval(8));
         }
     }
 }

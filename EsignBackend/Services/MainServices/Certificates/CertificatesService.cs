@@ -28,9 +28,11 @@ namespace EsignBackend.Services.MainServices.Certificates
         {
             _logger.Debug("GenerateCertificateDetailsToCustomer");
 
+            var customerIden = _context.Customers.Where(x => Convert.ToDouble(x.Idnumber).Equals(customerId)).Select(x => x.Id).FirstOrDefault();
+
             var certificateDeatailsList = new List<CertificateDetails>();
             var certificateDeatails = (from cer in _context.Certificates
-                                       .Where(el => el.Customerid == customerId)
+                                       .Where(el => el.Customerid == customerIden)
 
                                        join pro in _context.Projects
                                        on cer.Project equals pro.Id
@@ -48,7 +50,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                                        on cer.Certificatestatus equals cerStatus.Id
 
                                        join customer in _context.Customers
-                                       on cer.Customerid equals Convert.ToDouble(customer.Idnumber)
+                                       on customerId equals Convert.ToDouble(customer.Idnumber)
 
                                        join docType in _context.Docstypes
                                        on cer.Docstype equals docType.Id
@@ -335,7 +337,77 @@ namespace EsignBackend.Services.MainServices.Certificates
 */
             return EncryptDecryptHandler.decryptSecurityAns(encryptedSecurityAns);
         }
+
+
         public async Task<ServiceResponse<List<CertificateDetails>>> GetCertificatesDetails(int skip, int take)
+        {
+            _logger.Debug("GetCertificatesDetailsUpdate");
+
+            var serviceResponse = new ServiceResponse<List<CertificateDetails>>();
+            serviceResponse.Amount = _context.Certificates.Count();
+            var certificateDetailsList = new List<CertificateDetails>();
+        
+            var certificates = _context.Certificates
+                .Include(cer => cer.RelatedCertificateissuer)
+                .Include(cer => cer.RelatedCertificatesstatus)
+                .Include(cer => cer.RelatedCustomer)
+                .Include(cer => cer.RelatedCustomerIdentifier)
+                .Include(cer => cer.RelatedDocsType)
+                .Include(cer => cer.RelatedExpiration)
+                .Include(cer => cer.RelatedIssuerPlace)
+                .Include(cer => cer.RelatedProject)
+                .Include(cer => cer.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedSmartObject)
+                .Include(cer => cer.RelatedSubProject)
+                .Skip(skip).Take(take).ToList();
+
+            foreach (var cer in certificates)
+            {
+                var newCertificateDetail = new CertificateDetails();
+                newCertificateDetail.Id = cer.Id;
+                newCertificateDetail.Company = cer.Company;
+                newCertificateDetail.Hpnumber = cer.Hpnumber;
+                newCertificateDetail.Email = cer.Email;
+                newCertificateDetail.Passportid = cer.Passportid;
+                newCertificateDetail.Licenseid = cer.Licenceid;
+                newCertificateDetail.Signer = cer.Hotem;
+                newCertificateDetail.Securityquestion = (double)cer.Securityquestion;
+                newCertificateDetail.Securityanswer = decryptSecurityAnswer(cer.Securityansware);
+                newCertificateDetail.Remarks = cer.Remarks;
+                newCertificateDetail.Remarkdesc = cer.Remarksdesc;
+                newCertificateDetail.Job = cer.Job;
+                newCertificateDetail.Issuedate = (DateTime)cer.Issuedate;
+                newCertificateDetail.Expiredate = (DateTime)cer.Expiredate;
+                newCertificateDetail.Project = cer.RelatedProject;
+                newCertificateDetail.SubProject = cer.RelatedSubProject;
+                newCertificateDetail.Expire = cer.RelatedExpiration;
+                newCertificateDetail.Smartobject = cer.RelatedSmartObject;
+                newCertificateDetail.Certificatesstatus = cer.RelatedCertificatesstatus;
+                newCertificateDetail.CustomerId = cer.RelatedCustomer.Idnumber;
+                newCertificateDetail.CustomerName = cer.RelatedCustomer.Firstname + " " + cer.RelatedCustomer.Lastname;
+                newCertificateDetail.Docstype = cer.RelatedDocsType;
+                newCertificateDetail.CertificateIssuer = cer.RelatedCertificateissuer;
+                newCertificateDetail.CertificateLocation = cer.RelatedIssuerPlace;
+                newCertificateDetail.CustomerIdentifier = cer.RelatedCustomerIdentifier.Title;
+                newCertificateDetail.CustomerIdentifierId = cer.RelatedCustomerIdentifier.Id;
+                certificateDetailsList.Add(newCertificateDetail);
+            }
+            
+            serviceResponse.Data = certificateDetailsList;
+            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            return serviceResponse;
+        }
+
+
+
+
+
+
+
+
+
+
+        public async Task<ServiceResponse<List<CertificateDetails>>> GetCertificatesDetailsUpdate(int skip, int take)
         {
 
            // encryptSecurityAnswers();
@@ -362,7 +434,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                                       on cer.Certificatestatus equals cerStatus.Id
 
                                       join customer in _context.Customers
-                                      on cer.Customerid equals Convert.ToDouble(customer.Idnumber)
+                                      on cer.Customerid equals customer.Id
 
                                       join docType in _context.Docstypes
                                       on cer.Docstype equals docType.Id
@@ -627,7 +699,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             var certificatesIds =  _context.Certificates.Where(cer =>
             ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
             && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
-            && ((customersIds == null || customersIds.Count == 0) || customersIds.Contains(cer.Customerid.Value))
+            && ((customersIds == null || customersIds.Count == 0) || customersIds.Contains(cer.Customerid))
             && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
             && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
             && ((certificateAdvancedSearch.CustomerIdNumber.CompareTo(0) == 0) || cer.Customerid == certificateAdvancedSearch.CustomerIdNumber)
