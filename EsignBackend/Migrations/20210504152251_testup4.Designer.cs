@@ -4,14 +4,16 @@ using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210504152251_testup4")]
+    partial class testup4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1143,6 +1145,23 @@ namespace EsignBackend.Migrations
                     b.ToTable("issplace");
                 });
 
+            modelBuilder.Entity("EsignBackend.Models.Person", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Persons");
+                });
+
             modelBuilder.Entity("EsignBackend.Models.Progressreport", b =>
                 {
                     b.Property<string>("Description")
@@ -1357,6 +1376,15 @@ namespace EsignBackend.Migrations
                         .HasColumnName("userid");
 
                     b.ToTable("userviews");
+                });
+
+            modelBuilder.Entity("EsignBackend.Models.Person", b =>
+                {
+                    b.HasOne("EsignBackend.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId");
+
+                    b.Navigation("Project");
                 });
 #pragma warning restore 612, 618
         }

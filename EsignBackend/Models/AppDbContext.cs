@@ -19,7 +19,7 @@ namespace EsignBackend.Models
         {
         }
 
-        public virtual DbSet<Person> Persons { get; set; }
+        //public virtual DbSet<Person> Persons { get; set; }
 
         public virtual DbSet<Attachment> Attachments { get; set; }
         // public virtual DbSet<Blog> Blogs { get; set; }
@@ -44,7 +44,6 @@ namespace EsignBackend.Models
         public virtual DbSet<Expirationtype> Expirationtypes { get; set; }
         public virtual DbSet<Isscert> Isscerts { get; set; }
         public virtual DbSet<Issplace> Issplaces { get; set; }
-        //public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Progressreport> Progressreports { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<Securityquestion> Securityquestions { get; set; }
@@ -64,6 +63,7 @@ namespace EsignBackend.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1255_CI_AS");
 
             modelBuilder.Entity<Attachment>(entity =>
@@ -91,13 +91,7 @@ namespace EsignBackend.Models
                     .HasColumnName("title")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
-            /*
-                        modelBuilder.Entity<Blog>(entity =>
-                        {
-                            entity.Property(e => e.Name).HasMaxLength(200);
 
-                            entity.Property(e => e.Url).HasMaxLength(200);
-                        });*/
 
             modelBuilder.Entity<Budesign>(entity =>
             {
@@ -933,6 +927,7 @@ namespace EsignBackend.Models
             modelBuilder.Entity<Issplace>(entity =>
             {
                 //entity.HasNoKey();
+
                 entity.HasKey(en => new { en.Id });
 
                 entity.ToTable("issplace");
