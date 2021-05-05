@@ -38,17 +38,19 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetCustomers");
             var serviceRespone = new ServiceResponse<List<Customer>>();
-            var amount = _context.Customers.Where(customer => customer.Id > 0).ToList();
-            var dbCustomers = await _context.Customers.Where(customer => customer.Id > 0).Skip(skip).Take(take).ToListAsync();
-            serviceRespone.Message = amount.Count().ToString();
-            serviceRespone.Data = dbCustomers;
+            //var amount = _context.Customers.ToList();
+            //var dbCustomers = await _context.Customers.Skip(skip).Take(take).ToListAsync();
+            //serviceRespone.Message = amount.Count().ToString();
+            //serviceRespone.Data = dbCustomers;
+            serviceRespone.Data = await _context.Customers.Skip(skip).Take(take).ToListAsync();
+            serviceRespone.Amount = _context.Customers.Count();
             return serviceRespone;
         }
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()
         {
             _logger.Debug("GetAmountOfCustomers");
             var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _context.Customers.Where(customer => customer.Id > 0).ToListAsync().Result.Count();
+            serviceRespone.Data = _context.Customers.ToList().Count();
             return serviceRespone;
         }
         public async Task<ServiceResponse<List<Customer>>> GetCustomer(string searchValue, string criterion)

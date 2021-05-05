@@ -12,5 +12,6 @@ namespace EsignBackend.Models
         public bool Success { get; set; } = true;
 
         public string Message { get; set; } = null;
+        public int Amount { get; set; }
     }
 }

@@ -53,6 +53,7 @@ namespace EsignBackend.Services.CharacterService
             _logger.Debug("GetAllUsers");
             var serviceRespone = new ServiceResponse<List<Buuser>>();
             serviceRespone.Data = await _context.Buusers.Skip(skip).Take(take).ToListAsync();
+            serviceRespone.Amount = _context.Buusers.Count();
             return serviceRespone;
         }
 

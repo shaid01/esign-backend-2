@@ -1041,6 +1041,10 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
+
+            modelBuilder.Entity<Subproject>().HasOne<Project>(sp => sp.RelatedProject).
+                WithMany(p => p.Subprojects).HasForeignKey(sp => sp.Project);
+
             modelBuilder.Entity<Ticket>(entity =>
             {
                 entity.HasNoKey();

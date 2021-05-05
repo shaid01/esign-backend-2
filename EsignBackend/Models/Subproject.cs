@@ -9,6 +9,8 @@ namespace EsignBackend.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public double? Project { get; set; }
+        public int Project { get; set; }
+        public virtual Project RelatedProject { get; set; }
+
     }
 }
