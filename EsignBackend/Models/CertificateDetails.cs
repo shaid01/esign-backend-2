@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EsignBackend.Extensions.EncryptDecrypt;
+using EsignBackend.Services.MainServices.Certificates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +9,40 @@ namespace EsignBackend.Models
 {
     public class CertificateDetails
     {
+        public CertificateDetails() { }
+
+        public CertificateDetails(Certificate certificate)
+        {
+            this.Id = certificate.Id;
+            this.Company = certificate.Company;
+            this.Hpnumber = certificate.Hpnumber;
+            this.Email = certificate.Email;
+            this.Passportid = certificate.Passportid;
+            this.Licenseid = certificate.Licenceid;
+            this.Signer = certificate.Hotem;
+            this.Securityquestion = (double)certificate.Securityquestion;
+            //this.Securityanswer = CertificatesService.decryptSecurityAnswer(certificate.Securityansware);
+            this.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificate.Securityansware);
+            this.Remarks = certificate.Remarks;
+            this.Remarkdesc = certificate.Remarksdesc;
+            this.Job = certificate.Job;
+            this.Issuedate = (DateTime)certificate.Issuedate;
+            this.Expiredate = (DateTime)certificate.Expiredate;
+            this.Project = certificate.RelatedProject;
+            this.SubProject = certificate.RelatedSubProject;
+            this.Expire = certificate.RelatedExpiration;
+            this.Smartobject = certificate.RelatedSmartObject;
+            this.Certificatesstatus = certificate.RelatedCertificatesstatus;
+            //this.CustomerId = certificate.RelatedCustomer.Idnumber;
+            //this.CustomerIdInDb = certificate.RelatedCustomer.Id;
+            this.CustomerName = certificate.RelatedCustomer?.Firstname + " " + certificate.RelatedCustomer?.Lastname;
+            this.Docstype = certificate.RelatedDocsType;
+            this.CertificateIssuer = certificate.RelatedCertificateissuer;
+            this.CertificateLocation = certificate.RelatedIssuerPlace;
+            //this.CustomerIdentifier = certificate.RelatedCustomerIdentifier.Title;
+           // this.CustomerIdentifierId = certificate.RelatedCustomerIdentifier.Id;
+        }
+
         public int Id { get; set; }
         public Project Project { get; set; }
         public Subproject SubProject { get; set; }
@@ -15,6 +51,7 @@ namespace EsignBackend.Models
         public Certificatesstatus Certificatesstatus { get; set; }
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
+        public int CustomerIdInDb { get; set; }
 
         public Docstype Docstype { get; set; }
         public Isscert CertificateIssuer { get; set; }

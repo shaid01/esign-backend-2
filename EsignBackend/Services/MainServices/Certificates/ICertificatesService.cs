@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,12 @@ namespace EsignBackend.Services.MainServices.Certificates
     public interface ICertificatesService
     {
         Task<ServiceResponse<int>> GetAmountOfCertificates();
-        Task<ServiceResponse<List<CertificateDetails>>> GetCertificatesDetails(int skip, int take);
+        Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take);
         Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate);
         Task<ServiceResponse<int>> AddNewHistoryCertificate(Certificateshistory certificateshistory);
         Task<ServiceResponse<List<HistoryCertificateDetails>>> GetHistoryCertificates(double certificateId);
         Task<ServiceResponse<List<CertificateDetails>>> GetCustomerCertificatesDetails(double customerIdInt);
-        Task<ServiceResponse<List<CertificateDetails>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take);
+        Task<ServiceResponse<List<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take);
         Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns,int question);
         Task<ServiceResponse<int>> AddCertificate(Certificate certificate);
         Task<ServiceResponse<int>> UpdateExpiredCertificates();

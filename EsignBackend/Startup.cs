@@ -76,7 +76,8 @@ namespace EsignBackend
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.
-            GetConnectionString("DefaultConnection")));
+            GetConnectionString("DefaultConnection"))
+            ) ;
 
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>

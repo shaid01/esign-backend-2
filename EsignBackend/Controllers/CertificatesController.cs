@@ -33,6 +33,7 @@ namespace EsignBackend.Controllers
         }
 
         [HttpGet("GetCertificatesDetails")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCertificatesDetails(int skip, int take)
         {
             _logger.Debug("GetCertificatesDetails");

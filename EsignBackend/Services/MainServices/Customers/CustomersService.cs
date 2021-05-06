@@ -1,5 +1,6 @@
 ﻿using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -34,17 +35,29 @@ namespace EsignBackend.Services.CharacterService
             _logger.Debug("IsUserIdAlreadyInUse");
             return _context.Customers.Where(customer => customer.Idnumber.Equals(username)).Count() != 0;
         }
-        public async Task<ServiceResponse<List<Customer>>> GetCustomers(int skip, int take)
+        public async Task<ServiceResponse<List<CustomerDTO>>> GetCustomers(int skip, int take)
         {
             _logger.Debug("GetCustomers");
-            var serviceRespone = new ServiceResponse<List<Customer>>();
+            //var serviceRespone = new ServiceResponse<List<Customer>>();
+            var serviceRespone = new ServiceResponse<List<CustomerDTO>>();
+            var customers = await _context.Customers.Skip(skip).Take(take).ToListAsync();
+            var customersList = new List<CustomerDTO>();
+            foreach (var customer in customers)
+            {
+                customersList.Add(new CustomerDTO(customer));
+            }
+            serviceRespone.Data = customersList;
+            serviceRespone.Amount = 120000;
+//
+            //serviceRespone.Amount = _context.Customers.Count();
+            return serviceRespone;
+
+
             //var amount = _context.Customers.ToList();
             //var dbCustomers = await _context.Customers.Skip(skip).Take(take).ToListAsync();
             //serviceRespone.Message = amount.Count().ToString();
             //serviceRespone.Data = dbCustomers;
-            serviceRespone.Data = await _context.Customers.Skip(skip).Take(take).ToListAsync();
-            serviceRespone.Amount = _context.Customers.Count();
-            return serviceRespone;
+
         }
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()
         {

@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace EsignBackend.Services.CharacterService
 {
     public interface ICustomersService
     {
-        Task<ServiceResponse<List<Customer>>> GetCustomers(int skip, int take);
+        Task<ServiceResponse<List<CustomerDTO>>> GetCustomers(int skip, int take);
         Task<ServiceResponse<int>> GetAmountOfCustomers();
         Task<ServiceResponse<List<Customer>>> GetCustomer(string searchValue, string criterion);
         Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions();
