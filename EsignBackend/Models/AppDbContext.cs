@@ -1073,11 +1073,16 @@ namespace EsignBackend.Models
                 WithMany(et => et.Certificates).HasForeignKey(c => c.Expire);
 
             modelBuilder.Entity<Certificate>().HasOne<Securityquestion>(c => c.RelatedSecurityquestion).
-                WithMany(sq => sq.Certificates).HasForeignKey(c => c.Securityquestion);
+                WithMany(sq => sq.Certificates).HasForeignKey(c => c.Securityquestion).
+                OnDelete(DeleteBehavior.Restrict); ;
 
             modelBuilder.Entity<Certificate>().HasOne<Docstype>(c => c.RelatedDocsType).
                 WithMany(dt => dt.Certificates).HasForeignKey(c => c.Docstype);
 
+
+            modelBuilder.Entity<Customer>().HasOne<Securityquestion>(cu => cu.RelatedSecurityquestion)
+                .WithMany(sq => sq.Customers).HasForeignKey(cu => cu.Securityquestion)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Ticket>(entity =>
             {

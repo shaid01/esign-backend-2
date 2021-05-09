@@ -31,8 +31,8 @@ namespace EsignBackend.Models
         public string Passportid { get; set; }
         public string Licenceid { get; set; }
         public string Hotem { get; set; }
-        public int? Securityquestion { get; set; }
-        public virtual Securityquestion? RelatedSecurityquestion { get; set; }
+        public int Securityquestion { get; set; }
+        public virtual Securityquestion RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
         public string Remarksdesc { get; set; }
         public string Job { get; set; }

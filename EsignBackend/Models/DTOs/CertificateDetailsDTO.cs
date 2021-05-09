@@ -10,9 +10,9 @@ namespace EsignBackend.Models.DTOs
 
         public CertificateDetailsDTO(CertificateDetails certificate)
         {
-            if(certificate == null)
+            if (certificate == null)
                 return;
-            
+
 
             Id = certificate.Id;
             CustomerId = certificate.CustomerId;
@@ -43,6 +43,7 @@ namespace EsignBackend.Models.DTOs
             Docstype = new DocstypeDTO(certificate.Docstype);
             CertificateIssuer = new IsscertDTO(certificate.CertificateIssuer);
             CertificateLocation = new IssplaceDTO(certificate.CertificateLocation);
+            RelatedCustomer = new CustomerDTO(certificate.RelatedCustomer);
 
 
         }
@@ -75,5 +76,6 @@ namespace EsignBackend.Models.DTOs
         public string Job { get; set; }
         public DateTime Issuedate { get; set; }
         public DateTime Expiredate { get; set; }
+        public CustomerDTO RelatedCustomer { get; set; }
     }
 }

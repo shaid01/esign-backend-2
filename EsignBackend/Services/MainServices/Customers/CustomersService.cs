@@ -38,9 +38,8 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<List<CustomerDTO>>> GetCustomers(int skip, int take)
         {
             _logger.Debug("GetCustomers");
-            //var serviceRespone = new ServiceResponse<List<Customer>>();
             var serviceRespone = new ServiceResponse<List<CustomerDTO>>();
-            var customers = await _context.Customers.Skip(skip).Take(take).ToListAsync();
+            var customers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).Skip(skip).Take(take).ToListAsync();
             var customersList = new List<CustomerDTO>();
             foreach (var customer in customers)
             {
@@ -48,41 +47,17 @@ namespace EsignBackend.Services.CharacterService
             }
             serviceRespone.Data = customersList;
             serviceRespone.Amount = 120000;
-//
             //serviceRespone.Amount = _context.Customers.Count();
             return serviceRespone;
-
-
-            //var amount = _context.Customers.ToList();
-            //var dbCustomers = await _context.Customers.Skip(skip).Take(take).ToListAsync();
-            //serviceRespone.Message = amount.Count().ToString();
-            //serviceRespone.Data = dbCustomers;
-
         }
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()
         {
             _logger.Debug("GetAmountOfCustomers");
             var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _context.Customers.ToList().Count();
+            serviceRespone.Data = _context.Customers.Count();
             return serviceRespone;
         }
-        public async Task<ServiceResponse<List<Customer>>> GetCustomer(string searchValue, string criterion)
-        {
-            _logger.Debug("GetCustomer");
-            var serviceRespone = new ServiceResponse<List<Customer>>();
-            switch (criterion)
-            {
-                case "id":
-                    List<Customer> dbCustomers = await _context.Customers.Where(user => user.Idnumber.Equals(searchValue)).ToListAsync();
-                    serviceRespone.Data = dbCustomers.ToList();
-                    break;               
-                default:
-                    dbCustomers = await _context.Customers.Where(user => user.Idnumber.Equals(searchValue)).ToListAsync();
-                    serviceRespone.Data = dbCustomers.ToList();
-                    break;
-            }
-            return serviceRespone;
-        }
+
         public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions()
         {
             _logger.Debug("GetSecurityQuestions");
@@ -113,12 +88,13 @@ namespace EsignBackend.Services.CharacterService
                 return serviceResponse;
             }
         }
-        public async Task<ServiceResponse<List<Customer>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch,
+
+        public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch,
             int skip, int take)
         {
             _logger.Debug("SearchCustomers");
-            var serviceRespone = new ServiceResponse<List<Customer>>();
-            var dbUsers = await _context.Customers.Where(customer =>
+            var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
+            var dbCustomers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).Where(customer =>
             (customer.Id > 0) &&
             ((customerAdvancedSearch.CustomerId == null)|| EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
             && ((customerAdvancedSearch.FirstName == null) || EF.Functions.Like(customer.Firstname, $"%{customerAdvancedSearch.FirstName}%"))
@@ -128,10 +104,16 @@ namespace EsignBackend.Services.CharacterService
             && (((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Phone1, $"%{customerAdvancedSearch.Phone}%"))
             || ((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Mobile1, $"%{customerAdvancedSearch.Phone}%")))
             ).ToListAsync();
-            //serviceRespone.Message = dbUsers.Count().ToString();
-            serviceRespone.Amount = dbUsers.Count();
-            serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
-            return serviceRespone;
+            serviceResponse.Amount = dbCustomers.Count();
+
+            var customersDtoList = new List<CustomerDTO>();
+            foreach (var customer in dbCustomers.Skip(skip).Take(take).ToList())
+            {
+                var newCustomerDto = new CustomerDTO(customer);
+                customersDtoList.Add(newCustomerDto);
+            }
+            serviceResponse.Data = customersDtoList;
+            return serviceResponse;
         }
         public async Task<ServiceResponse<int>> AddNewCustomer(Customer customer)
         {

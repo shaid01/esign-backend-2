@@ -51,6 +51,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newCallsPriorityInDb.Entity.Id;
+                    serviceRespone.Amount = _context.Callpriorities.Count();
                     return serviceRespone;
                 }
                 catch (Exception exception)
@@ -63,19 +64,13 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
                 }
             }
         }         
-        public async Task<ServiceResponse<int>> GetAmountOfCallsPriority()
-        {
-            _logger.Debug("GetAmountOfCallsPriority");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Callpriorities.Count();
-            return serviceResponse;
-        }
+
         public async Task<ServiceResponse<List<Callpriority>>> GetCallsPriority(int skip, int take)
         {
             _logger.Debug("GetCallsPriority");
             var serviceResponse = new ServiceResponse<List<Callpriority>>();
             serviceResponse.Data = _context.Callpriorities.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count.ToString();
+            serviceResponse.Amount = _context.Callpriorities.Count();
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority)

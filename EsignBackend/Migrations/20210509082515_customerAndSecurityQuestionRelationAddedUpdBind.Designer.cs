@@ -4,14 +4,16 @@ using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210509082515_customerAndSecurityQuestionRelationAddedUpdBind")]
+    partial class customerAndSecurityQuestionRelationAddedUpdBind
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -716,7 +718,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("securityansware");
 
-                    b.Property<int>("Securityquestion")
+                    b.Property<int?>("Securityquestion")
                         .HasColumnType("int")
                         .HasColumnName("securityquestion");
 
@@ -1054,8 +1056,6 @@ namespace EsignBackend.Migrations
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Securityquestion");
 
                     b.ToTable("customers");
                 });
@@ -1425,9 +1425,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
                         .WithMany("Certificates")
-                        .HasForeignKey("Securityquestion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("Securityquestion");
 
                     b.HasOne("EsignBackend.Models.Smartobject", "RelatedSmartObject")
                         .WithMany("Certificates")
@@ -1458,17 +1456,6 @@ namespace EsignBackend.Migrations
                     b.Navigation("RelatedSmartObject");
 
                     b.Navigation("RelatedSubProject");
-                });
-
-            modelBuilder.Entity("EsignBackend.Models.Customer", b =>
-                {
-                    b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
-                        .WithMany("Customers")
-                        .HasForeignKey("Securityquestion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("RelatedSecurityquestion");
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Subproject", b =>
@@ -1527,8 +1514,6 @@ namespace EsignBackend.Migrations
             modelBuilder.Entity("EsignBackend.Models.Securityquestion", b =>
                 {
                     b.Navigation("Certificates");
-
-                    b.Navigation("Customers");
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Smartobject", b =>

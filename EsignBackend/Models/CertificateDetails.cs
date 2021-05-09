@@ -33,6 +33,7 @@ namespace EsignBackend.Models
             this.Expire = certificate.RelatedExpiration;
             this.Smartobject = certificate.RelatedSmartObject;
             this.Certificatesstatus = certificate.RelatedCertificatesstatus;
+            this.RelatedCustomer = certificate.RelatedCustomer;
             //this.CustomerId = certificate.RelatedCustomer.Idnumber;
             //this.CustomerIdInDb = certificate.RelatedCustomer.Id;
             this.CustomerName = certificate.RelatedCustomer?.Firstname + " " + certificate.RelatedCustomer?.Lastname;
@@ -58,6 +59,7 @@ namespace EsignBackend.Models
         public Issplace CertificateLocation { get; set; }
         public string CustomerIdentifier { get; set; }
         public int CustomerIdentifierId { get; set; }
+        public Customer RelatedCustomer { get; set; }
 
         public string Company { get; set; }
         public string Hpnumber { get; set; }

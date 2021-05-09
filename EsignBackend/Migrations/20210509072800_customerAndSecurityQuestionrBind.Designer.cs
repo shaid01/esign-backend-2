@@ -4,14 +4,16 @@ using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210509072800_customerAndSecurityQuestionrBind")]
+    partial class customerAndSecurityQuestionrBind
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -716,7 +718,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("securityansware");
 
-                    b.Property<int>("Securityquestion")
+                    b.Property<int?>("Securityquestion")
                         .HasColumnType("int")
                         .HasColumnName("securityquestion");
 
@@ -1038,12 +1040,15 @@ namespace EsignBackend.Migrations
                         .HasColumnName("phone1")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
+                    b.Property<int?>("RelatedSecurityquestionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Securityansware")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("securityansware")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<int>("Securityquestion")
+                    b.Property<int?>("Securityquestion")
                         .HasColumnType("int")
                         .HasColumnName("securityquestion");
 
@@ -1055,7 +1060,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Securityquestion");
+                    b.HasIndex("RelatedSecurityquestionId");
 
                     b.ToTable("customers");
                 });
@@ -1425,9 +1430,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
                         .WithMany("Certificates")
-                        .HasForeignKey("Securityquestion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("Securityquestion");
 
                     b.HasOne("EsignBackend.Models.Smartobject", "RelatedSmartObject")
                         .WithMany("Certificates")
@@ -1464,9 +1467,7 @@ namespace EsignBackend.Migrations
                 {
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
                         .WithMany("Customers")
-                        .HasForeignKey("Securityquestion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("RelatedSecurityquestionId");
 
                     b.Navigation("RelatedSecurityquestion");
                 });

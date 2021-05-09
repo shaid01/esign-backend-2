@@ -19,11 +19,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             _callsPriorityService = callsPriorityService;
         }
-        [HttpGet("GetAmountOfCallsPriority")]
-        public async Task<IActionResult> GetAmountOfCallsPriority()
-        {
-            return Ok(await _callsPriorityService.GetAmountOfCallsPriority());
-        }
         [HttpGet("GetCallsPriority")]
         public async Task<IActionResult> GetCallsPriority(int skip, int take)
         {

@@ -152,7 +152,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             var certificates = _context.Certificates
                 .Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCertificatesstatus)
-                .Include(cer => cer.RelatedCustomer)
+                .Include(cer => cer.RelatedCustomer).ThenInclude(cus => cus.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedCustomerIdentifier)
                 .Include(cer => cer.RelatedDocsType)
                 .Include(cer => cer.RelatedExpiration)
@@ -424,7 +424,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             lock (_locker)
             {
                 certificate.Id = GenerateCertificateId();
-                //certificate.Securityansware = encryptSecurityAns(certificate.Securityansware);3ך
+                //certificate.Securityansware = encryptSecurityAns(certificate.Securityansware);
                 certificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(certificate.Securityansware);
                 
                 var newCertificateInDb = _context.Certificates.Add(certificate);

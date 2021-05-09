@@ -37,12 +37,7 @@ namespace EsignBackend.Controllers
             _logger.Debug("GetAmountOfCustomers");
             return Ok(await _customersService.GetAmountOfCustomers());
         }
-        [HttpGet("GetSearchedCustomers/{searchValue}/{criterion}")]
-        public async Task<IActionResult> GetSearchedCustomers(string searchValue, string criterion)
-        {
-            _logger.Debug("GetSearchedCustomers");
-            return Ok(await _customersService.GetCustomer(searchValue, criterion));
-        }
+
         [HttpGet("GetSecurityQuestions")]
         public async Task<IActionResult> GetSecurityQuestions()
         {
