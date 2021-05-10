@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -65,12 +66,18 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             }
         }         
 
-        public async Task<ServiceResponse<List<Callpriority>>> GetCallsPriority(int skip, int take)
+        public async Task<ServiceResponse<List<CallpriorityDTO>>> GetCallsPriority(int skip, int take)
         {
             _logger.Debug("GetCallsPriority");
-            var serviceResponse = new ServiceResponse<List<Callpriority>>();
-            serviceResponse.Data = _context.Callpriorities.Skip(skip).Take(take).ToList();
+            var serviceResponse = new ServiceResponse<List<CallpriorityDTO>>();
+            var data = _context.Callpriorities.Skip(skip).Take(take).ToList();
+            var callpriorityDTOList = new List<CallpriorityDTO>();
+            foreach (var cp in data)
+            {
+                callpriorityDTOList.Add(new CallpriorityDTO(cp));
+            }
             serviceResponse.Amount = _context.Callpriorities.Count();
+            serviceResponse.Data = callpriorityDTOList;
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority)

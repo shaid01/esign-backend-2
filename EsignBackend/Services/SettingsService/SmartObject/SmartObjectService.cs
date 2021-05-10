@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
@@ -30,20 +31,18 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             _logger.Debug("IsNameAlreadyInUse");
             return _context.Smartobjects.Where(item => item.Title.Equals(title)).Count() != 0;
         }
-        public async Task<ServiceResponse<List<Smartobject>>> GetSmartObjects(int skip, int take)
+        public async Task<ServiceResponse<List<SmartobjectDTO>>> GetSmartObjects(int skip, int take)
         {
             _logger.Debug("GetSmartObjects");
-            var serviceResponse = new ServiceResponse<List<Smartobject>>();
-            serviceResponse.Data = _context.Smartobjects.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<int>> GetAmountOfSmartObjects()
-        {
-            _logger.Debug("GetAmountOfSmartObjects");
-            var serviceResponse = new ServiceResponse<int>();
-            int amount = _context.Smartobjects.Count();
-            serviceResponse.Data = amount;
+            var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
+            var outputList = new List<SmartobjectDTO>();
+            var data = _context.Smartobjects.Skip(skip).Take(take).ToList();
+            foreach (var so in data)
+            {
+                outputList.Add(new SmartobjectDTO(so));
+            }
+            serviceResponse.Amount = _context.Smartobjects.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateSmartObject(Smartobject updatedSmartObject)
@@ -86,6 +85,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
                 try
                 {
                     _context.SaveChanges();
+                    serviceRespone.Amount = _context.Smartobjects.Count();
                     serviceRespone.Data = newcertificatesStatusInDb.Entity.Id;
                     return serviceRespone;
                 }
@@ -99,12 +99,18 @@ namespace EsignBackend.Services.SettingsService.SmartObject
                 }
             }
         }
-        public async Task<ServiceResponse<List<Smartobject>>> GetAllSmartObjects()
+        public async Task<ServiceResponse<List<SmartobjectDTO>>> GetAllSmartObjects()
         {
             _logger.Debug("GetAllSmartObjects");
-            var serviceResponse = new ServiceResponse<List<Smartobject>>();
-            serviceResponse.Data = _context.Smartobjects.ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
+            var outputList = new List<SmartobjectDTO>();
+            var data = _context.Smartobjects.ToList();
+            foreach (var so in data)
+            {
+                outputList.Add(new SmartobjectDTO(so));
+            }
+            serviceResponse.Data = outputList;
+            serviceResponse.Amount = serviceResponse.Data.Count();
             return serviceResponse;
         }
     }

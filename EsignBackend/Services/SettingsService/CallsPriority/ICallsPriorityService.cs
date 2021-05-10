@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 {
     public interface ICallsPriorityService
     {
-        Task<ServiceResponse<List<Callpriority>>> GetCallsPriority(int skip, int take);
+        Task<ServiceResponse<List<CallpriorityDTO>>> GetCallsPriority(int skip, int take);
         Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority);
         Task<ServiceResponse<int>> AddNewCallPriority(Callpriority callPriority);
     }

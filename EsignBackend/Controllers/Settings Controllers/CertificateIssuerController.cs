@@ -25,11 +25,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _certificateIssuerService.GetCertificateIssuers(skip, take));
         }
-        [HttpGet("GetAmountOfCertificateIssuers")]
-        public async Task<IActionResult> GetAmountOfCertificateIssuers()
-        {
-            return Ok(await _certificateIssuerService.GetAmountOfCertificateIssuers());
-        }
+
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateCertificateIssuer")]
         public async Task<IActionResult> UpdateCustomerIdentifer(Isscert updatedCertificateIssuer)

@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
@@ -50,6 +51,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
                 try
                 {
                     _context.SaveChanges();
+                    serviceRespone.Amount = _context.Securityquestions.Count();
                     serviceRespone.Data = newSecurityQuestionInDb.Entity.Id;
                     return serviceRespone;
                 }
@@ -63,19 +65,19 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
                 }
             }
         }      
-        public async Task<ServiceResponse<int>> GetAmountOfSecurityQuestions()
-        {
-            _logger.Debug("GetAmountOfSecurityQuestions");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Securityquestions.Count();
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions(int skip, int take)
-        {
+
+        public async Task<ServiceResponse<List<SecurityquestionDTO>>> GetSecurityQuestions(int skip, int take)
+        {            
             _logger.Debug("GetSecurityQuestions");
-            var serviceResponse = new ServiceResponse<List<Securityquestion>>();
-            serviceResponse.Data = _context.Securityquestions.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
+            var outputList = new List<SecurityquestionDTO>();
+            var data = _context.Securityquestions.Skip(skip).Take(take).ToList();
+            foreach (var sq in data)
+            {
+                outputList.Add(new SecurityquestionDTO(sq));
+            }
+            serviceResponse.Data = outputList;
+            serviceResponse.Amount = _context.Securityquestions.Count();
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateSecurityQuestion(Securityquestion updatedSecurityQuestion)
@@ -99,12 +101,18 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<Securityquestion>>> GetAllSecurityQuestions()
+        public async Task<ServiceResponse<List<SecurityquestionDTO>>> GetAllSecurityQuestions()
         {
             _logger.Debug("GetAllSecurityQuestions");
-            var serviceResponse = new ServiceResponse<List<Securityquestion>>();
-            serviceResponse.Data = _context.Securityquestions.ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
+            var outputList = new List<SecurityquestionDTO>();
+            var data = _context.Securityquestions.ToList();
+            foreach (var sq in data)
+            {
+                outputList.Add(new SecurityquestionDTO(sq));
+            }
+            serviceResponse.Data = outputList;
+            serviceResponse.Amount = serviceResponse.Data.Count();
             return serviceResponse;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newCustomerIdentifierInDb.Entity.Id;
+                    serviceRespone.Amount = _context.Custidents.Count();
                     return serviceRespone;
                 }
                 catch (Exception exception)
@@ -62,19 +64,18 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 }
             }
         }
-        public async Task<ServiceResponse<int>> GetAmountOfCustomersIdentifiers()
-        {
-            _logger.Debug("GetAmountOfCustomersIdentifiers");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Custidents.Count();
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<List<Custident>>> GetCustomersIdentifiers(int skip, int take)
+        public async Task<ServiceResponse<List<CustidentDTO>>> GetCustomersIdentifiers(int skip, int take)
         {
             _logger.Debug("GetCustomersIdentifiers");
-            var serviceResponse = new ServiceResponse<List<Custident>>();
-            serviceResponse.Data = _context.Custidents.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<CustidentDTO>>();
+            var outputList = new List<CustidentDTO>();
+            var data = _context.Custidents.Skip(skip).Take(take).ToList();
+            foreach (var ci in data)
+            {
+                outputList.Add(new CustidentDTO(ci));
+            }
+            serviceResponse.Data = outputList;
+            serviceResponse.Amount = _context.Custidents.Count();
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateCustomerIdentifer(Custident updatedCustomerIdentifer)
@@ -100,12 +101,18 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             }
         }
 
-        public async Task<ServiceResponse<List<Custident>>> GetAllCustomerIdentifiers()
+        public async Task<ServiceResponse<List<CustidentDTO>>> GetAllCustomerIdentifiers()
         {
             _logger.Debug("GetAllCustomerIdentifiers");
-            var serviceResponse = new ServiceResponse<List<Custident>>();
-            serviceResponse.Data = _context.Custidents.ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<CustidentDTO>>();
+            var outputList = new List<CustidentDTO>();
+            var data = _context.Custidents.ToList();
+            foreach (var ci in data)
+            {
+                outputList.Add(new CustidentDTO(ci));
+            }
+            serviceResponse.Amount = _context.Custidents.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
     }

@@ -19,11 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             _issueLocationService = issueLocationService;
         }
-        [HttpGet("GetAmountOfIssueLocations")]
-        public async Task<IActionResult> GetAmountOfIssueLocations()
-        {
-            return Ok(await _issueLocationService.GetAmountOfIssueLocations());
-        }
+
         [HttpGet("GetIssueLocations")]
         public async Task<IActionResult> GetIssueLocations(int skip, int take)
         {

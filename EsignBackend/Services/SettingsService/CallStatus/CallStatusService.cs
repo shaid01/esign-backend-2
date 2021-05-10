@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
                 {
                      _context.SaveChanges();
                     serviceRespone.Data = newCallStatusInDb.Entity.Id;
+                    serviceRespone.Amount = _context.Callstatuses.Count();
                     return serviceRespone;
                 }
                 catch (Exception exception)
@@ -63,20 +65,19 @@ namespace EsignBackend.Services.SettingsService.CallStatus
                 }
             }
         }
-        public async Task<ServiceResponse<int>> GetAmountOfCallsStatus()
-        {
-            _logger.Debug("GetAmountOfCallsStatus");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Callstatuses.Count();
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<List<Callstatus>>> GetCallsStatus(int skipInt, int takeInt)
+
+        public async Task<ServiceResponse<List<CallStatusDto>>> GetCallsStatus(int skipInt, int takeInt)
         {
             _logger.Debug("GetCallsStatus");
-            var serviceResponse = new ServiceResponse<List<Callstatus>>();
+            var serviceResponse = new ServiceResponse<List<CallStatusDto>>();
+            serviceResponse.Amount = _context.Callstatuses.Count();
             var dbCallStatus = _context.Callstatuses.Skip(skipInt).Take(takeInt).ToList();
-            serviceResponse.Data = dbCallStatus;
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var CallStatusList = new List<CallStatusDto>();
+            foreach (var cs in dbCallStatus)
+            {
+                CallStatusList.Add(new CallStatusDto(cs));
+            }
+            serviceResponse.Data = CallStatusList;
             return serviceResponse;
         }
 

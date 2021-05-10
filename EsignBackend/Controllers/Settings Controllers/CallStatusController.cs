@@ -26,12 +26,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _callStatusService.GetCallsStatus(skip, take));
         }
-        [HttpGet("GetAmountOfCallsStatus")]
-        public async Task<IActionResult> GetAmountOfCallsStatus()
-        {
-           // Response.Headers.Add("aaaa", "bbbb");
-            return Ok(await _callStatusService.GetAmountOfCallsStatus());
-        }
+
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateCallStatus")]
         public async Task<IActionResult> UpdateCallStatus(Callstatus updatedCallstatus)

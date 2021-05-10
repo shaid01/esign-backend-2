@@ -46,8 +46,8 @@ namespace EsignBackend.Services.CharacterService
                 customersList.Add(new CustomerDTO(customer));
             }
             serviceRespone.Data = customersList;
-            serviceRespone.Amount = 120000;
-            //serviceRespone.Amount = _context.Customers.Count();
+            //serviceRespone.Amount = 120000;
+            serviceRespone.Amount = _context.Customers.Count();
             return serviceRespone;
         }
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()

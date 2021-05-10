@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
@@ -50,6 +51,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
                 try
                 {
                     _context.SaveChanges();
+                    serviceRespone.Amount = _context.Docstypes.Count();
                     serviceRespone.Data = newIdentificationDocumentInDb.Entity.Id;
                     return serviceRespone;
                 }
@@ -63,19 +65,19 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
                 }
             }
         }
-        public async Task<ServiceResponse<int>> GetAmountOfIdentificationDocuments()
-        {
-            _logger.Debug("GetAmountOfIdentificationDocuments");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Docstypes.Count();
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<List<Docstype>>> GetIdentificationDocuments(int skip, int take)
+
+        public async Task<ServiceResponse<List<DocstypeDTO>>> GetIdentificationDocuments(int skip, int take)
         {
             _logger.Debug("GetIdentificationDocuments");
-            var serviceResponse = new ServiceResponse<List<Docstype>>();
-            serviceResponse.Data = _context.Docstypes.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count.ToString();
+            var serviceResponse = new ServiceResponse<List<DocstypeDTO>>();
+            var outputList = new List<DocstypeDTO>();
+            var data = _context.Docstypes.Skip(skip).Take(take).ToList();
+            foreach (var id in data)
+            {
+                outputList.Add(new DocstypeDTO(id));
+            }
+            serviceResponse.Data = outputList;
+            serviceResponse.Amount = _context.Docstypes.Count();
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateIdentificationDocument(Docstype updatedIdentificationDocument)
@@ -99,12 +101,18 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<Docstype>>> GetAllIdentificationDocuments()
+        public async Task<ServiceResponse<List<DocstypeDTO>>> GetAllIdentificationDocuments()
         {
             _logger.Debug("GetAllIdentificationDocuments");
-            var serviceResponse = new ServiceResponse<List<Docstype>>();
-            serviceResponse.Data = _context.Docstypes.ToList();
-            serviceResponse.Message = serviceResponse.Data.Count.ToString();
+            var serviceResponse = new ServiceResponse<List<DocstypeDTO>>();
+            var outputList = new List<DocstypeDTO>();
+            var data = _context.Docstypes.ToList();
+            foreach (var id in data)
+            {
+                outputList.Add(new DocstypeDTO(id));
+            }
+            serviceResponse.Amount = _context.Docstypes.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
     }

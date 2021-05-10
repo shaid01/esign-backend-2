@@ -27,11 +27,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _customerIdentifierService.GetCustomersIdentifiers(skip, take));
         }
 
-        [HttpGet("GetAmountOfCustomersIdentifiers")]
-        public async Task<IActionResult> GetAmountOfCustomersIdentifiers()
-        {
-            return Ok(await _customerIdentifierService.GetAmountOfCustomersIdentifiers());
-        }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateCustomerIdentifer")]
         public async Task<IActionResult> UpdateCustomerIdentifer(Custident updatedCustomerIdentifer)

@@ -21,12 +21,6 @@ namespace EsignBackend.Controllers
             _projectsService = projectsService;
         }
 
-        [HttpGet("GetAmountOfProjects")]
-        public async Task<IActionResult> GetAmountOfProjects()
-        {
-            return Ok(await _projectsService.GetAmountOfProjects());
-        }
-
         [HttpGet("GetProjectsInRange")]
         public async Task<IActionResult> GetProjectsInRange(int skip, int take)
         {
@@ -51,11 +45,6 @@ namespace EsignBackend.Controllers
             return Ok(await _projectsService.GetSubprojectsInRange(skip, take));
         }
 
-        [HttpGet("GetAmountOfSubprojects")]
-        public async Task<IActionResult> GetAmountOfSubprojects()
-        {           
-            return Ok(await _projectsService.GetAmountOfSubprojects());
-        }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateSubproject")]
         public async Task<IActionResult> UpdateSubproject(Subproject updatedSubproject)

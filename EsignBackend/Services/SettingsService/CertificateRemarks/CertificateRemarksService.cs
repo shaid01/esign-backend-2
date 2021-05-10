@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -38,12 +39,18 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             serviceResponse.Data = _context.Certificatermearks.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<Certificatermeark>>> GetCertificateRemarks(int skip, int take)
+        public async Task<ServiceResponse<List<CertificateremarkDTO>>> GetCertificateRemarks(int skip, int take)
         {
             _logger.Debug("GetCertificateRemarks");
-            var serviceResponse = new ServiceResponse<List<Certificatermeark>>();
-            serviceResponse.Data = _context.Certificatermearks.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<CertificateremarkDTO>>();
+            var data = _context.Certificatermearks.Skip(skip).Take(take).ToList();
+            var outputData = new List<CertificateremarkDTO>();
+            foreach (var cr in data)
+            {
+                outputData.Add(new CertificateremarkDTO(cr));
+            }
+            serviceResponse.Amount = _context.Certificatermearks.Count();
+            serviceResponse.Data = outputData;
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateCertificateRemarks(Certificatermeark updatedCertificateRemarks)
@@ -86,6 +93,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
                 try
                 {
                     _context.SaveChanges();
+                    serviceRespone.Amount = _context.Certificatermearks.Count();
                     serviceRespone.Data = newCertificateRemarksInDb.Entity.Id;
                     return serviceRespone;
                 }

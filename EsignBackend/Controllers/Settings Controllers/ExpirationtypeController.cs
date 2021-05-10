@@ -20,11 +20,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             this._expirationTypeService = expirationTypeService;
         }
-        [HttpGet("GetAmountOfExpirationTypes")]
-        public async Task<IActionResult> GetAmountOfExpirationTypes()
-        {
-            return Ok(await _expirationTypeService.GetAmountOfExpirationTypes());
-        }
 
         [HttpGet("GetExpirationTypes")]
         public async Task<IActionResult> GetExpirationTypes(int skip, int take)

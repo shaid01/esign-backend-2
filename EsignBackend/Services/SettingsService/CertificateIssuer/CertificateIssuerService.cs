@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newCertificateIssuerInDb.Entity.Id;
+                    serviceRespone.Amount = _context.Isscerts.Count();
                     return serviceRespone;
                 }
                 catch (Exception exception)
@@ -62,19 +64,19 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                 }
             }
         }    
-        public async Task<ServiceResponse<int>> GetAmountOfCertificateIssuers()
-        {
-            _logger.Debug("GetAmountOfCertificateIssuers");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Isscerts.Count();
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<List<Isscert>>> GetCertificateIssuers(int skip, int take)
+
+        public async Task<ServiceResponse<List<IsscertDTO>>> GetCertificateIssuers(int skip, int take)
         {
             _logger.Debug("GetCertificateIssuers");
-            var serviceResponse = new ServiceResponse<List<Isscert>>();
-            serviceResponse.Data = _context.Isscerts.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
+            var issuers = new List<IsscertDTO>();
+            var data = _context.Isscerts.Skip(skip).Take(take).ToList();
+            foreach (var issuer in data)
+            {
+                issuers.Add(new IsscertDTO(issuer));
+            }
+            serviceResponse.Amount = _context.Isscerts.Count();
+            serviceResponse.Data = issuers;
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateCertificateIssuer(Isscert updatedCertificateIssuer)
@@ -98,12 +100,18 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<Isscert>>> GetAllCertificateIssuers()
+        public async Task<ServiceResponse<List<IsscertDTO>>> GetAllCertificateIssuers()
         {
             _logger.Debug("GetAllCertificateIssuers");
-            var serviceResponse = new ServiceResponse<List<Isscert>>();
-            serviceResponse.Data = _context.Isscerts.ToList(); ;
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
+            var outputList = new List<IsscertDTO>();
+            var data = _context.Isscerts.ToList(); 
+            foreach (var ci in data)
+            {
+                outputList.Add(new IsscertDTO(ci));
+            }
+            serviceResponse.Amount = _context.Isscerts.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
     }

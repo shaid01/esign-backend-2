@@ -18,11 +18,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             this._securityQuestionsService = securityQuestionsService;
         }
-        [HttpGet("GetAmountOfSecurityQuestions")]
-        public async Task<IActionResult> GetAmountOfSecurityQuestions()
-        {
-            return Ok(await _securityQuestionsService.GetAmountOfSecurityQuestions());
-        }
         [HttpGet("GetSecurityQuestions")]
         public async Task<IActionResult> GetSecurityQuestions(int skip, int take)
         {

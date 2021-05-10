@@ -25,11 +25,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _smartObjectService.GetSmartObjects(skip, take));
         }
 
-        [HttpGet("GetAmountOfSmartObjects")]
-        public async Task<IActionResult> GetAmountOfSmartObjects()
-        {
-            return Ok(await _smartObjectService.GetAmountOfSmartObjects());
-        }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateSmartObject")]
         public async Task<IActionResult> UpdateCertificatesStatus(Smartobject updatedSmartobject)

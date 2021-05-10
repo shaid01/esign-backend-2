@@ -20,11 +20,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _departmentService = departmentsService;
         }
 
-        [HttpGet("GetAmountOfDepartments")]
-        public async Task<IActionResult> GetAmountOfDepartments()
-        {
-            return Ok(await _departmentService.GetAmountOfDepartments());
-        }
         [HttpGet("GetDepartments")]
         public async Task<IActionResult> GetDepartments(int skip, int take)
         {

@@ -21,12 +21,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
             this._certificateRemarksService = certificateRemarksService;
         }
 
-        [HttpGet("GetAmountOfCertificateRemarks")]
-        public async Task<IActionResult> GetAmountOfCertificateRemarks()
-        {
-            return Ok(await _certificateRemarksService.GetAmountOfCertificateRemarks());
-        }
-
         [HttpGet("GetCertificateRemarks")]
         public async Task<IActionResult> GetCertificateRemarks(int skip, int take)
         {

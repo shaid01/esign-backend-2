@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ namespace EsignBackend.Services.SettingsService.Departments
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newDepartmentInDb.Entity.Id;
+                    serviceRespone.Amount = _context.Departmants.Count();
                     return serviceRespone;
                 }
                 catch (Exception exception)
@@ -68,12 +70,18 @@ namespace EsignBackend.Services.SettingsService.Departments
             serviceResponse.Data = _context.Departmants.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<Departmant>>> GetDepartments(int skip, int take)
+        public async Task<ServiceResponse<List<DepartmentDTO>>> GetDepartments(int skip, int take)
         {
             _logger.Debug("GetDepartments");
-            var serviceResponse = new ServiceResponse<List<Departmant>> ();
-            serviceResponse.Data = _context.Departmants.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<DepartmentDTO>> ();
+            var outputList = new List<DepartmentDTO>();
+            var data = _context.Departmants.Skip(skip).Take(take).ToList();
+            foreach (var d in data)
+            {
+                outputList.Add(new DepartmentDTO(d));
+            }
+            serviceResponse.Amount = _context.Departmants.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateDepartment(Departmant updatedDepartment)

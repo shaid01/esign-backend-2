@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
@@ -37,12 +38,18 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
             serviceResponse.Data = _context.Expirationtypes.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<Models.Expirationtype>>> GetExpirationTypes(int skip, int take)
+        public async Task<ServiceResponse<List<ExpirationtypeDTO>>> GetExpirationTypes(int skip, int take)
         {
             _logger.Debug("GetExpirationTypes");
-            var serviceResponse = new ServiceResponse<List<Models.Expirationtype>>();
-            serviceResponse.Data = _context.Expirationtypes.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
+            var outputList = new List<ExpirationtypeDTO>();
+            var data = _context.Expirationtypes.Skip(skip).Take(take).ToList();
+            foreach (var et in data)
+            {
+                outputList.Add(new ExpirationtypeDTO(et));
+            }
+            serviceResponse.Data = outputList;
+            serviceResponse.Amount = _context.Expirationtypes.Count() ;
             return serviceResponse;
         }
 
@@ -86,6 +93,7 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
                 try
                 {
                     _context.SaveChanges();
+                    serviceRespone.Amount = _context.Expirationtypes.Count();
                     serviceRespone.Data = newExpirationTypeInDb.Entity.Id;
                     return serviceRespone;
                 }
@@ -99,12 +107,18 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
                 }
             }
         }
-        public async Task<ServiceResponse<List<Models.Expirationtype>>> GetAllExpirationTypes()
+        public async Task<ServiceResponse<List<ExpirationtypeDTO>>> GetAllExpirationTypes()
         {
             _logger.Debug("GetAllExpirationTypes");
-            var serviceResponse = new ServiceResponse<List<Models.Expirationtype>>();
-            serviceResponse.Data = _context.Expirationtypes.ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
+            var outputList = new List<ExpirationtypeDTO>();
+            var data = _context.Expirationtypes.ToList();
+            foreach (var et in data)
+            {
+                outputList.Add(new ExpirationtypeDTO(et));
+            }
+            serviceResponse.Amount = _context.Expirationtypes.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
     }

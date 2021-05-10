@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -31,20 +32,18 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
         }
 
-        public async Task<ServiceResponse<List<Certificatesstatus>>> GetCertificatesStatus(int skip, int take)
+        public async Task<ServiceResponse<List<CertificatesstatusDTO>>> GetCertificatesStatus(int skip, int take)
         {
             _logger.Debug("GetCertificatesStatus");
-            var serviceResponse = new ServiceResponse<List<Certificatesstatus>>();
-            serviceResponse.Data = _context.Certificatesstatuses.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<int>> GetAmountOfCertificatesStatus()
-        {
-            _logger.Debug("GetAmountOfCertificatesStatus");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Certificatesstatuses.Count();
+            var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
+            var outputList = new List<CertificatesstatusDTO>();
+            var data = _context.Certificatesstatuses.Skip(skip).Take(take).ToList();
+            foreach (var cs in data)
+            {
+                outputList.Add(new CertificatesstatusDTO(cs));
+            }
+            serviceResponse.Amount = _context.Certificatesstatuses.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
 
@@ -89,6 +88,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                 try
                 {
                     _context.SaveChanges();
+                    serviceRespone.Amount = _context.Certificatesstatuses.Count();
                     serviceRespone.Data = newcertificatesStatusInDb.Entity.Id;
                     return serviceRespone;
                 }
@@ -102,12 +102,18 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                 }
             }
         }
-        public async Task<ServiceResponse<List<Certificatesstatus>>> GetAllCertificatesStatus()
+        public async Task<ServiceResponse<List<CertificatesstatusDTO>>> GetAllCertificatesStatus()
         {
             _logger.Debug("GetAllCertificatesStatus");
-            var serviceResponse = new ServiceResponse<List<Certificatesstatus>>();
-            serviceResponse.Data = _context.Certificatesstatuses.ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
+            var outputList = new List<CertificatesstatusDTO>();
+            var data = _context.Certificatesstatuses.ToList();
+            foreach (var cs in data)
+            {
+                outputList.Add(new CertificatesstatusDTO(cs));
+            }
+            serviceResponse.Amount = _context.Certificatesstatuses.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
     }

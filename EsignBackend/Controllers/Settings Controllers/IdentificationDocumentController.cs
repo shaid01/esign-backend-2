@@ -20,11 +20,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _identificationDocumentService = identificationDocumentService;
         }
 
-        [HttpGet("GetAmountOfIdentificationDocuments")]
-        public async Task<IActionResult> GetAmountOfIdentificationDocuments()
-        {
-            return Ok(await _identificationDocumentService.GetAmountOfIdentificationDocuments());
-        }
 
         [HttpGet("GetIdentificationDocuments")]
         public async Task<IActionResult> GetIdentificationDocuments(int skip, int take)

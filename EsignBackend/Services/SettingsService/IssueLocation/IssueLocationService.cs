@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
@@ -51,6 +52,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
                 {
                      _context.SaveChanges();
                     serviceRespone.Data = newIssueLocationInDb.Entity.Id;
+                    serviceRespone.Amount = _context.Issplaces.Count();
                     return serviceRespone;
                 }
                 catch (Exception exception)
@@ -63,19 +65,20 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
                 }
             }
         }
-        public async Task<ServiceResponse<int>> GetAmountOfIssueLocations()
-        {
-            _logger.Debug("GetAmountOfIssueLocations");
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Issplaces.Count();
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<List<Issplace>>> GetIssueLocations(int skip, int take)
+
+        public async Task<ServiceResponse<List<IssplaceDTO>>> GetIssueLocations(int skip, int take)
         {
             _logger.Debug("GetIssueLocations");
-            var serviceResponse = new ServiceResponse<List<Issplace>>();
-            serviceResponse.Data = _context.Issplaces.Skip(skip).Take(take).ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
+            var outputList = new List<IssplaceDTO>();
+            var data = _context.Issplaces.Skip(skip).Take(take).ToList();
+            foreach (var il in data)
+            {
+                outputList.Add(new IssplaceDTO(il));
+            }
+
+            serviceResponse.Amount = _context.Issplaces.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
         public async Task<ServiceResponse<int>> UpdateIssueLocation(Issplace updatedIssueLocation)
@@ -99,13 +102,18 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<Issplace>>> GetAllIssueLocations()
+        public async Task<ServiceResponse<List<IssplaceDTO>>> GetAllIssueLocations()
         {
             _logger.Debug("GetAllIssueLocations");
-            var serviceResponse = new ServiceResponse<List<Issplace>>();
-            var dbCustomersIdentifiers = 
-            serviceResponse.Data = _context.Issplaces.ToList();
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
+            var outputList = new List<IssplaceDTO>();
+            var data = _context.Issplaces.ToList();
+            foreach (var il in data)
+            {
+                outputList.Add(new IssplaceDTO(il));
+            }
+            serviceResponse.Amount = _context.Issplaces.Count();
+            serviceResponse.Data = outputList;
             return serviceResponse;
         }
     }

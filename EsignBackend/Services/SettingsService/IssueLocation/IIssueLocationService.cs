@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,9 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 {
     public interface IIssueLocationService
     {
-        Task<ServiceResponse<int>> GetAmountOfIssueLocations();
-        Task<ServiceResponse<List<Issplace>>> GetIssueLocations(int skip, int take);
+        Task<ServiceResponse<List<IssplaceDTO>>> GetIssueLocations(int skip, int take);
         Task<ServiceResponse<int>> UpdateIssueLocation(Issplace updatedIssueLocation);
         Task<ServiceResponse<int>> AddNewIssueLocation(Issplace issueLocation);
-        Task<ServiceResponse<List<Issplace>>> GetAllIssueLocations();
+        Task<ServiceResponse<List<IssplaceDTO>>> GetAllIssueLocations();
     }
 }
