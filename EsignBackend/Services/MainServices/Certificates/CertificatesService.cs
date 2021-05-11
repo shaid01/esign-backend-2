@@ -99,15 +99,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             return maxId + 1;
         }
 
-        // NEED TO REMOVE AND CHECK IF ITS IN USE IN FRONT
-        public async Task<ServiceResponse<int>> GetAmountOfCertificates()
-        {
-            _logger.Debug("GetAmountOfCertificates");
-
-            var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Certificates.Count();
-            return serviceResponse;
-        }
 
         // NEED TO FIX. NOT WORKING.
         public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
@@ -115,8 +106,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("UpdateCertificate");
 
             var serviceResponse = new ServiceResponse<int>();
-            //updatedCertificate.Securityansware = encryptSecurityAns(updatedCertificate.Securityansware);
-            updatedCertificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(updatedCertificate.Securityansware);            
+            updatedCertificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(updatedCertificate.Securityansware);
             var updatedCertificateInDb = _context.Certificates.Update(updatedCertificate);
             try
             {
@@ -146,7 +136,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("GetCertificatesDetailsUpdate");
 
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
-            //serviceResponse.Amount = _certificateCash.Counter;
             serviceResponse.Amount = _context.Certificates.Count();
             var certificateDetailsList = new List<CertificateDetailsDTO>();
             var certificates = _context.Certificates
@@ -164,12 +153,11 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Skip(skip).Take(take).ToList();
 
             foreach (var cer in certificates)
-            {             
-                    var newCertificateDetail = new CertificateDetailsDTO(new CertificateDetails(cer));
-                    certificateDetailsList.Add(newCertificateDetail);                
+            {
+                var newCertificateDetail = new CertificateDetailsDTO(new CertificateDetails(cer));
+                certificateDetailsList.Add(newCertificateDetail);
             }
             serviceResponse.Data = certificateDetailsList;
-            //serviceResponse.Message = serviceResponse.Data.Count().ToString();
             return serviceResponse;
         }
 
@@ -313,12 +301,30 @@ namespace EsignBackend.Services.MainServices.Certificates
 
 
 
-        public async Task<ServiceResponse<List<CertificateDetails>>> GetCustomerCertificatesDetails(double customerId)
+        public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId)
         {
-            _logger.Debug("GetCustomerCertificatesDetails");
-            var serviceResponse = new ServiceResponse<List<CertificateDetails>>();
-            serviceResponse.Data = GenerateCertificateDetailsToCustomer(customerId).OrderBy(x => x.Id).ToList();
-            serviceResponse.Amount = serviceResponse.Data.Count();
+            _logger.Debug("GetCustomerCertificatesDetailsById");
+            var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
+            var customerCertificateList = new List<CertificateDetailsDTO>();
+            var certificates = _context.Certificates
+                .Include(cer => cer.RelatedCertificateissuer)
+                .Include(cer => cer.RelatedCertificatesstatus)
+                .Include(cer => cer.RelatedCustomer).ThenInclude(cus => cus.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedCustomerIdentifier)
+                .Include(cer => cer.RelatedDocsType)
+                .Include(cer => cer.RelatedExpiration)
+                .Include(cer => cer.RelatedIssuerPlace)
+                .Include(cer => cer.RelatedProject)
+                .Include(cer => cer.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedSmartObject)
+                .Include(cer => cer.RelatedSubProject)
+                .Where(cer => cer.Customerid == customerId).ToList();
+            foreach (var cer in certificates)
+            {
+                var newCertificateDetail = new CertificateDetailsDTO(new CertificateDetails(cer));
+                customerCertificateList.Add(newCertificateDetail);
+            }
+            serviceResponse.Data = customerCertificateList;
             return serviceResponse;
         }
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch,
@@ -360,7 +366,6 @@ namespace EsignBackend.Services.MainServices.Certificates
         {
             _logger.Debug("CheckSecurityAnswer");
             var ServiceResponse = new ServiceResponse<bool>();
-           //secAns = encryptSecurityAns(secAns);
             secAns = EncryptDecryptHandler.encryptSecurityAns(secAns);
 
             var certificate = _context.Certificates.Include(cer => cer.RelatedCustomer)
@@ -426,7 +431,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 certificate.Id = GenerateCertificateId();
                 //certificate.Securityansware = encryptSecurityAns(certificate.Securityansware);
                 certificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(certificate.Securityansware);
-                
+
                 var newCertificateInDb = _context.Certificates.Add(certificate);
                 try
                 {
@@ -555,7 +560,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 newCd.Securityquestion = (double)certificateDetail.Securityquestion;
                 //newCd.Securityanswer = certificateDetail.Securityanswer;
                 //newCd.Securityanswer = decryptSecurityAnswer(certificateDetail.Securityanswer);
-                newCd.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificateDetail.Securityanswer);                
+                newCd.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificateDetail.Securityanswer);
                 newCd.Remarks = certificateDetail.Remarks;
                 newCd.Remarkdesc = certificateDetail.Remarkdesc;
                 newCd.Job = certificateDetail.Job;
@@ -694,7 +699,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 newCertificateDetail.Signer = certificateDetail.Signer;
                 newCertificateDetail.Securityquestion = (double)certificateDetail.Securityquestion;
                 //newCertificateDetail.Securityanswer = decryptSecurityAnswer(certificateDetail.Securityanswer);
-                newCertificateDetail.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificateDetail.Securityanswer);                
+                newCertificateDetail.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificateDetail.Securityanswer);
                 //newCd.Securityanswer = certificateDetail.Securityanswer;
                 newCertificateDetail.Remarks = certificateDetail.Remarks;
                 newCertificateDetail.Remarkdesc = certificateDetail.Remarkdesc;

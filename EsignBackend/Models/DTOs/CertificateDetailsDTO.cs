@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EsignBackend.Models.DTOs.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,7 +45,8 @@ namespace EsignBackend.Models.DTOs
             CertificateIssuer = new IsscertDTO(certificate.CertificateIssuer);
             CertificateLocation = new IssplaceDTO(certificate.CertificateLocation);
             RelatedCustomer = new CustomerDTO(certificate.RelatedCustomer);
-
+            RelatedCustomerIdentifier = new CustidentDTO(certificate.RelatedCustomerIdentifier);
+            RelatedSecurityQuestion = new SecurityquestionDTO(certificate.RelatedSecurityQuestion);
 
         }
         public int Id { get; set; }
@@ -70,6 +72,7 @@ namespace EsignBackend.Models.DTOs
         public string Licenseid { get; set; }
         public string Signer { get; set; }
         public double Securityquestion { get; set; }
+        public SecurityquestionDTO RelatedSecurityQuestion { get; set; }
         public string Securityanswer { get; set; }
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
@@ -77,5 +80,6 @@ namespace EsignBackend.Models.DTOs
         public DateTime Issuedate { get; set; }
         public DateTime Expiredate { get; set; }
         public CustomerDTO RelatedCustomer { get; set; }
+        public CustidentDTO RelatedCustomerIdentifier { get; set; }
     }
 }

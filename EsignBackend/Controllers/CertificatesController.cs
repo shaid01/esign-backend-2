@@ -25,13 +25,6 @@ namespace EsignBackend.Controllers
             _logger = logger;
         }
 
-        [HttpGet("GetAmountOfCertificates")]
-        public async Task<IActionResult> GetAmountOfCertificates()
-        {
-            _logger.Debug("GetAmountOfCertificates");
-            return Ok(await _certificatesService.GetAmountOfCertificates());
-        }
-
         [HttpGet("GetCertificatesDetails")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCertificatesDetails(int skip, int take)
@@ -61,13 +54,12 @@ namespace EsignBackend.Controllers
             Double.TryParse(certificateId, out certificateIdInDouble);
             return Ok(await _certificatesService.GetHistoryCertificates(certificateIdInDouble));
         }
-        [HttpGet("GetCustomerCertificatesDetails")]
-        public async Task<IActionResult> GetCustomerCertificatesDetails(string customerId)
+
+        [HttpGet("GetCustomerCertificates")]
+        public async Task<IActionResult> GetCustomerCertificates(double customerId)
         {
-            _logger.Debug("GetCustomerCertificatesDetails");
-            double customerIdDouble = -1;
-            Double.TryParse(customerId, out customerIdDouble);
-            return Ok(await _certificatesService.GetCustomerCertificatesDetails(customerIdDouble));
+            _logger.Debug("GetCustomerCertificates");
+            return Ok(await _certificatesService.GetCustomerCertificates(customerId));
         }
         [HttpPost("SearchCertificates")]
         public async Task<IActionResult> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
@@ -94,12 +86,5 @@ namespace EsignBackend.Controllers
             return Ok(await _certificatesService.UpdateExpiredCertificates());
         }
 
-
-        /*   [HttpGet("GetCertificates")]
-   public async Task<IActionResult> GetCertificates(int skip, int take)
-   {
-       return Ok(await _certificatesService.GetCertificates(skip, take));
-   }
-*/
     }
 }

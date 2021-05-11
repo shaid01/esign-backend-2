@@ -21,7 +21,6 @@ namespace EsignBackend.Models
             this.Licenseid = certificate.Licenceid;
             this.Signer = certificate.Hotem;
             this.Securityquestion = (double)certificate.Securityquestion;
-            //this.Securityanswer = CertificatesService.decryptSecurityAnswer(certificate.Securityansware);
             this.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificate.Securityansware);
             this.Remarks = certificate.Remarks;
             this.Remarkdesc = certificate.Remarksdesc;
@@ -40,8 +39,10 @@ namespace EsignBackend.Models
             this.Docstype = certificate.RelatedDocsType;
             this.CertificateIssuer = certificate.RelatedCertificateissuer;
             this.CertificateLocation = certificate.RelatedIssuerPlace;
+            this.RelatedCustomerIdentifier = certificate.RelatedCustomerIdentifier;
             //this.CustomerIdentifier = certificate.RelatedCustomerIdentifier.Title;
-           // this.CustomerIdentifierId = certificate.RelatedCustomerIdentifier.Id;
+            // this.CustomerIdentifierId = certificate.RelatedCustomerIdentifier.Id;
+            this.RelatedSecurityQuestion = certificate.RelatedSecurityquestion;
         }
 
         public int Id { get; set; }
@@ -59,6 +60,7 @@ namespace EsignBackend.Models
         public Issplace CertificateLocation { get; set; }
         public string CustomerIdentifier { get; set; }
         public int CustomerIdentifierId { get; set; }
+        public Custident RelatedCustomerIdentifier { get; set; }
         public Customer RelatedCustomer { get; set; }
 
         public string Company { get; set; }
@@ -68,6 +70,7 @@ namespace EsignBackend.Models
         public string Licenseid { get; set; }
         public string Signer { get; set; }
         public double Securityquestion { get; set; }
+        public Securityquestion RelatedSecurityQuestion { get; set; }
         public string Securityanswer { get; set; }
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
