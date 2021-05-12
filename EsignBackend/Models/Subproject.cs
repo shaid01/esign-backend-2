@@ -12,6 +12,7 @@ namespace EsignBackend.Models
         public int Project { get; set; }
         public virtual Project RelatedProject { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; }
+        public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
 
     }
 }

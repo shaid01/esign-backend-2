@@ -4,14 +4,16 @@ using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210512071935_historyCertificateRelationsBinding")]
+    partial class historyCertificateRelationsBinding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1515,7 +1517,7 @@ namespace EsignBackend.Migrations
                     b.HasOne("EsignBackend.Models.Subproject", "RelatedSubProject")
                         .WithMany("HistoryCertificates")
                         .HasForeignKey("Subproject")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("EsignBackend.Models.Buuser", "RelatedUser")

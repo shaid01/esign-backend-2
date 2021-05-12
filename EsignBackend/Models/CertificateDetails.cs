@@ -9,7 +9,8 @@ namespace EsignBackend.Models
 {
     public class CertificateDetails
     {
-        public CertificateDetails() { }
+        public CertificateDetails() { }        
+
 
         public CertificateDetails(Certificate certificate)
         {

@@ -100,7 +100,6 @@ namespace EsignBackend.Services.MainServices.Certificates
         }
 
 
-        // NEED TO FIX. NOT WORKING.
         public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
         {
             _logger.Debug("UpdateCertificate");
@@ -272,7 +271,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 newCd.Passportid = certificateDetail.Passportid;
                 newCd.Licenseid = certificateDetail.Licenseid;
                 newCd.Signer = certificateDetail.Signer;
-                newCd.Securityquestion = (double)certificateDetail.Securityquestion;
+                newCd.Securityquestion = certificateDetail.Securityquestion;
                 newCd.Securityanswer = certificateDetail.Securityanswer;
                 newCd.Remarks = certificateDetail.Remarks;
                 newCd.Remarkdesc = certificateDetail.Remarkdesc;
@@ -296,6 +295,39 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             serviceResponse.Data = certificateDeatailsList;
             serviceResponse.Message = serviceResponse.Data.Count().ToString();
+            //GetHistoryCertificatesUpdate(certificateId);
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificatesUpdate(double certificateId)
+        {
+            _logger.Debug("GetHistoryCertificates");
+
+            var serviceResponse = new ServiceResponse<List<HistoryCertificateDTO>>();
+            var historyCertificateDeatailsList = new List<HistoryCertificateDTO>();
+
+            var historyCertificateDeatailsUpdate = await _context.Certificateshistories
+                .Include(hc => hc.RelatedCertificate)
+                .Include(hc => hc.RelatedCertificateStatus)
+                .Include(hc => hc.RelatedCustomer)
+                .Include(hc => hc.RelatedDocsType)
+                .Include(hc => hc.RelatedExpiration)
+                .Include(hc => hc.RelatedProject)
+                .Include(hc => hc.RelatedSecurityQuestion)
+                .Include(hc => hc.RelatedSmartObject)
+                .Include(hc => hc.RelatedSubProject)
+                .Include(hc => hc.RelatedUser)
+                .Where(hc => certificateId == certificateId).ToListAsync();
+
+
+            foreach (var historyCer in historyCertificateDeatailsUpdate)
+            {
+                var newHistoryCertificateDetail = new HistoryCertificateDTO(new HistoryCertificateDetails(historyCer));
+                historyCertificateDeatailsList.Add(newHistoryCertificateDetail);
+            }
+
+            serviceResponse.Data = historyCertificateDeatailsList;
+            serviceResponse.Amount = historyCertificateDeatailsUpdate.Count();
             return serviceResponse;
         }
 

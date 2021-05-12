@@ -30,5 +30,7 @@ namespace EsignBackend.Models
         public double? Provider { get; set; }
         public double? Elang { get; set; }
         public string Departmantid { get; set; }
+        public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
+
     }
 }

@@ -1084,6 +1084,26 @@ namespace EsignBackend.Models
                 .WithMany(sq => sq.Customers).HasForeignKey(cu => cu.Securityquestion)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
+            modelBuilder.Entity<Certificateshistory>().HasOne<Customer>(ch => ch.RelatedCustomer).WithMany(cu => cu.CustomerHistoryCertificates).HasForeignKey(ch => ch.Updateduserid);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Project>(ch => ch.RelatedProject).WithMany(p => p.HistoryCertificates).HasForeignKey(ch => ch.Project);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Subproject>(ch => ch.RelatedSubProject).WithMany(sp => sp.HistoryCertificates).HasForeignKey(ch => ch.Subproject).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Expirationtype>(ch => ch.RelatedExpiration).WithMany(et => et.HistoryCertificates).HasForeignKey(ch => ch.Expire);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Certificatesstatus>(ch => ch.RelatedCertificateStatus).WithMany(cs => cs.HistoryCertificates).HasForeignKey(ch => ch.Certificatestatus);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Smartobject>(ch => ch.RelatedSmartObject).WithMany(so => so.HistoryCertificates).HasForeignKey(ch => ch.Smartobject);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Securityquestion>(ch => ch.RelatedSecurityQuestion).WithMany(sq => sq.HistoryCertificates).HasForeignKey(ch => ch.Securityquestion);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Docstype>(ch => ch.RelatedDocsType).WithMany(dt => dt.HistoryCertificates).HasForeignKey(ch => ch.Docstype);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Certificate>(ch => ch.RelatedCertificate).WithMany(c => c.HistoryCertificates).HasForeignKey(ch => ch.Certificateid);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Buuser>(ch => ch.RelatedUser).WithMany(us => us.HistoryCertificates).HasForeignKey(ch => ch.Updateduserid);
+
+            
+
+
+
+
+
+
+
             modelBuilder.Entity<Ticket>(entity =>
             {
                 entity.HasNoKey();

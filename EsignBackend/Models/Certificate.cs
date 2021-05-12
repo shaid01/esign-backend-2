@@ -43,5 +43,7 @@ namespace EsignBackend.Models
         public int? Issuerplace { get; set; }
         public virtual Issplace? RelatedIssuerPlace { get; set; }
         public string Remarks { get; set; }
+        public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
+
     }
 }

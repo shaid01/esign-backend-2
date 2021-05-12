@@ -26,6 +26,7 @@ namespace EsignBackend.Models
         public string Email { get; set; }
         public string Company { get; set; }
         public virtual ICollection<Certificate> CustomerCertificates { get; set; }
+        public virtual ICollection<Certificateshistory> CustomerHistoryCertificates { get; set; }
 
     }
 }
