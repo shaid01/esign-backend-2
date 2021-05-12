@@ -14,7 +14,9 @@ namespace EsignBackend.Services.MainServices.Certificates
         Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take);
         Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate);
         Task<ServiceResponse<int>> AddNewHistoryCertificate(Certificateshistory certificateshistory);
-        Task<ServiceResponse<List<HistoryCertificateDetails>>> GetHistoryCertificates(double certificateId);
+       // Task<ServiceResponse<List<HistoryCertificateDetails>>> GetHistoryCertificates(double certificateId);
+        Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId);
+
         Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId);
 
         

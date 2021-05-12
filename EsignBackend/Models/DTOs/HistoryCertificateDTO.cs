@@ -16,11 +16,11 @@ namespace EsignBackend.Models.DTOs
             this.Expire = new ExpirationtypeDTO(historyCertificateDetails.Expire);
             this.Smartobject = new SmartobjectDTO(historyCertificateDetails.Smartobject);
             this.Certificatesstatus = new CertificatesstatusDTO(historyCertificateDetails.Certificatesstatus);
-            //this.CustomerId = certificateshistory.Customerid;
+            //this.CustomerId = historyCertificateDetails.CustomerId;
             this.CustomerName = historyCertificateDetails.CustomerName;
             this.Docstype = new DocstypeDTO(historyCertificateDetails.Docstype);
             this.CertificateIssuer = historyCertificateDetails.CertificateIssuer;
-            this.CertificateLocation = this.CertificateLocation;
+            this.CertificateLocation = historyCertificateDetails.CertificateLocation;
             this.CustomerIdentifier = historyCertificateDetails.CustomerIdentifier;
             this.Company = historyCertificateDetails.Company;
             this.Hpnumber = historyCertificateDetails.Hpnumber;
