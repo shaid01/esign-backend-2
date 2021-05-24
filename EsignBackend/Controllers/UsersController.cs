@@ -1,5 +1,4 @@
-﻿using EsignBackend.Dtos.User;
-using EsignBackend.Models;
+﻿using EsignBackend.Models;
 using EsignBackend.Models.Tools;
 using EsignBackend.Services.CharacterService;
 using Microsoft.AspNetCore.Authorization;

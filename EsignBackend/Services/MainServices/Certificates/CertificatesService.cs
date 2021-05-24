@@ -27,33 +27,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             _certificateCash = CertificateCashHandler.GetInstance();
         }
 
-        private List<CertificateDetails> GenerateCertificateDetailsToCustomer(double customerId)
-        {
-            _logger.Debug("GenerateCertificateDetailsFromId");
-            var certificateDeatailsList = new List<CertificateDetails>();
-
-            var matchedCertificates = _context.Certificates
-                .Include(cer => cer.RelatedCertificateissuer)
-                .Include(cer => cer.RelatedCertificatesstatus)
-                .Include(cer => cer.RelatedCustomer)
-                .Include(cer => cer.RelatedCustomerIdentifier)
-                .Include(cer => cer.RelatedDocsType)
-                .Include(cer => cer.RelatedExpiration)
-                .Include(cer => cer.RelatedIssuerPlace)
-                .Include(cer => cer.RelatedProject)
-                .Include(cer => cer.RelatedSecurityquestion)
-                .Include(cer => cer.RelatedSmartObject)
-                .Include(cer => cer.RelatedSubProject)
-                .Where(cer => Convert.ToDouble(cer.RelatedCustomer.Idnumber).Equals(customerId)).ToList();
-
-            foreach (var matchedCertificate in matchedCertificates)
-            {
-                var certificate = new CertificateDetails(matchedCertificate);
-                certificateDeatailsList.Add(certificate);
-            }
-            return certificateDeatailsList;
-        }
-
         private CertificateDetails GenerateCertificateDetailsFromId(double cerId)
         {
             _logger.Debug("GenerateCertificateDetailsFromId");
@@ -125,11 +98,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             return serviceResponse;
         }
 
-
-
-
-
-
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take)
         {
             _logger.Debug("GetCertificatesDetailsUpdate");
@@ -159,11 +127,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             serviceResponse.Data = certificateDetailsList;
             return serviceResponse;
         }
-
-
-
-
-
 
         public async Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId)
         {
@@ -196,9 +159,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             serviceResponse.Amount = historyCertificateDeatailsUpdate.Count();
             return serviceResponse;
         }
-
-
-
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId)
         {
             _logger.Debug("GetCustomerCertificatesDetailsById");
@@ -327,7 +287,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             lock (_locker)
             {
                 certificate.Id = GenerateCertificateId();
-                //certificate.Securityansware = encryptSecurityAns(certificate.Securityansware);
                 certificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(certificate.Securityansware);
 
                 var newCertificateInDb = _context.Certificates.Add(certificate);
@@ -355,26 +314,35 @@ namespace EsignBackend.Services.MainServices.Certificates
 
 
 
-        /// <summary>
-        /// TO REMOVE
-        /// </summary>
-        /// <param name="plainSecurityAns"></param>
-        /// <returns></returns>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         // NEED TO REMOVE AND REFERECNCE
-        private static string encryptSecurityAns(String plainSecurityAns)
+        /*    public static string decryptSecurityAnswer(String encryptedSecurityAns)
+        {
+            return EncryptDecryptHandler.decryptSecurityAns(encryptedSecurityAns);
+        }*/
+
+
+        // NEED TO REMOVE AND REFERECNCE
+        /*   private static string encryptSecurityAns(String plainSecurityAns)
         {
             return EncryptDecryptHandler.encryptSecurityAns(plainSecurityAns);
         }
+*/
 
-        // NEED TO REMOVE AND REFERECNCE
-        public static string decryptSecurityAnswer(String encryptedSecurityAns)
-        {
-            return EncryptDecryptHandler.decryptSecurityAns(encryptedSecurityAns);
-        }
-
-        // NEED TO REMOVE. 
+        /*// NEED TO REMOVE. 
         private List<CertificateDetails> GenerateCertificateDetailsToCustomerUpdate(double customerId)
         {
             _logger.Debug("GenerateCertificateDetailsToCustomer");
@@ -482,34 +450,10 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             return certificateDeatailsList;
         }
+*/
 
         // NEED TO REMOVE
-        public void encryptSecurityAnswers()
-        {
-            foreach (Certificate cer in _context.Certificates)
-            {
-                Console.Out.WriteLine("Certificate id: " + cer.Securityansware + " ");
-                //var encrypted = encryptSecurityAns(cer.Securityansware);
-                var encrypted = EncryptDecryptHandler.encryptSecurityAns(cer.Securityansware);
-                var len = encrypted.Length.ToString();
-                // cer.Securityansware ="111111111122222222223333333333444444444455555555551111111111";
-                cer.Securityansware = encrypted;
-                _context.Certificates.Update(cer);
-
-            }
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-
-            }
-
-        }
-
-        // NEED TO REMOVE
-        public async Task<ServiceResponse<List<CertificateDetails>>> GetCertificatesDetailsUpdate(int skip, int take)
+        /*   public async Task<ServiceResponse<List<CertificateDetails>>> GetCertificatesDetailsUpdate(int skip, int take)
         {
 
             // encryptSecurityAnswers();
@@ -625,10 +569,10 @@ namespace EsignBackend.Services.MainServices.Certificates
             serviceResponse.Message = serviceResponse.Data.Count().ToString();
             return serviceResponse;
         }
+*/
 
 
-
-        // NEED TO UPGRADE
+        // NEED TO CHECK OR UPGRADE
         public async Task<ServiceResponse<int>> AddNewHistoryCertificate(Certificateshistory certificateshistory)
         {
             _logger.Debug("AddNewHistoryCertificate");
@@ -659,6 +603,38 @@ namespace EsignBackend.Services.MainServices.Certificates
                 }
             }
         }
+
+
+
+        /*    // NEED TO REMOVE
+        public void encryptSecurityAnswers()
+        {
+            foreach (Certificate cer in _context.Certificates)
+            {
+                Console.Out.WriteLine("Certificate id: " + cer.Securityansware + " ");
+                //var encrypted = encryptSecurityAns(cer.Securityansware);
+                var encrypted = EncryptDecryptHandler.encryptSecurityAns(cer.Securityansware);
+                var len = encrypted.Length.ToString();
+                // cer.Securityansware ="111111111122222222223333333333444444444455555555551111111111";
+                cer.Securityansware = encrypted;
+                _context.Certificates.Update(cer);
+
+            }
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+
+            }
+
+        }
+
+
+
+*/
+
 
         // NEED TO UPGRADE
         /*       public async Task<ServiceResponse<List<HistoryCertificateDetails>>> GetHistoryCertificatesOld(double certificateId)
@@ -764,6 +740,33 @@ namespace EsignBackend.Services.MainServices.Certificates
                    return serviceResponse;
                }
        */
+
+        /* private List<CertificateDetails> GenerateCertificateDetailsToCustomer(double customerId)
+         {
+             _logger.Debug("GenerateCertificateDetailsFromId");
+             var certificateDeatailsList = new List<CertificateDetails>();
+
+             var matchedCertificates = _context.Certificates
+                 .Include(cer => cer.RelatedCertificateissuer)
+                 .Include(cer => cer.RelatedCertificatesstatus)
+                 .Include(cer => cer.RelatedCustomer)
+                 .Include(cer => cer.RelatedCustomerIdentifier)
+                 .Include(cer => cer.RelatedDocsType)
+                 .Include(cer => cer.RelatedExpiration)
+                 .Include(cer => cer.RelatedIssuerPlace)
+                 .Include(cer => cer.RelatedProject)
+                 .Include(cer => cer.RelatedSecurityquestion)
+                 .Include(cer => cer.RelatedSmartObject)
+                 .Include(cer => cer.RelatedSubProject)
+                 .Where(cer => Convert.ToDouble(cer.RelatedCustomer.Idnumber).Equals(customerId)).ToList();
+
+             foreach (var matchedCertificate in matchedCertificates)
+             {
+                 var certificate = new CertificateDetails(matchedCertificate);
+                 certificateDeatailsList.Add(certificate);
+             }
+             return certificateDeatailsList;
+         }*/
     }
 }
 
