@@ -53,7 +53,7 @@ namespace EsignBackend.Services.CharacterService
             {
                 Subject = new ClaimsIdentity(claims),
                 // Expires = DateTime.Now.AddHours(1),
-                // Expires = DateTime.Now.AddSeconds(20),
+                // Expires = DateTime.Now.AddSeconds(5),
                 Expires = DateTime.Now.AddMinutes(30),
                 //Expires = DateTime.Now.AddMinutes(2),
                 SigningCredentials = creds

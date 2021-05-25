@@ -17,14 +17,18 @@ namespace EsignBackend.Services.MainServices.Certificates
     {
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
+        private readonly ICash _cash;
         private static object _locker = new object();
-        private static CertificateCashHandler _certificateCash;
+        private static CashHandler _certificateCash;
 
-        public CertificatesService(AppDbContext context, ILogger logger)
+        public CertificatesService(AppDbContext context, ILogger logger, ICash cash)
         {
             _context = context;
             _logger = logger;
-            _certificateCash = CertificateCashHandler.GetInstance();
+            _cash = cash;
+
+
+
         }
 
         private CertificateDetails GenerateCertificateDetailsFromId(double cerId)
@@ -103,7 +107,8 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("GetCertificatesDetailsUpdate");
 
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
-            serviceResponse.Amount = _context.Certificates.Count();
+            //serviceResponse.Amount = _context.Certificates.Count();
+            serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
             var certificateDetailsList = new List<CertificateDetailsDTO>();
             var certificates = _context.Certificates
                 .Include(cer => cer.RelatedCertificateissuer)
@@ -294,6 +299,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newCertificateInDb.Entity.Id;
+                    _cash.Increment(CashType.Certificate);
                     return serviceRespone;
                 }
                 catch (Exception exception)

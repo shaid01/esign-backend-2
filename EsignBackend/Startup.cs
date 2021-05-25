@@ -43,6 +43,7 @@ using Hangfire.SqlServer;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Text.Json;
+using EsignBackend.Extensions.CashHandlers;
 
 namespace EsignBackend
 {
@@ -66,7 +67,7 @@ namespace EsignBackend
                 .UseDefaultTypeSerializer()
                 .UseMemoryStorage();
             });
-      
+
 
             // Add the processing server as IHostedService
             services.AddHangfireServer();
@@ -77,7 +78,7 @@ namespace EsignBackend
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.
             GetConnectionString("DefaultConnection"))
-            ) ;
+            );
 
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
@@ -126,6 +127,9 @@ namespace EsignBackend
             services.AddScoped<IIssueLocationService, IssueLocationService>();
             services.AddScoped<ICertificatesService, CertificatesService>();
 
+            services.AddSingleton<ICash, CashHandler>();
+
+
             var configuration = new ConfigurationBuilder()
                               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                               .AddJsonFile($"appsettings.{env.EnvironmentName.ToLower()}.json", optional: true, reloadOnChange: true)
@@ -135,6 +139,8 @@ namespace EsignBackend
                 new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger());
+
+
 
             services.AddValidation();
             services.AddSwaggerGen();
