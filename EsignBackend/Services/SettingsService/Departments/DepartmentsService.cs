@@ -22,8 +22,11 @@ namespace EsignBackend.Services.SettingsService.Departments
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Departmants.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Departmants.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool isTheNameAlreadyInUse(string title)
         {
@@ -73,7 +76,7 @@ namespace EsignBackend.Services.SettingsService.Departments
         public async Task<ServiceResponse<List<DepartmentDTO>>> GetDepartments(int skip, int take)
         {
             _logger.Debug("GetDepartments");
-            var serviceResponse = new ServiceResponse<List<DepartmentDTO>> ();
+            var serviceResponse = new ServiceResponse<List<DepartmentDTO>>();
             var outputList = new List<DepartmentDTO>();
             var data = _context.Departmants.Skip(skip).Take(take).ToList();
             foreach (var d in data)

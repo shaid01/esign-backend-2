@@ -15,7 +15,6 @@ namespace EsignBackend.Models.DTOs.Settings
             Id = callpriority.Id;
             Title = callpriority.Title;
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
     }

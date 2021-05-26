@@ -25,7 +25,6 @@ namespace EsignBackend.Controllers
             _logger = logger;
         }
 
-
         [HttpGet("GetAllUsersByRange")]
         public async Task<IActionResult> GetAllUsersInRange(int skip, int take)
         {
@@ -58,7 +57,7 @@ namespace EsignBackend.Controllers
         public async Task<IActionResult> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchUsers");
-            return Ok(await _usersService.SearchUsers(userAdvancedSearch,skip,take));
+            return Ok(await _usersService.SearchUsers(userAdvancedSearch, skip, take));
         }
 
         [HttpPut("ChangeUserPassword")]

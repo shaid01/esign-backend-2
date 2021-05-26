@@ -14,15 +14,12 @@ namespace EsignBackend.Models.DTOs
             if (certificate == null)
                 return;
 
-
             Id = certificate.Id;
             CustomerId = certificate.CustomerId;
             CustomerName = certificate.CustomerName;
             CustomerIdInDb = certificate.CustomerIdInDb;
             CustomerIdentifier = certificate.CustomerIdentifier;
-
             CustomerIdentifierId = certificate.CustomerIdentifierId;
-
             Company = certificate.Company;
             Hpnumber = certificate.Hpnumber;
             Email = certificate.Email;
@@ -47,7 +44,6 @@ namespace EsignBackend.Models.DTOs
             RelatedCustomer = new CustomerDTO(certificate.RelatedCustomer);
             RelatedCustomerIdentifier = new CustidentDTO(certificate.RelatedCustomerIdentifier);
             RelatedSecurityQuestion = new SecurityquestionDTO(certificate.RelatedSecurityQuestion);
-
         }
         public int Id { get; set; }
         public ProjectDTO Project { get; set; }
@@ -58,13 +54,11 @@ namespace EsignBackend.Models.DTOs
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
         public int CustomerIdInDb { get; set; }
-
         public DocstypeDTO Docstype { get; set; }
         public IsscertDTO CertificateIssuer { get; set; }
         public IssplaceDTO CertificateLocation { get; set; }
         public string CustomerIdentifier { get; set; }
         public int CustomerIdentifierId { get; set; }
-
         public string Company { get; set; }
         public string Hpnumber { get; set; }
         public string Email { get; set; }

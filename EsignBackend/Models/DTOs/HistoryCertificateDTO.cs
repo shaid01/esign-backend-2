@@ -16,7 +16,6 @@ namespace EsignBackend.Models.DTOs
             this.Expire = new ExpirationtypeDTO(historyCertificateDetails.Expire);
             this.Smartobject = new SmartobjectDTO(historyCertificateDetails.Smartobject);
             this.Certificatesstatus = new CertificatesstatusDTO(historyCertificateDetails.Certificatesstatus);
-            //this.CustomerId = historyCertificateDetails.CustomerId;
             this.CustomerName = historyCertificateDetails.CustomerName;
             this.Docstype = new DocstypeDTO(historyCertificateDetails.Docstype);
             this.CertificateIssuer = historyCertificateDetails.CertificateIssuer;

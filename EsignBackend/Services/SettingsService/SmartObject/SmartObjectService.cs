@@ -23,8 +23,12 @@ namespace EsignBackend.Services.SettingsService.SmartObject
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Smartobjects.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Smartobjects.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
+
         }
         private bool IsNameAlreadyInUse(string title)
         {

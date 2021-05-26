@@ -16,7 +16,6 @@ namespace EsignBackend.Models.DTOs
             Title = certificatesstatus.Title;
             Color = certificatesstatus.Color;
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
         public string Color { get; set; }

@@ -14,12 +14,11 @@ namespace EsignBackend.Controllers.Settings_Controllers
     [Route("[controller]")]
     public class CustomerIdentifierController : ControllerBase
     {
-        private readonly ICustomerIdentifierService _customerIdentifierService; 
+        private readonly ICustomerIdentifierService _customerIdentifierService;
         public CustomerIdentifierController(ICustomerIdentifierService customerIdentifierService)
         {
             _customerIdentifierService = customerIdentifierService;
         }
-
 
         [HttpGet("GetCustomersIdentifiers")]
         public async Task<IActionResult> GetCustomersIdentifiers(int skip, int take)
@@ -39,7 +38,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _customerIdentifierService.AddNewCustomerIdentifier(customerIdentifer));
         }
-       
+
         [HttpGet("GetAllCustomerIdentifiers")]
         public async Task<IActionResult> GetAllCustomerIdentifiers()
         {

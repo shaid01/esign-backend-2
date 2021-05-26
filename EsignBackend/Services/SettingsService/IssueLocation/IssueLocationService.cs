@@ -23,8 +23,11 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Issplaces.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Issplaces.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool isTheNameAlreadyInUse(string title)
         {
@@ -50,7 +53,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
                 var newIssueLocationInDb = _context.Issplaces.Add(issueLocation);
                 try
                 {
-                     _context.SaveChanges();
+                    _context.SaveChanges();
                     serviceRespone.Data = newIssueLocationInDb.Entity.Id;
                     serviceRespone.Amount = _context.Issplaces.Count();
                     return serviceRespone;
@@ -65,7 +68,6 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
                 }
             }
         }
-
         public async Task<ServiceResponse<List<IssplaceDTO>>> GetIssueLocations(int skip, int take)
         {
             _logger.Debug("GetIssueLocations");

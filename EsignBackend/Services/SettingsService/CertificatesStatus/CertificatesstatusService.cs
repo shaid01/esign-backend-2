@@ -23,15 +23,17 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Certificatesstatuses.OrderByDescending(project => project.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Certificatesstatuses.OrderByDescending(project => project.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool IsTheNameAlreadyInUse(string title)
         {
             _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
         }
-
         public async Task<ServiceResponse<List<CertificatesstatusDTO>>> GetCertificatesStatus(int skip, int take)
         {
             _logger.Debug("GetCertificatesStatus");
@@ -46,7 +48,6 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
-
         public async Task<ServiceResponse<int>> UpdateCertificatesStatus(Certificatesstatus updatedCertificatestatus)
         {
             _logger.Debug("UpdateCertificatesStatus");
@@ -117,4 +118,5 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             return serviceResponse;
         }
     }
+
 }

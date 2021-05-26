@@ -15,8 +15,6 @@ namespace EsignBackend.Models.DTOs
             Title = subProject.Title;
             Project = subProject.Project;
         }
-
-
         public int Id { get; set; }
         public string Title { get; set; }
         public int Project { get; set; }

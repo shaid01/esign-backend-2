@@ -14,9 +14,8 @@ namespace EsignBackend.Models.DTOs
             Id = docstype.Id;
             Title = docstype.Title;
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
-       
+
     }
 }

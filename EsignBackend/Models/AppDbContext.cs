@@ -19,10 +19,7 @@ namespace EsignBackend.Models
         {
         }
 
-        //public virtual DbSet<Person> Persons { get; set; }
-
         public virtual DbSet<Attachment> Attachments { get; set; }
-        // public virtual DbSet<Blog> Blogs { get; set; }
         public virtual DbSet<Budesign> Budesigns { get; set; }
         public virtual DbSet<Bulanguage> Bulanguages { get; set; }
         public virtual DbSet<Bumodule> Bumodules { get; set; }
@@ -1095,14 +1092,6 @@ namespace EsignBackend.Models
             modelBuilder.Entity<Certificateshistory>().HasOne<Docstype>(ch => ch.RelatedDocsType).WithMany(dt => dt.HistoryCertificates).HasForeignKey(ch => ch.Docstype);
             modelBuilder.Entity<Certificateshistory>().HasOne<Certificate>(ch => ch.RelatedCertificate).WithMany(c => c.HistoryCertificates).HasForeignKey(ch => ch.Certificateid);
             modelBuilder.Entity<Certificateshistory>().HasOne<Buuser>(ch => ch.RelatedUser).WithMany(us => us.HistoryCertificates).HasForeignKey(ch => ch.Updateduserid);
-
-            
-
-
-
-
-
-
 
             modelBuilder.Entity<Ticket>(entity =>
             {

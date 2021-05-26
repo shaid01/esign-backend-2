@@ -16,7 +16,6 @@ namespace EsignBackend.Models.DTOs
             Title = certificateLocation.Title;
             Active = certificateLocation.Active;
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
         public string Active { get; set; }

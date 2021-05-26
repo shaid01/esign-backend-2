@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService
 {
-    public class ProjectsService:IProjectsService
+    public class ProjectsService : IProjectsService
     {
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
@@ -20,10 +20,12 @@ namespace EsignBackend.Services.SettingsService
             _context = context;
             _logger = logger;
         }
-        private enum projectType{
+        private enum projectType
+        {
             PROJECT,
             SUBPROJECT
         }
+
         private bool IsTheNameAlreadyInUse(string title, projectType projectType)
         {
             _logger.Debug("IsTheNameAlreadyInUse");
@@ -39,16 +41,19 @@ namespace EsignBackend.Services.SettingsService
         private int GenerateId(projectType projectType)
         {
             _logger.Debug("GenerateId");
-            int maxId = 0;
-            if (projectType == projectType.SUBPROJECT)
+            lock (_locker)
             {
-                maxId = _context.Subprojects.OrderByDescending(subproject => subproject.Id).Take(1).ToList()[0].Id;
+                int maxId = 0;
+                if (projectType == projectType.SUBPROJECT)
+                {
+                    maxId = _context.Subprojects.OrderByDescending(subproject => subproject.Id).Take(1).ToList()[0].Id;
+                }
+                else
+                {
+                    maxId = _context.Projects.OrderByDescending(project => project.Id).Take(1).ToList()[0].Id;
+                }
+                return maxId + 1;
             }
-            else
-            {
-                maxId = _context.Projects.OrderByDescending(project => project.Id).Take(1).ToList()[0].Id;
-            }
-            return maxId + 1;
         }
         public async Task<ServiceResponse<List<ProjectDTO>>> GetProjects()
         {
@@ -90,7 +95,7 @@ namespace EsignBackend.Services.SettingsService
             _logger.Debug("GetSubprojectsInRange");
             var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
             var outputList = new List<SubprojectDTO>();
-            var data =  _context.Subprojects.Skip(skip).Take(take).ToList();
+            var data = _context.Subprojects.Skip(skip).Take(take).ToList();
             foreach (var sp in data)
             {
                 outputList.Add(new SubprojectDTO(sp));
@@ -124,7 +129,7 @@ namespace EsignBackend.Services.SettingsService
         {
             _logger.Debug("AddNewProject");
             var serviceRespone = new ServiceResponse<int>();
-            var projectNameIsAlreadyTaken = IsTheNameAlreadyInUse(newProject.Title,projectType.PROJECT);
+            var projectNameIsAlreadyTaken = IsTheNameAlreadyInUse(newProject.Title, projectType.PROJECT);
             if (projectNameIsAlreadyTaken)
             {
                 serviceRespone.Success = false;
@@ -157,7 +162,7 @@ namespace EsignBackend.Services.SettingsService
         {
             _logger.Debug("AddNewSubroject");
             var serviceRespone = new ServiceResponse<int>();
-            var subprojectNameIsAlreadyTaken = IsTheNameAlreadyInUse(newSubproject.Title,projectType.SUBPROJECT);
+            var subprojectNameIsAlreadyTaken = IsTheNameAlreadyInUse(newSubproject.Title, projectType.SUBPROJECT);
             if (subprojectNameIsAlreadyTaken)
             {
                 serviceRespone.Success = false;

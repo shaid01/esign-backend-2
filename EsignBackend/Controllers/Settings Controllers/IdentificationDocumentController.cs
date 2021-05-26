@@ -20,7 +20,6 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _identificationDocumentService = identificationDocumentService;
         }
 
-
         [HttpGet("GetIdentificationDocuments")]
         public async Task<IActionResult> GetIdentificationDocuments(int skip, int take)
         {
@@ -40,7 +39,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
         [HttpGet("GetAllIdentificationDocuments")]
         public async Task<IActionResult> GetAllIdentificationDocuments()
-        {           
+        {
             return Ok(await _identificationDocumentService.GetAllIdentificationDocuments());
         }
     }

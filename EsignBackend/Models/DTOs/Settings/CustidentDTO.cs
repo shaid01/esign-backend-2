@@ -16,7 +16,6 @@ namespace EsignBackend.Models.DTOs.Settings
             Title = custident.Title;
             Active = custident.Active;
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
         public string Active { get; set; }

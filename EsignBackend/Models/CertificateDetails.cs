@@ -9,9 +9,7 @@ namespace EsignBackend.Models
 {
     public class CertificateDetails
     {
-        public CertificateDetails() { }        
-
-
+        public CertificateDetails() { }
         public CertificateDetails(Certificate certificate)
         {
             this.Id = certificate.Id;
@@ -34,15 +32,11 @@ namespace EsignBackend.Models
             this.Smartobject = certificate.RelatedSmartObject;
             this.Certificatesstatus = certificate.RelatedCertificatesstatus;
             this.RelatedCustomer = certificate.RelatedCustomer;
-            //this.CustomerId = certificate.RelatedCustomer.Idnumber;
-            //this.CustomerIdInDb = certificate.RelatedCustomer.Id;
             this.CustomerName = certificate.RelatedCustomer?.Firstname + " " + certificate.RelatedCustomer?.Lastname;
             this.Docstype = certificate.RelatedDocsType;
             this.CertificateIssuer = certificate.RelatedCertificateissuer;
             this.CertificateLocation = certificate.RelatedIssuerPlace;
             this.RelatedCustomerIdentifier = certificate.RelatedCustomerIdentifier;
-            //this.CustomerIdentifier = certificate.RelatedCustomerIdentifier.Title;
-            // this.CustomerIdentifierId = certificate.RelatedCustomerIdentifier.Id;
             this.RelatedSecurityQuestion = certificate.RelatedSecurityquestion;
         }
 
@@ -55,7 +49,6 @@ namespace EsignBackend.Models
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
         public int CustomerIdInDb { get; set; }
-
         public Docstype Docstype { get; set; }
         public Isscert CertificateIssuer { get; set; }
         public Issplace CertificateLocation { get; set; }
@@ -63,7 +56,6 @@ namespace EsignBackend.Models
         public int CustomerIdentifierId { get; set; }
         public Custident RelatedCustomerIdentifier { get; set; }
         public Customer RelatedCustomer { get; set; }
-
         public string Company { get; set; }
         public string Hpnumber { get; set; }
         public string Email { get; set; }

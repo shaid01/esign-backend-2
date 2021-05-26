@@ -23,8 +23,11 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Callpriorities.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Callpriorities.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool IsTheNameAlreadyInUse(string title)
         {
@@ -43,7 +46,6 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
                 serviceRespone.Data = -1;
                 return serviceRespone;
             }
-
             lock (_locker)
             {
                 callPriority.Id = GenerateId();
@@ -64,7 +66,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
                     return serviceRespone;
                 }
             }
-        }         
+        }
 
         public async Task<ServiceResponse<List<CallpriorityDTO>>> GetCallsPriority(int skip, int take)
         {
@@ -80,6 +82,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             serviceResponse.Data = callpriorityDTOList;
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority)
         {
             _logger.Debug("UpdateCallPriority");

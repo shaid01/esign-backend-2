@@ -10,7 +10,6 @@ namespace EsignBackend.Extensions.EncryptDecrypt
     {
         public static string encryptUserPass(string pass)
         {
-            //_logger.Debug("encryptPass");
             var encryptedPass = ESignEncrypt.Encrypt(pass, "kikiitb");
             return encryptedPass;
         }
@@ -34,7 +33,6 @@ namespace EsignBackend.Extensions.EncryptDecrypt
             var aes = new AspRijndael();
             var decPhase2 = aes.DecryptData(encryptedSecurityAns, DPAPI.GetPhase2Password());
             var decPhase1 = ESignEncrypt.Decrypt(decPhase2, DPAPI.GetPhase1Password());
-
             Encoding latinEncoding = Encoding.GetEncoding("Windows-1252");
             Encoding hebrewEncoding = Encoding.GetEncoding("Windows-1255");
             byte[] latinBytes = latinEncoding.GetBytes(decPhase1);
@@ -44,3 +42,4 @@ namespace EsignBackend.Extensions.EncryptDecrypt
         }
     }
 }
+

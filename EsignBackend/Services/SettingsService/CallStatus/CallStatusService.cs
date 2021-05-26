@@ -22,8 +22,12 @@ namespace EsignBackend.Services.SettingsService.CallStatus
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Callstatuses.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Callstatuses.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
+
         }
         private bool IsTheNameAlreadyInUse(string title)
         {
@@ -47,10 +51,10 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             lock (_locker)
             {
                 callstatus.Id = GenerateId();
-                var newCallStatusInDb =  _context.Callstatuses.Add(callstatus);
+                var newCallStatusInDb = _context.Callstatuses.Add(callstatus);
                 try
                 {
-                     _context.SaveChanges();
+                    _context.SaveChanges();
                     serviceRespone.Data = newCallStatusInDb.Entity.Id;
                     serviceRespone.Amount = _context.Callstatuses.Count();
                     return serviceRespone;

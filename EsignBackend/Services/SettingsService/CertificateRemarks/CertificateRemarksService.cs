@@ -23,8 +23,11 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Certificatermearks.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Certificatermearks.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool IsTheNameAlreadyInUse(string title)
         {
@@ -108,4 +111,4 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             }
         }
     }
- }
+}

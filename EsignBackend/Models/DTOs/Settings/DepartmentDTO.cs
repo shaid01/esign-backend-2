@@ -15,7 +15,6 @@ namespace EsignBackend.Models.DTOs.Settings
             Id = departmant.Id;
             Title = departmant.Title;
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
     }

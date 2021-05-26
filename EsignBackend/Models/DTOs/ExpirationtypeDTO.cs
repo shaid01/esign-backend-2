@@ -15,7 +15,6 @@ namespace EsignBackend.Models.DTOs
             Id = expire.Id;
             Title = expire.Title;
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
     }

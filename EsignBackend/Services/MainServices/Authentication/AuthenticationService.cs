@@ -26,13 +26,11 @@ namespace EsignBackend.Services.CharacterService
             _configuration = configuration;
             _logger = logger;
         }
-        //Todo not mockup - real checking.
         private bool VerifyPassword(string password, string userPassInDb)
         {
             _logger.Debug("VerifyPassword");
             var encryptedPass = EncryptDecryptHandler.encryptUserPass(password);
             return userPassInDb.Equals(encryptedPass);
-           // return password.Equals("5F585E5F5A46");
         }
         private string CreateToken(Buuser user)
         {
@@ -55,7 +53,6 @@ namespace EsignBackend.Services.CharacterService
                 // Expires = DateTime.Now.AddHours(1),
                 // Expires = DateTime.Now.AddSeconds(5),
                 Expires = DateTime.Now.AddMinutes(30),
-                //Expires = DateTime.Now.AddMinutes(2),
                 SigningCredentials = creds
             };
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
@@ -67,7 +64,6 @@ namespace EsignBackend.Services.CharacterService
             // JUST FOR NOW - MOCK UP!
             password = "123456";
             _logger.Debug("Login");
-
 
             var response = new ServiceResponse<string>();
             var user = await _context.Buusers.FirstOrDefaultAsync(x => x.Username.Equals(username));
@@ -104,4 +100,5 @@ namespace EsignBackend.Services.CharacterService
             return !(expires != null && DateTime.Now < expires);
         }
     }
+
 }

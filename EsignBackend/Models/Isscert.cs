@@ -11,6 +11,5 @@ namespace EsignBackend.Models
         public string Title { get; set; }
         public string Active { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; }
-
     }
 }

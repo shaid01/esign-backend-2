@@ -12,7 +12,5 @@ namespace EsignBackend.Models
         public virtual ICollection<Subproject> Subprojects { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; }
         public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
-
-
     }
 }

@@ -21,7 +21,6 @@ namespace EsignBackend.Middlewares
         {
             _next = next;
             _log = log;
-          
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
@@ -35,7 +34,7 @@ namespace EsignBackend.Middlewares
             }
             catch (InvalidOperationException ex)
             {
-               // var generalError = new GeneralError(ex.Message);
+                // var generalError = new GeneralError(ex.Message);
                 //_log.Error($"{Environment.NewLine}{Environment.NewLine}--------------{Environment.NewLine} Invalid Operation Error. Message: {string.Join("", generalError.errors["error"])}. Request: {requestBody}{Environment.NewLine}{ex.ToString()}");
                 _log.Error(ex, "Validation error");
 
@@ -44,7 +43,7 @@ namespace EsignBackend.Middlewares
             catch (Exception ex)
             {
                 _log.Error($"{Environment.NewLine}{Environment.NewLine}--------------{Environment.NewLine} General Error. HResult : {ex.HResult}.  Request: {requestBody}{Environment.NewLine}{ex.ToString()}");
-              //  var error = new GeneralError(GENERAL_ERROR_CODE, ex.HResult.ToString(), _dater.UtcNow());
+                //  var error = new GeneralError(GENERAL_ERROR_CODE, ex.HResult.ToString(), _dater.UtcNow());
                 await HandleExceptionAsync(httpContext, ex.Message, HttpStatusCode.InternalServerError);
             }
         }

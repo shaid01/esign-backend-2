@@ -12,19 +12,13 @@ namespace EsignBackend.Services.MainServices.Certificates
     {
 
         Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take);
-        Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate);
-        Task<ServiceResponse<int>> AddNewHistoryCertificate(Certificateshistory certificateshistory);
-       // Task<ServiceResponse<List<HistoryCertificateDetails>>> GetHistoryCertificates(double certificateId);
+        Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate);      
         Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId);
-
-        Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId);
-
-        
+        Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId);        
         Task<ServiceResponse<List<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take);
         Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns,int question);
         Task<ServiceResponse<int>> AddCertificate(Certificate certificate);
         Task<ServiceResponse<int>> UpdateExpiredCertificates();
-        //Task<ServiceResponse<List<Certificate>>> GetCertificates(int skip, int take);
-
+        Task<ServiceResponse<int>> AddNewHistoryCertificate(Certificateshistory certificateshistory);
     }
 }

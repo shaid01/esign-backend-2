@@ -14,4 +14,5 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
         Task<ServiceResponse<int>> AddNewSecurityQuestion(Securityquestion securityQuestion);
         Task<ServiceResponse<List<SecurityquestionDTO>>> GetAllSecurityQuestions();
     }
+
 }

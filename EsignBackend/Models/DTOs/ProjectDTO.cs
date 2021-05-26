@@ -7,8 +7,6 @@ namespace EsignBackend.Models.DTOs
 {
     public class ProjectDTO
     {
-
-
         public ProjectDTO(Project project)
         {
             if (project == null)
@@ -20,6 +18,6 @@ namespace EsignBackend.Models.DTOs
         }
 
         public int Id { get; set; }
-        public string Title { get; set; }        
+        public string Title { get; set; }
     }
 }

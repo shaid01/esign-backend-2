@@ -22,8 +22,11 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Isscerts.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Isscerts.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool IsTheNameAlreadyInUse(string title)
         {
@@ -63,8 +66,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                     return serviceRespone;
                 }
             }
-        }    
-
+        }
         public async Task<ServiceResponse<List<IsscertDTO>>> GetCertificateIssuers(int skip, int take)
         {
             _logger.Debug("GetCertificateIssuers");
@@ -105,7 +107,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             _logger.Debug("GetAllCertificateIssuers");
             var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
             var outputList = new List<IsscertDTO>();
-            var data = _context.Isscerts.ToList(); 
+            var data = _context.Isscerts.ToList();
             foreach (var ci in data)
             {
                 outputList.Add(new IsscertDTO(ci));

@@ -22,15 +22,18 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Custidents.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Custidents.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
+
         }
         private bool isTheNameAlreadyInUse(string title)
         {
             _logger.Debug("isTheNameAlreadyInUse");
             return _context.Custidents.Where(item => item.Title.Equals(title)).Count() != 0;
         }
-
         public async Task<ServiceResponse<int>> AddNewCustomerIdentifier(Custident customerIdentifer)
         {
             _logger.Debug("AddNewCertificatesStatus");
@@ -100,7 +103,6 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 return serviceResponse;
             }
         }
-
         public async Task<ServiceResponse<List<CustidentDTO>>> GetAllCustomerIdentifiers()
         {
             _logger.Debug("GetAllCustomerIdentifiers");

@@ -8,7 +8,6 @@ namespace EsignBackend.Models
     public partial class Certificate
     {
         public int Id { get; set; }
-
         public int Project { get; set; }
         public virtual Project RelatedProject { get; set; }
         public string Company { get; set; }
@@ -44,6 +43,5 @@ namespace EsignBackend.Models
         public virtual Issplace? RelatedIssuerPlace { get; set; }
         public string Remarks { get; set; }
         public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
-
     }
 }

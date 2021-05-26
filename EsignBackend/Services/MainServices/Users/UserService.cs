@@ -1,4 +1,5 @@
-﻿using EsignBackend.Extensions.EncryptDecrypt;
+﻿using EsignBackend.Extensions.CashHandlers;
+using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using EsignBackend.Models.Tools;
 using Microsoft.EntityFrameworkCore;
@@ -16,52 +17,48 @@ namespace EsignBackend.Services.CharacterService
 
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
-
+        private readonly ICash _cash;
         private static object _locker = new object();
 
-        public UserService(AppDbContext context, ILogger logger)
+        public UserService(AppDbContext context, ILogger logger, ICash cash)
         {
             _context = context;
             _logger = logger;
+            _cash = cash;
         }
-
 
         private int GenerateUserId()
         {
             _logger.Debug("GenerateUserId");
-            int maxId = _context.Buusers.OrderByDescending(user => user.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Buusers.OrderByDescending(user => user.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
-
         private bool IsUserNameAlreadyInUse(string username)
         {
             _logger.Debug("IsUserNameAlreadyInUse");
             return _context.Buusers.Where(user => user.Username.Equals(username)).Count() != 0;
         }
-
         private string encryptPass(String pass)
         {
-          /*  _logger.Debug("encryptPass");
-            var encryptedPass = ESignEncrypt.Encrypt(pass, "kikiitb");
-            return encryptedPass;*/
-
+            _logger.Debug("encryptPass");
             return EncryptDecryptHandler.encryptUserPass(pass);
         }
-
         public async Task<ServiceResponse<List<Buuser>>> GetAllUsers(int skip, int take)
         {
             _logger.Debug("GetAllUsers");
             var serviceRespone = new ServiceResponse<List<Buuser>>();
             serviceRespone.Data = await _context.Buusers.Skip(skip).Take(take).ToListAsync();
-            serviceRespone.Amount = _context.Buusers.Count();
+            serviceRespone.Amount = _cash.GetCounterByType(CashType.Users);
             return serviceRespone;
         }
-
         public async Task<ServiceResponse<int>> GetAmountOfUsers()
         {
             _logger.Debug("GetAmountOfUsers");
             var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _context.Buusers.Count();
+            serviceRespone.Data = _cash.GetCounterByType(CashType.Users);
             return serviceRespone;
         }
 
@@ -84,7 +81,6 @@ namespace EsignBackend.Services.CharacterService
                 serviceRespone.Data = -1;
                 return serviceRespone;
             }
-
             lock (_locker)
             {
                 var newId = GenerateUserId();
@@ -92,11 +88,12 @@ namespace EsignBackend.Services.CharacterService
 
                 newUser.Pass = encryptPass(newUser.Pass);
                 newUser.Expires = newUser.Expires.Value.ToLocalTime();
-                var newUserInDb =  _context.Buusers.Add(newUser);
+                var newUserInDb = _context.Buusers.Add(newUser);
                 try
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newUserInDb.Entity.Id;
+                    _cash.Increment(CashType.Users);
                     return serviceRespone;
                 }
                 catch (Exception exception)
@@ -109,7 +106,6 @@ namespace EsignBackend.Services.CharacterService
                 }
             }
         }
-
         public async Task<ServiceResponse<int>> UpdateUser(Buuser updatedUser)
         {
             _logger.Debug("UpdateUser");
@@ -133,7 +129,6 @@ namespace EsignBackend.Services.CharacterService
                 return serviceResponse;
             }
         }
-
         public async Task<ServiceResponse<List<Buuser>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchUsers");
@@ -151,7 +146,6 @@ namespace EsignBackend.Services.CharacterService
             serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
             return serviceRespone;
         }
-
         public async Task<ServiceResponse<int>> ChangeUserPassword(Buuser user)
         {
             _logger.Debug("ChangeUserPassword");
@@ -178,40 +172,5 @@ namespace EsignBackend.Services.CharacterService
             }
         }
 
-     
-
-        /*public async Task<ServiceResponse<List<Buuser>>> GetUser(string searchValue, string criterion)
-        {
-            ServiceResponse<List<Buuser>> serviceRespone = new ServiceResponse<List<Buuser>>();
-            switch (criterion)
-            {
-                case "username":
-                    List<Buuser> dbUsers = await _context.Buusers.Where(user => user.Username.Equals(searchValue)).ToListAsync();
-                    serviceRespone.Data = dbUsers.ToList();
-                    break;
-                case "firstname":
-                    dbUsers = await _context.Buusers.Where(user => user.Firstname.Equals(searchValue)).ToListAsync();
-                    serviceRespone.Data = dbUsers.ToList();
-                    break;
-                case "lastname":
-                    dbUsers = await _context.Buusers.Where(user => user.Lastname.Equals(searchValue)).ToListAsync();
-                    serviceRespone.Data = dbUsers.ToList();
-                    break;
-                case "email":
-                    dbUsers = await _context.Buusers.Where(user => user.Email.Equals(searchValue)).ToListAsync();
-                    serviceRespone.Data = dbUsers.ToList();
-                    break;
-                default:
-                    dbUsers = await _context.Buusers.Where(user => user.Username.Equals(searchValue)).ToListAsync();
-                    serviceRespone.Data = dbUsers.ToList();
-                    break;
-            }
-            return serviceRespone;
-        }*/
-        /* public async Task<ServiceResponse<int>> ExportUsers(List<Buuser> usersToExport)
-         {
-            return new ServiceResponse<int>();
-         }
-        */
     }
 }

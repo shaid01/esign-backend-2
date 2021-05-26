@@ -1,4 +1,5 @@
-﻿using EsignBackend.Extensions.EncryptDecrypt;
+﻿using EsignBackend.Extensions.CashHandlers;
+using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
@@ -11,24 +12,27 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Services.CharacterService
 {
-    public class CustomersService:ICustomersService
+    public class CustomersService : ICustomersService
     {
         private readonly AppDbContext _context;
+        private readonly ICash _cash;
         private readonly ILogger _logger;
         private static object _locker = new object();
 
-
-        public CustomersService(AppDbContext context, ILogger logger)
+        public CustomersService(AppDbContext context, ILogger logger, ICash cash)
         {
             _context = context;
             _logger = logger;
+            _cash = cash;
         }
-
         private int GenerateUserId()
         {
             _logger.Debug("GenerateUserId");
-            int maxId = _context.Customers.OrderByDescending(customer => customer.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Customers.OrderByDescending(customer => customer.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool IsUserIdAlreadyInUse(string username)
         {
@@ -46,15 +50,14 @@ namespace EsignBackend.Services.CharacterService
                 customersList.Add(new CustomerDTO(customer));
             }
             serviceRespone.Data = customersList;
-            //serviceRespone.Amount = 120000;
-            serviceRespone.Amount = _context.Customers.Count();
+            serviceRespone.Amount = _cash.GetCounterByType(CashType.Customers);
             return serviceRespone;
         }
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()
         {
             _logger.Debug("GetAmountOfCustomers");
             var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _context.Customers.Count();
+            serviceRespone.Data = _cash.GetCounterByType(CashType.Customers);
             return serviceRespone;
         }
 
@@ -88,7 +91,6 @@ namespace EsignBackend.Services.CharacterService
                 return serviceResponse;
             }
         }
-
         public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch,
             int skip, int take)
         {
@@ -96,7 +98,7 @@ namespace EsignBackend.Services.CharacterService
             var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
             var dbCustomers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).Where(customer =>
             (customer.Id > 0) &&
-            ((customerAdvancedSearch.CustomerId == null)|| EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
+            ((customerAdvancedSearch.CustomerId == null) || EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
             && ((customerAdvancedSearch.FirstName == null) || EF.Functions.Like(customer.Firstname, $"%{customerAdvancedSearch.FirstName}%"))
             && ((customerAdvancedSearch.LastName == null) || EF.Functions.Like(customer.Lastname, $"%{customerAdvancedSearch.LastName}%"))
             && ((customerAdvancedSearch.Email == null) || EF.Functions.Like(customer.Email, $"%{customerAdvancedSearch.Email}%"))
@@ -134,11 +136,12 @@ namespace EsignBackend.Services.CharacterService
                 customer.Id = GenerateUserId();
                 var encryptedSecurityAns = EncryptDecryptHandler.encryptSecurityAns(customer.Securityansware);
                 customer.Securityansware = encryptedSecurityAns;
-                var newCustomerInDb =  _context.Customers.Add(customer);
+                var newCustomerInDb = _context.Customers.Add(customer);
                 try
                 {
-                     _context.SaveChanges();
+                    _context.SaveChanges();
                     serviceRespone.Data = newCustomerInDb.Entity.Id;
+                    _cash.Increment(CashType.Customers);
                     return serviceRespone;
                 }
                 catch (Exception exception)

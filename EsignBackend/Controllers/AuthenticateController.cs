@@ -3,7 +3,6 @@ using EsignBackend.Models;
 using EsignBackend.Services.CharacterService;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-//using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,12 +26,11 @@ namespace EsignBackend.Controllers
         }
 
         [HttpPost("Login")]
-       /* [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ServiceResponse<string>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ServiceResponse<string>))]*/
+
         public async Task<IActionResult> Login(LoginDto request)
         {
             _logger.Debug("Login");
-            
+
             var response = await _authenticateService.Login(
                 request.UserName, request.Password);
             if (!response.Success)

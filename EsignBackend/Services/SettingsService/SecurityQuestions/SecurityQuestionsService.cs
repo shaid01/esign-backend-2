@@ -23,8 +23,11 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Securityquestions.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Securityquestions.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool isNameAlreadyInUse(string title)
         {
@@ -64,10 +67,10 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
                     return serviceRespone;
                 }
             }
-        }      
+        }
 
         public async Task<ServiceResponse<List<SecurityquestionDTO>>> GetSecurityQuestions(int skip, int take)
-        {            
+        {
             _logger.Debug("GetSecurityQuestions");
             var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
             var outputList = new List<SecurityquestionDTO>();

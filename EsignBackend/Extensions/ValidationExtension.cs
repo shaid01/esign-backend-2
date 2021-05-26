@@ -19,8 +19,6 @@ namespace EsignBackend.Extensions
             services.AddTransient<IValidator<Buuser>, UserValidator>();
             services.AddTransient<IValidator<Customer>, CustomerValidator>();
             services.AddTransient<IValidator<Certificate>, CertificatesValidator>();
-
-            
             services.AddTransient<IValidator<Callpriority>, CallpriorityValidator>();
             services.AddTransient<IValidator<Callstatus>, CallStatusValidator>();
             services.AddTransient<IValidator<Isscert>, CertificateIssuerValidator>();
@@ -35,7 +33,7 @@ namespace EsignBackend.Extensions
             services.AddTransient<IValidator<Subproject>, SubProjectValidator>();
             services.AddTransient<IValidator<Securityquestion>, SecurityQuestionsValidator>();
             services.AddTransient<IValidator<Smartobject>, SmartObjectValidator>();
-            
+
         }
     }
 }

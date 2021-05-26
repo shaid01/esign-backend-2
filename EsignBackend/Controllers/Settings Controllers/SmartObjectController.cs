@@ -10,10 +10,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
     [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
-    public class SmartObjectController:ControllerBase
+    public class SmartObjectController : ControllerBase
     {
         private readonly ISmartObjectService _smartObjectService;
-
         public SmartObjectController(ISmartObjectService smartObjectService)
         {
             _smartObjectService = smartObjectService;
@@ -40,7 +39,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
 
         [HttpGet("GetAllSmartObjects")]
         public async Task<IActionResult> GetAllSmartObjects()
-        {            
+        {
             return Ok(await _smartObjectService.GetAllSmartObjects());
         }
     }

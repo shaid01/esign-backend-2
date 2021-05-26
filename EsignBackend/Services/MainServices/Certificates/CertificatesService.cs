@@ -19,16 +19,12 @@ namespace EsignBackend.Services.MainServices.Certificates
         private readonly ILogger _logger;
         private readonly ICash _cash;
         private static object _locker = new object();
-        private static CashHandler _certificateCash;
 
         public CertificatesService(AppDbContext context, ILogger logger, ICash cash)
         {
             _context = context;
             _logger = logger;
             _cash = cash;
-
-
-
         }
 
         private CertificateDetails GenerateCertificateDetailsFromId(double cerId)
@@ -52,30 +48,15 @@ namespace EsignBackend.Services.MainServices.Certificates
             return certificate;
         }
 
-        // NEED TO ADD LOCK
         private int GenerateCertificateId()
         {
             _logger.Debug("GenerateCertificateId");
-            int maxId = _context.Certificates.OrderByDescending(cer => cer.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
-        }
-        // NEED TO ADD LOCK
-        private int GenerateHistoryCertificateId()
-        {
-            _logger.Debug("GenerateHistoryCertificateId");
-
-            int maxId = 0;
-            try
+            lock (_locker)
             {
-                maxId = _context.Certificateshistories.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                int maxId = _context.Certificates.OrderByDescending(cer => cer.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
             }
-            catch (Exception e)
-            {
-
-            }
-            return maxId + 1;
         }
-
 
         public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
         {
@@ -107,7 +88,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("GetCertificatesDetailsUpdate");
 
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
-            //serviceResponse.Amount = _context.Certificates.Count();
             serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
             var certificateDetailsList = new List<CertificateDetailsDTO>();
             var certificates = _context.Certificates
@@ -261,12 +241,13 @@ namespace EsignBackend.Services.MainServices.Certificates
         public async Task<ServiceResponse<int>> UpdateExpiredCertificates()
         {
             _logger.Debug("UpdateExpiredCertificates");
+            var certificateStatus = _context.Certificatesstatuses.Where(cer => cer.Title.Equals("פג תוקף")).FirstOrDefault().Id;
             var serviceRespone = new ServiceResponse<int>();
             var now = DateTime.Now.ToLocalTime();
             var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now).ToListAsync();
             foreach (Certificate c in expiredCertificates)
             {
-                c.Certificatestatus = 3;
+                c.Certificatestatus = certificateStatus;
                 _context.Certificates.Update(c);
             }
             try
@@ -313,469 +294,5 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // NEED TO REMOVE AND REFERECNCE
-        /*    public static string decryptSecurityAnswer(String encryptedSecurityAns)
-        {
-            return EncryptDecryptHandler.decryptSecurityAns(encryptedSecurityAns);
-        }*/
-
-
-        // NEED TO REMOVE AND REFERECNCE
-        /*   private static string encryptSecurityAns(String plainSecurityAns)
-        {
-            return EncryptDecryptHandler.encryptSecurityAns(plainSecurityAns);
-        }
-*/
-
-        /*// NEED TO REMOVE. 
-        private List<CertificateDetails> GenerateCertificateDetailsToCustomerUpdate(double customerId)
-        {
-            _logger.Debug("GenerateCertificateDetailsToCustomer");
-
-            var customerIden = _context.Customers.Where(x => Convert.ToDouble(x.Idnumber).Equals(customerId)).Select(x => x.Id).FirstOrDefault();
-
-            var certificateDeatailsList = new List<CertificateDetails>();
-            var certificateDeatails = (from cer in _context.Certificates
-                                       .Where(el => el.Customerid == customerIden)
-
-                                       join pro in _context.Projects
-                                       on cer.Project equals pro.Id
-
-                                       join subpro in _context.Subprojects
-                                       on cer.Subproject equals subpro.Id
-
-                                       join expire in _context.Expirationtypes
-                                       on cer.Expire equals expire.Id
-
-                                       join smartObject in _context.Smartobjects
-                                       on cer.Smartobject equals smartObject.Id
-
-                                       join cerStatus in _context.Certificatesstatuses
-                                       on cer.Certificatestatus equals cerStatus.Id
-
-                                       join customer in _context.Customers
-                                       on customerId equals Convert.ToDouble(customer.Idnumber)
-
-                                       join docType in _context.Docstypes
-                                       on cer.Docstype equals docType.Id
-
-                                       join cerIssuer in _context.Isscerts
-                                       on cer.Certificateissuer equals cerIssuer.Id
-
-                                       join cerLocation in _context.Issplaces
-                                       on cer.Issuerplace equals cerLocation.Id
-
-                                       select new
-                                       {
-                                           ID = cer.Id,
-                                           Company = cer.Company,
-                                           Hpnumber = cer.Hpnumber,
-                                           Email = cer.Email,
-                                           Passportid = cer.Passportid,
-                                           Licenseid = cer.Licenceid,
-                                           Signer = cer.Hotem,
-                                           Securityquestion = cer.Securityquestion,
-                                           Securityanswer = cer.Securityansware,
-                                           Remarks = cer.Remarks,
-                                           Remarkdesc = cer.Remarksdesc,
-                                           Job = cer.Job,
-                                           Issuedate = cer.Issuedate,
-                                           Expiredate = cer.Expiredate,
-                                           Project = pro,
-                                           SubProject = subpro,
-                                           Expire = expire,
-                                           SmartObject = smartObject,
-                                           CertificateStatus = cerStatus,
-                                           CustomerId = customer.Idnumber,
-                                           CustomerName = $"{customer.Firstname}" + $" {customer.Lastname}",
-                                           DocsType = docType,
-                                           Certificateissuer = cerIssuer,
-                                           CertificateLocation = cerLocation,
-                                           CustomerIdentifierId = cer.Identify
-                                       }).ToList();
-
-            foreach (var certificateDetail in certificateDeatails)
-            {
-                // Fetching customer identifier.
-                var identifier = _context.Custidents.Where(x => x.Id == certificateDetail.CustomerIdentifierId).FirstOrDefault();
-
-                var newCd = new CertificateDetails();
-                // Original fields.
-                newCd.Id = certificateDetail.ID;
-                newCd.Company = certificateDetail.Company;
-                newCd.Hpnumber = certificateDetail.Hpnumber;
-                newCd.Email = certificateDetail.Email;
-                newCd.Passportid = certificateDetail.Passportid;
-                newCd.Licenseid = certificateDetail.Licenseid;
-                newCd.Signer = certificateDetail.Signer;
-                newCd.Securityquestion = (double)certificateDetail.Securityquestion;
-                //newCd.Securityanswer = certificateDetail.Securityanswer;
-                //newCd.Securityanswer = decryptSecurityAnswer(certificateDetail.Securityanswer);
-                newCd.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificateDetail.Securityanswer);
-                newCd.Remarks = certificateDetail.Remarks;
-                newCd.Remarkdesc = certificateDetail.Remarkdesc;
-                newCd.Job = certificateDetail.Job;
-                newCd.Issuedate = (DateTime)certificateDetail.Issuedate;
-                newCd.Expiredate = (DateTime)certificateDetail.Expiredate;
-                // Tables join fields.
-                newCd.Project = certificateDetail.Project;
-                newCd.SubProject = certificateDetail.SubProject;
-                newCd.Expire = certificateDetail.Expire;
-                newCd.Smartobject = certificateDetail.SmartObject;
-                newCd.Certificatesstatus = certificateDetail.CertificateStatus;
-                newCd.CustomerId = certificateDetail.CustomerId;
-                newCd.CustomerName = certificateDetail.CustomerName;
-                newCd.Docstype = certificateDetail.DocsType;
-                newCd.CertificateIssuer = certificateDetail.Certificateissuer;
-                newCd.CertificateLocation = certificateDetail.CertificateLocation;
-                newCd.CustomerIdentifier = identifier.Title;
-                newCd.CustomerIdentifierId = identifier.Id;
-
-                certificateDeatailsList.Add(newCd);
-            }
-            return certificateDeatailsList;
-        }
-*/
-
-        // NEED TO REMOVE
-        /*   public async Task<ServiceResponse<List<CertificateDetails>>> GetCertificatesDetailsUpdate(int skip, int take)
-        {
-
-            // encryptSecurityAnswers();
-
-            _logger.Debug("GetCertificatesDetails");
-
-            var serviceResponse = new ServiceResponse<List<CertificateDetails>>();
-            var certificateDetailsList = new List<CertificateDetails>();
-            var certificateDetails = (from cer in _context.Certificates.Skip(skip).Take(take)
-
-                                      join pro in _context.Projects
-                                      on cer.Project equals pro.Id
-
-                                      join subpro in _context.Subprojects
-                                      on cer.Subproject equals subpro.Id
-
-                                      join expire in _context.Expirationtypes
-                                      on cer.Expire equals expire.Id
-
-                                      join smartObject in _context.Smartobjects
-                                      on cer.Smartobject equals smartObject.Id
-
-                                      join cerStatus in _context.Certificatesstatuses
-                                      on cer.Certificatestatus equals cerStatus.Id
-
-                                      join customer in _context.Customers
-                                      on cer.Customerid equals customer.Id
-
-                                      join docType in _context.Docstypes
-                                      on cer.Docstype equals docType.Id
-
-                                      join cerIssuer in _context.Isscerts
-                                      on cer.Certificateissuer equals cerIssuer.Id
-
-                                      join cerIssuer1 in _context.Isscerts
-                                     on cer.Identify equals cerIssuer1.Id
-
-                                      join cerLocation in _context.Issplaces
-                                      on cer.Issuerplace equals cerLocation.Id
-
-                                      select new
-                                      {
-                                          ID = cer.Id,
-                                          Company = cer.Company,
-                                          Hpnumber = cer.Hpnumber,
-                                          Email = cer.Email,
-                                          Passportid = cer.Passportid,
-                                          Licenseid = cer.Licenceid,
-                                          Signer = cer.Hotem,
-                                          Securityquestion = cer.Securityquestion,
-                                          Securityanswer = cer.Securityansware,
-                                          Remarks = cer.Remarks,
-                                          Remarkdesc = cer.Remarksdesc,
-                                          Job = cer.Job,
-                                          Issuedate = cer.Issuedate,
-                                          Expiredate = cer.Expiredate,
-                                          Project = pro,
-                                          SubProject = subpro,
-                                          Expire = expire,
-                                          SmartObject = smartObject,
-                                          CertificateStatus = cerStatus,
-                                          CustomerId = customer.Idnumber,
-                                          CustomerName = $"{customer.Firstname}" + $" {customer.Lastname}",
-                                          DocsType = docType,
-                                          Certificateissuer = cerIssuer,
-                                          CertificateLocation = cerLocation,
-                                          CustomerIdentifierId = cer.Identify,
-                                          Identifier = cerIssuer1
-
-                                      }).ToList();
-
-            foreach (var certificateDetail in certificateDetails)
-            {
-                // Fetching customer identifier.
-
-
-                var newCertificateDetail = new CertificateDetails();
-                // Original fields.
-                newCertificateDetail.Id = certificateDetail.ID;
-                newCertificateDetail.Company = certificateDetail.Company;
-                newCertificateDetail.Hpnumber = certificateDetail.Hpnumber;
-                newCertificateDetail.Email = certificateDetail.Email;
-                newCertificateDetail.Passportid = certificateDetail.Passportid;
-                newCertificateDetail.Licenseid = certificateDetail.Licenseid;
-                newCertificateDetail.Signer = certificateDetail.Signer;
-                newCertificateDetail.Securityquestion = (double)certificateDetail.Securityquestion;
-                //newCertificateDetail.Securityanswer = decryptSecurityAnswer(certificateDetail.Securityanswer);
-                newCertificateDetail.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificateDetail.Securityanswer);
-                //newCd.Securityanswer = certificateDetail.Securityanswer;
-                newCertificateDetail.Remarks = certificateDetail.Remarks;
-                newCertificateDetail.Remarkdesc = certificateDetail.Remarkdesc;
-                newCertificateDetail.Job = certificateDetail.Job;
-                newCertificateDetail.Issuedate = (DateTime)certificateDetail.Issuedate;
-                newCertificateDetail.Expiredate = (DateTime)certificateDetail.Expiredate;
-
-                // Tables join fields.
-                newCertificateDetail.Project = certificateDetail.Project;
-                newCertificateDetail.SubProject = certificateDetail.SubProject;
-                newCertificateDetail.Expire = certificateDetail.Expire;
-                newCertificateDetail.Smartobject = certificateDetail.SmartObject;
-                newCertificateDetail.Certificatesstatus = certificateDetail.CertificateStatus;
-                newCertificateDetail.CustomerId = certificateDetail.CustomerId;
-                newCertificateDetail.CustomerName = certificateDetail.CustomerName;
-                newCertificateDetail.Docstype = certificateDetail.DocsType;
-                newCertificateDetail.CertificateIssuer = certificateDetail.Certificateissuer;
-                newCertificateDetail.CertificateLocation = certificateDetail.CertificateLocation;
-                newCertificateDetail.CustomerIdentifier = certificateDetail.Identifier.Title;
-                newCertificateDetail.CustomerIdentifierId = certificateDetail.Identifier.Id;
-
-                certificateDetailsList.Add(newCertificateDetail);
-            }
-            serviceResponse.Data = certificateDetailsList;
-            serviceResponse.Message = serviceResponse.Data.Count().ToString();
-            return serviceResponse;
-        }
-*/
-
-
-        // NEED TO CHECK OR UPGRADE
-        public async Task<ServiceResponse<int>> AddNewHistoryCertificate(Certificateshistory certificateshistory)
-        {
-            _logger.Debug("AddNewHistoryCertificate");
-
-            var serviceRespone = new ServiceResponse<int>();
-
-            lock (_locker)
-            {
-                certificateshistory.Id = GenerateHistoryCertificateId();
-                //certificateshistory.Securityansware = encryptSecurityAns(certificateshistory.Securityansware);
-                certificateshistory.Securityansware = EncryptDecryptHandler.encryptSecurityAns(certificateshistory.Securityansware);
-                var newHistoryCertificateInDb = _context.Certificateshistories.Add(certificateshistory);
-                try
-                {
-                    _context.SaveChangesAsync();
-                    serviceRespone.Data = newHistoryCertificateInDb.Entity.Id;
-                    serviceRespone.Message = "Certificateshistory addedd successfully!";
-                    _logger.Debug("Certificate added successfully");
-                    return serviceRespone;
-                }
-                catch (Exception exception)
-                {
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new Certificateshistory failed. {exception}";
-                    serviceRespone.Data = -1;
-                    _logger.Error("Exception detected: " + exception);
-                    return serviceRespone;
-                }
-            }
-        }
-
-
-
-        /*    // NEED TO REMOVE
-        public void encryptSecurityAnswers()
-        {
-            foreach (Certificate cer in _context.Certificates)
-            {
-                Console.Out.WriteLine("Certificate id: " + cer.Securityansware + " ");
-                //var encrypted = encryptSecurityAns(cer.Securityansware);
-                var encrypted = EncryptDecryptHandler.encryptSecurityAns(cer.Securityansware);
-                var len = encrypted.Length.ToString();
-                // cer.Securityansware ="111111111122222222223333333333444444444455555555551111111111";
-                cer.Securityansware = encrypted;
-                _context.Certificates.Update(cer);
-
-            }
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-
-            }
-
-        }
-
-
-
-*/
-
-
-        // NEED TO UPGRADE
-        /*       public async Task<ServiceResponse<List<HistoryCertificateDetails>>> GetHistoryCertificatesOld(double certificateId)
-               {
-                   _logger.Debug("GetHistoryCertificates");
-
-                   var serviceResponse = new ServiceResponse<List<HistoryCertificateDetails>>();
-                   var certificateDeatailsList = new List<HistoryCertificateDetails>();
-
-                   var historyCertificateDeatails = (from historyCer in _context.Certificateshistories.Where
-                                                     (el => EF.Functions.Like(el.Certificateid.ToString(), certificateId.ToString()))
-
-                                                     join pro in _context.Projects
-                                                     on historyCer.Project equals pro.Id
-
-                                                     join subpro in _context.Subprojects
-                                                     on historyCer.Subproject equals subpro.Id
-
-                                                     join expire in _context.Expirationtypes
-                                                     on historyCer.Expire equals expire.Id
-
-                                                     join smartObject in _context.Smartobjects
-                                                     on historyCer.Smartobject equals smartObject.Id
-
-                                                     join cerStatus in _context.Certificatesstatuses
-                                                     on historyCer.Certificatestatus equals cerStatus.Id
-
-                                                     join customer in _context.Customers
-                                                     on historyCer.Customerid equals Convert.ToDouble(customer.Idnumber)
-
-                                                     join docType in _context.Docstypes
-                                                     on historyCer.Docstype equals docType.Id
-
-                                                     join users in _context.Buusers
-                                                     on historyCer.Updateduserid equals users.Id
-
-                                                     select new
-                                                     {
-                                                         ID = historyCer.Id,
-                                                         Company = historyCer.Company,
-                                                         Hpnumber = historyCer.Hpnumber,
-                                                         Email = historyCer.Email,
-                                                         Passportid = historyCer.Passportid,
-                                                         Licenseid = historyCer.Licenceid,
-                                                         Signer = historyCer.Hotem,
-                                                         Securityquestion = historyCer.Securityquestion,
-                                                         Securityanswer = historyCer.Securityansware,
-                                                         Remarks = historyCer.Remarks,
-                                                         Remarkdesc = historyCer.Remarksdesc,
-                                                         Issuedate = historyCer.Issuedate,
-                                                         Expiredate = historyCer.Expiredate,
-                                                         UpdatedDate = historyCer.Updateddate,
-                                                         Project = pro,
-                                                         SubProject = subpro,
-                                                         Expire = expire,
-                                                         SmartObject = smartObject,
-                                                         CertificateStatus = cerStatus,
-                                                         CustomerId = customer.Idnumber,
-                                                         CustomerName = $"{customer.Firstname}" + $" {customer.Lastname}",
-                                                         DocsType = docType,
-                                                         Certificateissuer = historyCer.Certificateissuer,
-                                                         CertificateLocation = historyCer.Issuerplace,
-                                                         CustomerIdentifier = historyCer.Identify,
-                                                         CustomerIdentifierId = historyCer.Customerid,
-                                                         UpdatedUserName = users.Firstname + " " + users.Lastname
-                                                     }).ToList();
-
-                   foreach (var certificateDetail in historyCertificateDeatails)
-                   {
-                       var newCd = new HistoryCertificateDetails();
-
-                       newCd.Id = certificateDetail.ID;
-                       newCd.Company = certificateDetail.Company;
-                       newCd.Hpnumber = certificateDetail.Hpnumber;
-                       newCd.Email = certificateDetail.Email;
-                       newCd.Passportid = certificateDetail.Passportid;
-                       newCd.Licenseid = certificateDetail.Licenseid;
-                       newCd.Signer = certificateDetail.Signer;
-                       newCd.Securityquestion = certificateDetail.Securityquestion;
-                       newCd.Securityanswer = certificateDetail.Securityanswer;
-                       newCd.Remarks = certificateDetail.Remarks;
-                       newCd.Remarkdesc = certificateDetail.Remarkdesc;
-                       newCd.Issuedate = (DateTime)certificateDetail.Issuedate;
-                       newCd.Expiredate = (DateTime)certificateDetail.Expiredate;
-                       newCd.Project = certificateDetail.Project;
-                       newCd.SubProject = certificateDetail.SubProject;
-                       newCd.Expire = certificateDetail.Expire;
-                       newCd.Smartobject = certificateDetail.SmartObject;
-                       newCd.Certificatesstatus = certificateDetail.CertificateStatus;
-                       newCd.CustomerId = certificateDetail.CustomerId;
-                       newCd.CustomerName = certificateDetail.CustomerName;
-                       newCd.Docstype = certificateDetail.DocsType;
-                       newCd.CertificateIssuer = certificateDetail.Certificateissuer;
-                       newCd.CertificateLocation = certificateDetail.CertificateLocation;
-                       newCd.CustomerIdentifier = certificateDetail.CustomerIdentifier;
-                       newCd.UpdatedUserName = certificateDetail.UpdatedUserName;
-                       newCd.UpdatedDate = (DateTime)certificateDetail.UpdatedDate;
-                       certificateDeatailsList.Add(newCd);
-                   }
-
-                   serviceResponse.Data = certificateDeatailsList;
-                   serviceResponse.Message = serviceResponse.Data.Count().ToString();
-                   return serviceResponse;
-               }
-       */
-
-        /* private List<CertificateDetails> GenerateCertificateDetailsToCustomer(double customerId)
-         {
-             _logger.Debug("GenerateCertificateDetailsFromId");
-             var certificateDeatailsList = new List<CertificateDetails>();
-
-             var matchedCertificates = _context.Certificates
-                 .Include(cer => cer.RelatedCertificateissuer)
-                 .Include(cer => cer.RelatedCertificatesstatus)
-                 .Include(cer => cer.RelatedCustomer)
-                 .Include(cer => cer.RelatedCustomerIdentifier)
-                 .Include(cer => cer.RelatedDocsType)
-                 .Include(cer => cer.RelatedExpiration)
-                 .Include(cer => cer.RelatedIssuerPlace)
-                 .Include(cer => cer.RelatedProject)
-                 .Include(cer => cer.RelatedSecurityquestion)
-                 .Include(cer => cer.RelatedSmartObject)
-                 .Include(cer => cer.RelatedSubProject)
-                 .Where(cer => Convert.ToDouble(cer.RelatedCustomer.Idnumber).Equals(customerId)).ToList();
-
-             foreach (var matchedCertificate in matchedCertificates)
-             {
-                 var certificate = new CertificateDetails(matchedCertificate);
-                 certificateDeatailsList.Add(certificate);
-             }
-             return certificateDeatailsList;
-         }*/
     }
 }
-
-
-
-

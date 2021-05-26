@@ -24,8 +24,11 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
-            int maxId = _context.Docstypes.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-            return maxId + 1;
+            lock (_locker)
+            {
+                int maxId = _context.Docstypes.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
         }
         private bool isTheNameAlreadyInUse(string title)
         {
@@ -65,7 +68,6 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
                 }
             }
         }
-
         public async Task<ServiceResponse<List<DocstypeDTO>>> GetIdentificationDocuments(int skip, int take)
         {
             _logger.Debug("GetIdentificationDocuments");
