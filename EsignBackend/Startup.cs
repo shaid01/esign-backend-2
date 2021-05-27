@@ -1,4 +1,4 @@
-using EsignBackend.Data;
+
 using EsignBackend.Services.CharacterService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -129,10 +129,8 @@ namespace EsignBackend
 
             services.AddSingleton<ICash, CashHandler>();
 
-
             var configuration = new ConfigurationBuilder()
-                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                              .AddJsonFile($"appsettings.{env.EnvironmentName.ToLower()}.json", optional: true, reloadOnChange: true)
+                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)                           
                               .Build();
 
             services.AddSingleton<ILogger>(
@@ -140,6 +138,15 @@ namespace EsignBackend
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger());
 
+            var address = configuration.GetSection("AppSettings").GetSection("FrontURL").Value;
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                builder => builder.WithOrigins(address)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+            });
 
 
             services.AddValidation();
@@ -159,13 +166,14 @@ namespace EsignBackend
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
             app.UseCors(builder =>
             {
-                builder.WithOrigins("http://localhost:4200");
-                //builder.AllowAnyOrigin();
+                //builder.WithOrigins("http://localhost:81");
+                builder.AllowAnyOrigin();
                 builder.AllowAnyMethod();
                 builder.AllowAnyHeader();
-                builder.AllowCredentials();
+              //  builder.AllowCredentials();
             });
 
 

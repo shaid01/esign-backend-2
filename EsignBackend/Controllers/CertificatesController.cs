@@ -39,13 +39,13 @@ namespace EsignBackend.Controllers
             _logger.Debug("UpdateCertificate");
             return Ok(await _certificatesService.UpdateCertificate(updatedCertificate));
         }
-        [Authorize(Roles = "אדמין,מחדש,מנהל")]
+        /*        [Authorize(Roles = "אדמין,מחדש,מנהל")]
         [HttpPost("AddNewHistoryCertificate")]
         public async Task<IActionResult> AddNewHistoryCertificate(Certificateshistory certificateshistory)
         {
             _logger.Debug("AddNewHistoryCertificate");
             return Ok(await _certificatesService.AddNewHistoryCertificate(certificateshistory));
-        }
+        }*/
         [HttpGet("GetHistoryCertificates")]
         public async Task<IActionResult> GetHistoryCertificates(string certificateId)
         {

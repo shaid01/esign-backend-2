@@ -33,7 +33,7 @@ namespace EsignBackend.Models
         public virtual DbSet<Certificatermeark> Certificatermearks { get; set; }
         public virtual DbSet<Certificateshistory> Certificateshistories { get; set; }
         public virtual DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
-        public virtual DbSet<Character> Characters { get; set; }
+       // public virtual DbSet<Character> Characters { get; set; }
         public virtual DbSet<Custident> Custidents { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Departmant> Departmants { get; set; }
@@ -763,11 +763,11 @@ namespace EsignBackend.Models
                     .HasColumnName("title")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
-
+/*
             modelBuilder.Entity<Character>(entity =>
             {
                 entity.ToTable("characters");
-            });
+            });*/
 
             modelBuilder.Entity<Custident>(entity =>
             {

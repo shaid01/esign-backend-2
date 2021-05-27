@@ -19,6 +19,5 @@ namespace EsignBackend.Services.MainServices.Certificates
         Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns,int question);
         Task<ServiceResponse<int>> AddCertificate(Certificate certificate);
         Task<ServiceResponse<int>> UpdateExpiredCertificates();
-        Task<ServiceResponse<int>> AddNewHistoryCertificate(Certificateshistory certificateshistory);
     }
 }
