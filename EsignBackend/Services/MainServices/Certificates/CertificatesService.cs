@@ -162,6 +162,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
                 .Where(cer => cer.Customerid == customerId).ToList();
+
             foreach (var cer in certificates)
             {
                 var newCertificateDetail = new CertificateDetailsDTO(new CertificateDetails(cer));

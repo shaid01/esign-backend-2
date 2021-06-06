@@ -1,4 +1,8 @@
-﻿using System;
+﻿
+/*
+ * Script-Migration -Output C:\Users\saarm\Desktop\CreateWeSignTables.sql
+ */
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;

@@ -143,9 +143,9 @@ namespace EsignBackend
             {
                 options.AddPolicy("CorsPolicy",
                 builder => builder.WithOrigins(address)
+                .AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+                .AllowAnyHeader()                );
             });
 
 
