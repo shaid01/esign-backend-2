@@ -50,7 +50,8 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             }
             lock (_locker)
             {
-                callstatus.Id = GenerateId();
+                //callstatus.Id = GenerateId();
+                callstatus.Id = 0;
                 var newCallStatusInDb = _context.Callstatuses.Add(callstatus);
                 try
                 {

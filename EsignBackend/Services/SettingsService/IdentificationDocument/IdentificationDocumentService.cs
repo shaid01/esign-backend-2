@@ -49,7 +49,8 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             }
             lock (_locker)
             {
-                identificationDocument.Id = GenerateId();
+                /* identificationDocument.Id = GenerateId();*/
+                identificationDocument.Id = 0;
                 var newIdentificationDocumentInDb = _context.Docstypes.Add(identificationDocument);
                 try
                 {

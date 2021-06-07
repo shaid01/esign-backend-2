@@ -48,7 +48,8 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             }
             lock (_locker)
             {
-                customerIdentifer.Id = GenerateId();
+                //customerIdentifer.Id = GenerateId();
+                customerIdentifer.Id = 0;
                 var newCustomerIdentifierInDb = _context.Custidents.Add(customerIdentifer);
                 try
                 {

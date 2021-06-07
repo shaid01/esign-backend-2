@@ -91,7 +91,8 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
             }
             lock (_locker)
             {
-                expirationType.Id = GenerateId();
+                /*expirationType.Id = GenerateId();*/
+                expirationType.Id = 0;
                 var newExpirationTypeInDb = _context.Expirationtypes.Add(expirationType);
                 try
                 {

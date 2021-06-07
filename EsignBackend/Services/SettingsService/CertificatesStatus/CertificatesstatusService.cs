@@ -84,7 +84,8 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             }
             lock (_locker)
             {
-                certificatestatus.Id = GenerateId();
+                //certificatestatus.Id = GenerateId();
+                certificatestatus.Id = 0;
                 var newcertificatesStatusInDb = _context.Certificatesstatuses.Add(certificatestatus);
                 try
                 {

@@ -49,7 +49,8 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             }
             lock (_locker)
             {
-                issueLocation.Id = GenerateId();
+                //issueLocation.Id = GenerateId();
+                issueLocation.Id = 0;
                 var newIssueLocationInDb = _context.Issplaces.Add(issueLocation);
                 try
                 {

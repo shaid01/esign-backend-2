@@ -49,7 +49,8 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             }
             lock (_locker)
             {
-                securityQuestion.Id = GenerateId();
+                //securityQuestion.Id = GenerateId();
+                securityQuestion.Id = 0;
                 var newSecurityQuestionInDb = _context.Securityquestions.Add(securityQuestion);
                 try
                 {

@@ -83,8 +83,8 @@ namespace EsignBackend.Services.CharacterService
             }
             lock (_locker)
             {
-                var newId = GenerateUserId();
-                newUser.Id = newId;
+                //var newId = GenerateUserId();
+                //newUser.Id = newId;
 
                 newUser.Pass = encryptPass(newUser.Pass);
                 newUser.Expires = newUser.Expires.Value.ToLocalTime();

@@ -139,7 +139,8 @@ namespace EsignBackend.Services.SettingsService
             }
             lock (_locker)
             {
-                newProject.Id = GenerateId(projectType.PROJECT);
+                //newProject.Id = GenerateId(projectType.PROJECT);
+                newProject.Id = 0;
                 var newProjectInDb = _context.Projects.Add(newProject);
                 try
                 {
@@ -172,7 +173,8 @@ namespace EsignBackend.Services.SettingsService
             }
             lock (_locker)
             {
-                newSubproject.Id = GenerateId(projectType.SUBPROJECT);
+                //newSubproject.Id = GenerateId(projectType.SUBPROJECT);
+                newSubproject.Id = 0;
                 var newSubprojectInDb = _context.Subprojects.Add(newSubproject);
                 try
                 {

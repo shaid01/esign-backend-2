@@ -48,7 +48,8 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             }
             lock (_locker)
             {
-                callPriority.Id = GenerateId();
+                //callPriority.Id = GenerateId();
+                callPriority.Id = 0;
                 var newCallsPriorityInDb = _context.Callpriorities.Add(callPriority);
                 try
                 {

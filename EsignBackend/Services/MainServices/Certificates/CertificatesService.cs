@@ -183,7 +183,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
             && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
             && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
-            && ((certificateAdvancedSearch.CustomerIdNumber.CompareTo(0) == 0) || cer.Customerid == certificateAdvancedSearch.CustomerIdNumber)
+            && ((certificateAdvancedSearch.CustomerIdNumber.CompareTo(0) == 0) || Convert.ToDouble(cer.RelatedCustomer.Idnumber) == certificateAdvancedSearch.CustomerIdNumber)
             && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
             && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
             && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || cer.Identify == certificateAdvancedSearch.CustomerIdentifier)
@@ -273,7 +273,8 @@ namespace EsignBackend.Services.MainServices.Certificates
             certificate.Expiredate = certificate.Expiredate.Value.ToLocalTime();
             lock (_locker)
             {
-                certificate.Id = GenerateCertificateId();
+                //certificate.Id = GenerateCertificateId();
+                certificate.Id = 0;
                 certificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(certificate.Securityansware);
 
                 var newCertificateInDb = _context.Certificates.Add(certificate);

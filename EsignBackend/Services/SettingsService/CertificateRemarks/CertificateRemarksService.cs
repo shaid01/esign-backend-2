@@ -91,8 +91,10 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             }
             lock (_locker)
             {
-                certificateRemark.Id = GenerateId();
-                var newCertificateRemarksInDb = _context.Certificatermearks.Add(certificateRemark);
+                //certificateRemark.Id = GenerateId();
+                //certificateRemark.Id = 0;
+               
+                var newCertificateRemarksInDb = _context.Certificatermearks.Add(new Certificatermeark() { Title = certificateRemark.Title });
                 try
                 {
                     _context.SaveChanges();

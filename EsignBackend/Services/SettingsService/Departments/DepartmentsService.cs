@@ -35,6 +35,7 @@ namespace EsignBackend.Services.SettingsService.Departments
         }
         public async Task<ServiceResponse<int>> AddNewDepartment(Departmant department)
         {
+            _logger.Debug($"Add new Department {department.Id}, {department.Title}");
             _logger.Debug("AddNewDepartment");
             var serviceRespone = new ServiceResponse<int>();
             var nameIsAlreadyTaken = isTheNameAlreadyInUse(department.Title);
@@ -47,8 +48,8 @@ namespace EsignBackend.Services.SettingsService.Departments
             }
             lock (_locker)
             {
-                department.Id = GenerateId();
-                var newDepartmentInDb = _context.Departmants.Add(department);
+                //department.Id = GenerateId();
+                var newDepartmentInDb = _context.Departmants.Add(new Departmant() { Title = department.Title });
                 try
                 {
                     _context.SaveChanges();

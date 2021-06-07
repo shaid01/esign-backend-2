@@ -48,7 +48,9 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
             lock (_locker)
             {
-                certificateIssuer.Id = GenerateId();
+                //certificateIssuer.Id = GenerateId();
+                certificateIssuer.Id = 0;
+
                 var newCertificateIssuerInDb = _context.Isscerts.Add(certificateIssuer);
                 try
                 {

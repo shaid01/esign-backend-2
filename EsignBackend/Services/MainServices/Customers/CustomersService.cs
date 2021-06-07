@@ -133,7 +133,8 @@ namespace EsignBackend.Services.CharacterService
 
             lock (_locker)
             {
-                customer.Id = GenerateUserId();
+                //customer.Id = GenerateUserId();
+                customer.Id = 0;
                 var encryptedSecurityAns = EncryptDecryptHandler.encryptSecurityAns(customer.Securityansware);
                 customer.Securityansware = encryptedSecurityAns;
                 var newCustomerInDb = _context.Customers.Add(customer);

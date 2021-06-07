@@ -84,7 +84,8 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             }
             lock (_locker)
             {
-                smartobject.Id = GenerateId();
+                //smartobject.Id = GenerateId();
+                smartobject.Id = 0;
                 var newcertificatesStatusInDb = _context.Smartobjects.Add(smartobject);
                 try
                 {
