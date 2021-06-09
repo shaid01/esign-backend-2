@@ -61,8 +61,8 @@ namespace EsignBackend.Services.CharacterService
         }
         public async Task<ServiceResponse<string>> Login(string username, string password)
         {
-            // JUST FOR NOW - MOCK UP!
-            password = "123456";
+           
+           // password = "123456";
             _logger.Debug("Login");
 
             var response = new ServiceResponse<string>();
