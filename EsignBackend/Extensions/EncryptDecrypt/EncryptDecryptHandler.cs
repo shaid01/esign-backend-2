@@ -8,9 +8,11 @@ namespace EsignBackend.Extensions.EncryptDecrypt
 {
     public class EncryptDecryptHandler
     {
+        private const string PASS = "kikiitb";
         public static string encryptUserPass(string pass)
         {
-            var encryptedPass = ESignEncrypt.Encrypt(pass, "kikiitb");
+            //var encryptedPass = ESignEncrypt.Encrypt(pass, PASS);
+            var encryptedPass = ESignEncrypt.Encrypt(pass, DPAPI.GetPhase1Password());
             return encryptedPass;
         }
 

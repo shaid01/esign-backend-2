@@ -131,7 +131,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(hc => hc.RelatedSmartObject)
                 .Include(hc => hc.RelatedSubProject)
                 .Include(hc => hc.RelatedUser)
-                .Where(hc => certificateId == certificateId).ToListAsync();
+                .Where(hc => hc.Certificateid == certificateId).ToListAsync();
 
 
             foreach (var historyCer in historyCertificateDeatailsUpdate)
@@ -242,26 +242,30 @@ namespace EsignBackend.Services.MainServices.Certificates
         public async Task<ServiceResponse<int>> UpdateExpiredCertificates()
         {
             _logger.Debug("UpdateExpiredCertificates");
-            var certificateStatus = _context.Certificatesstatuses.Where(cer => cer.Title.Equals("פג תוקף")).FirstOrDefault().Id;
+            var cert = _context.Certificatesstatuses.FirstOrDefault(cer => cer.Title.Equals("פג תוקף"));
             var serviceRespone = new ServiceResponse<int>();
-            var now = DateTime.Now.ToLocalTime();
-            var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now).ToListAsync();
-            foreach (Certificate c in expiredCertificates)
+            if (cert != null)
             {
-                c.Certificatestatus = certificateStatus;
-                _context.Certificates.Update(c);
-            }
-            try
-            {
-                _context.SaveChanges();
-                serviceRespone.Data = expiredCertificates.Count();
-                serviceRespone.Message = "Updated expired certificates successfully";
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("UpdateExpiredCertificates error, " + ex.Message);
-                serviceRespone.Data = -1;
-                serviceRespone.Message = "Updating expired certificates failed. " + ex;
+                var certificateStatus = cert.Id;
+                var now = DateTime.Now.ToLocalTime();
+                var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now).ToListAsync();
+                foreach (Certificate c in expiredCertificates)
+                {
+                    c.Certificatestatus = certificateStatus;
+                    _context.Certificates.Update(c);
+                }
+                try
+                {
+                    _context.SaveChanges();
+                    serviceRespone.Data = expiredCertificates.Count();
+                    serviceRespone.Message = "Updated expired certificates successfully";
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("UpdateExpiredCertificates error, " + ex.Message);
+                    serviceRespone.Data = -1;
+                    serviceRespone.Message = "Updating expired certificates failed. " + ex;
+                }
             }
             return serviceRespone;
         }

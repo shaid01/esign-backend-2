@@ -26,12 +26,14 @@ namespace EsignBackend.Extensions.EncryptDecrypt
 
         public static string GetPhase1Password()
         {
-            return "87654321";
+            return "kikiitb";
+            //return "87654321";
 
         }
 
         public static string GetPhase2Password()
         {
+
             return "12345678";
         }
     }

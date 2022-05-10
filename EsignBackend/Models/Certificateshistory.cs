@@ -8,7 +8,7 @@ namespace EsignBackend.Models
     public partial class Certificateshistory
     {
         public int Id { get; set; }
-        public int Customerid { get; set; }
+        public int? Customerid { get; set; }
         public virtual Customer RelatedCustomer { get; set; }
         public string Email { get; set; }
         public int Project { get; set; }

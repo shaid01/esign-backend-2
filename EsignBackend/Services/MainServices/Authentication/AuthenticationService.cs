@@ -30,8 +30,10 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("VerifyPassword");
             var encryptedPass = EncryptDecryptHandler.encryptUserPass(password);
+
             return userPassInDb.Equals(encryptedPass);
         }
+
         private string CreateToken(Buuser user)
         {
             _logger.Debug("CreateToken");

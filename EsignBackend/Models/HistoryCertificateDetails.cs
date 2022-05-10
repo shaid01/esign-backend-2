@@ -17,7 +17,7 @@ namespace EsignBackend.Models
             this.Smartobject = certificateshistory.RelatedSmartObject;
             this.Certificatesstatus = certificateshistory.RelatedCertificateStatus;
             //this.CustomerId = certificateshistory.Customerid;
-            this.CustomerName = certificateshistory.RelatedCustomer.Firstname + " " + certificateshistory.RelatedCustomer.Lastname;
+            this.CustomerName = certificateshistory.RelatedCustomer?.Firstname + " " + certificateshistory.RelatedCustomer?.Lastname;
             this.Docstype = certificateshistory.RelatedDocsType;
             this.CertificateIssuer = certificateshistory.Certificateissuer;
             this.CertificateLocation = certificateshistory.Issuerplace;
