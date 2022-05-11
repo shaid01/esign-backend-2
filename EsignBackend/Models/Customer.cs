@@ -15,7 +15,7 @@ namespace EsignBackend.Models
         public string Lastname { get; set; }
         public string Phone1 { get; set; }
         public string Mobile1 { get; set; }
-        public int Securityquestion { get; set; }
+        public int? Securityquestion { get; set; }
         public virtual Securityquestion RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
         public string Certificates { get; set; }

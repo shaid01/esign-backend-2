@@ -65,14 +65,14 @@ namespace EsignBackend.Models.DTOs
         public string Passportid { get; set; }
         public string Licenseid { get; set; }
         public string Signer { get; set; }
-        public double Securityquestion { get; set; }
+        public double? Securityquestion { get; set; }
         public SecurityquestionDTO RelatedSecurityQuestion { get; set; }
         public string Securityanswer { get; set; }
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
         public string Job { get; set; }
-        public DateTime Issuedate { get; set; }
-        public DateTime Expiredate { get; set; }
+        public DateTime? Issuedate { get; set; }
+        public DateTime? Expiredate { get; set; }
         public CustomerDTO RelatedCustomer { get; set; }
         public CustidentDTO RelatedCustomerIdentifier { get; set; }
     }

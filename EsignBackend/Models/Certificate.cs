@@ -21,7 +21,7 @@ namespace EsignBackend.Models
         public virtual Smartobject? RelatedSmartObject { get; set; }
         public int? Certificatestatus { get; set; }
         public virtual Certificatesstatus? RelatedCertificatesstatus { get; set; }
-        public int Customerid { get; set; }
+        public int? Customerid { get; set; }
         public virtual Customer RelatedCustomer { get; set; }
         public int? Subproject { get; set; }
         public virtual Subproject RelatedSubProject { get; set; }
@@ -30,7 +30,7 @@ namespace EsignBackend.Models
         public string Passportid { get; set; }
         public string Licenceid { get; set; }
         public string Hotem { get; set; }
-        public int Securityquestion { get; set; }
+        public int? Securityquestion { get; set; }
         public virtual Securityquestion RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
         public string Remarksdesc { get; set; }

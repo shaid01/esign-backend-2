@@ -19,13 +19,13 @@ namespace EsignBackend.Models
             this.Passportid = certificate.Passportid;
             this.Licenseid = certificate.Licenceid;
             this.Signer = certificate.Hotem;
-            this.Securityquestion = (double)certificate.Securityquestion;
+            this.Securityquestion = certificate.Securityquestion;
             this.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificate.Securityansware);
             this.Remarks = certificate.Remarks;
             this.Remarkdesc = certificate.Remarksdesc;
             this.Job = certificate.Job;
-            this.Issuedate = (DateTime)certificate.Issuedate;
-            this.Expiredate = (DateTime)certificate.Expiredate;
+            this.Issuedate = certificate.Issuedate;
+            this.Expiredate = certificate.Expiredate;
             this.Project = certificate.RelatedProject;
             this.SubProject = certificate.RelatedSubProject;
             this.Expire = certificate.RelatedExpiration;
@@ -62,13 +62,13 @@ namespace EsignBackend.Models
         public string Passportid { get; set; }
         public string Licenseid { get; set; }
         public string Signer { get; set; }
-        public double Securityquestion { get; set; }
+        public double? Securityquestion { get; set; }
         public Securityquestion RelatedSecurityQuestion { get; set; }
         public string Securityanswer { get; set; }
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
         public string Job { get; set; }
-        public DateTime Issuedate { get; set; }
-        public DateTime Expiredate { get; set; }
+        public DateTime? Issuedate { get; set; }
+        public DateTime? Expiredate { get; set; }
     }
 }
