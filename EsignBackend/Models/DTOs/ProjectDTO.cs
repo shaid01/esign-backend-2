@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace EsignBackend.Models.DTOs
 {
@@ -14,7 +15,7 @@ namespace EsignBackend.Models.DTOs
                 return;
             }
             Id = project.Id;
-            Title = project.Title;
+            Title = HttpUtility.HtmlDecode(project.Title);
         }
 
         public int Id { get; set; }

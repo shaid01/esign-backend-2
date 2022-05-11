@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace EsignBackend.Models.DTOs.Settings
 {
@@ -13,7 +14,7 @@ namespace EsignBackend.Models.DTOs.Settings
                 return;
 
             Id = custident.Id;
-            Title = custident.Title;
+            Title = HttpUtility.HtmlDecode(custident.Title);
             Active = custident.Active;
         }
         public int Id { get; set; }

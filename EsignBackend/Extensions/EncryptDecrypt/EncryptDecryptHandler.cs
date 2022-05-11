@@ -11,14 +11,13 @@ namespace EsignBackend.Extensions.EncryptDecrypt
         private const string PASS = "kikiitb";
         public static string encryptUserPass(string pass)
         {
-            //var encryptedPass = ESignEncrypt.Encrypt(pass, PASS);
-            var encryptedPass = ESignEncrypt.Encrypt(pass, DPAPI.GetPhase1Password());
+            var encryptedPass = ESignEncrypt.Encrypt(pass, PASS);
             return encryptedPass;
         }
 
         public static string decryptUserPass(string encryptedPass)
         {
-            var decryptedPhaseOne = ESignEncrypt.Decrypt(encryptedPass, DPAPI.GetPhase1Password());
+            var decryptedPhaseOne = ESignEncrypt.Decrypt(encryptedPass, PASS);
             return decryptedPhaseOne;
         }
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Web;
 
 namespace EsignBackend.Models.DTOs
 {
@@ -12,7 +9,7 @@ namespace EsignBackend.Models.DTOs
             if (docstype == null)
                 return;
             Id = docstype.Id;
-            Title = docstype.Title;
+            Title = HttpUtility.HtmlDecode(docstype.Title); 
         }
         public int Id { get; set; }
         public string Title { get; set; }

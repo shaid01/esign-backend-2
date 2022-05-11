@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace EsignBackend.Models.DTOs
 {
@@ -16,11 +17,11 @@ namespace EsignBackend.Models.DTOs
 
             Id = certificate.Id;
             CustomerId = certificate.CustomerId;
-            CustomerName = certificate.CustomerName;
+            CustomerName = HttpUtility.HtmlDecode(certificate.CustomerName);
             CustomerIdInDb = certificate.CustomerIdInDb;
             CustomerIdentifier = certificate.CustomerIdentifier;
             CustomerIdentifierId = certificate.CustomerIdentifierId;
-            Company = certificate.Company;
+            Company = HttpUtility.HtmlDecode(certificate.Company);
             Hpnumber = certificate.Hpnumber;
             Email = certificate.Email;
             Passportid = certificate.Passportid;
