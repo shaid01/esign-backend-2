@@ -12,7 +12,7 @@ namespace EsignBackend.Validation
         public UserValidator()
         {
            // RuleFor(x => x.Id).NotEmpty().WithMessage("User id is missing");
-            RuleFor(x => x.Username).NotEmpty().WithMessage("שם המשתמש לא הוזן").Matches("^[A-Za-z0-9]$*").WithMessage("שם המשתמש יכול להכיל רק אותיות ומספרים").Matches("^[^# “”]*$").WithMessage("הוכנסו תווים לא חוקיים לשם המשתמש");
+            RuleFor(x => x.Username).NotEmpty().WithMessage("שם המשתמש לא הוזן").Matches("^[A-Za-z0-9]$*").WithMessage("שם המשתמש יכול להכיל רק אותיות באנגלית ומספרים").Matches("^[^# “”]*$").WithMessage("הוכנסו תווים לא חוקיים לשם המשתמש");
             RuleFor(x => x.Email).EmailAddress().WithMessage("כתובת אימייל אינה תקינה");
             RuleFor(x => x.Firstname).NotEmpty().WithMessage("שם פרטי לא הוזן");
             RuleFor(x => x.Lastname).NotEmpty().WithMessage("שם משפחה לא הוזן");
