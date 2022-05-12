@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace EsignBackend.Models
 {
@@ -13,17 +14,17 @@ namespace EsignBackend.Models
         public CertificateDetails(Certificate certificate)
         {
             this.Id = certificate.Id;
-            this.Company = certificate.Company;
+            this.Company = HttpUtility.HtmlDecode(certificate.Company);
             this.Hpnumber = certificate.Hpnumber;
             this.Email = certificate.Email;
             this.Passportid = certificate.Passportid;
             this.Licenseid = certificate.Licenceid;
-            this.Signer = certificate.Hotem;
+            this.Signer = HttpUtility.HtmlDecode(certificate.Hotem);
             this.Securityquestion = certificate.Securityquestion;
             this.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificate.Securityansware);
-            this.Remarks = certificate.Remarks;
-            this.Remarkdesc = certificate.Remarksdesc;
-            this.Job = certificate.Job;
+            this.Remarks = HttpUtility.HtmlDecode(certificate.Remarks);
+            this.Remarkdesc = HttpUtility.HtmlDecode(certificate.Remarksdesc);
+            this.Job = HttpUtility.HtmlDecode(certificate.Job);
             this.Issuedate = certificate.Issuedate;
             this.Expiredate = certificate.Expiredate;
             this.Project = certificate.RelatedProject;
@@ -32,7 +33,7 @@ namespace EsignBackend.Models
             this.Smartobject = certificate.RelatedSmartObject;
             this.Certificatesstatus = certificate.RelatedCertificatesstatus;
             this.RelatedCustomer = certificate.RelatedCustomer;
-            this.CustomerName = certificate.RelatedCustomer?.Firstname + " " + certificate.RelatedCustomer?.Lastname;
+            this.CustomerName = $"{HttpUtility.HtmlDecode(certificate.RelatedCustomer?.Firstname)} {HttpUtility.HtmlDecode(certificate.RelatedCustomer?.Lastname)}";
             this.Docstype = certificate.RelatedDocsType;
             this.CertificateIssuer = certificate.RelatedCertificateissuer;
             this.CertificateLocation = certificate.RelatedIssuerPlace;
