@@ -67,32 +67,21 @@ namespace EsignBackend
                 .UseDefaultTypeSerializer()
                 .UseMemoryStorage();
             });
-
-
             // Add the processing server as IHostedService
             services.AddHangfireServer();
-
             //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.
             GetConnectionString("DefaultConnection"))
             );
-
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
-
             services.AddControllers();
-
-
             services.AddAutoMapper(typeof(Startup));
-
             services.AddRazorPages();
-
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -150,7 +139,39 @@ namespace EsignBackend
 
 
             services.AddValidation();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(
+                c =>
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Esign API", Version = "v1" });
+                    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey
+                    });
+
+                    var security = new OpenApiSecurityRequirement
+                            {
+                                { new OpenApiSecurityScheme
+                                    {
+                                        Reference = new OpenApiReference
+                                        {
+                                            Type = ReferenceType.SecurityScheme, Id = "Bearer"
+                                        },
+                                        Scheme = "oauth2",
+                                        Name = "Bearer",
+                                        In = ParameterLocation.Header
+                                        },
+                                        new List<string>()
+                                    }
+                            };
+                    c.AddSecurityRequirement(security);
+                    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    c.IncludeXmlComments(xmlFile);
+                }
+                );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -191,11 +212,7 @@ namespace EsignBackend
                 endpoints.MapHangfireDashboard();
             });
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseSwaggerUI();
 
             app.UseHangfireDashboard();
             backgroundJobs.Enqueue(() => certificatesService.UpdateExpiredCertificates());

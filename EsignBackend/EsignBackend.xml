@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EsignBackend</name>
+    </assembly>
+    <members>
+        <member name="T:EsignBackend.Extensions.EncryptDecrypt.Rijndael">
+            <summary>
+            AUTHOR:       Phil Fresle
+            COPYRIGHT:    Copyright 2001-2005 Phil Fresle
+            EMAIL:        phil@frez.co.uk
+            WEB:          http://www.frez.co.uk
+            Implementation of the AES Rijndael Block Cipher, converted from my VB6 version. 
+            Inspired by Mike Scott's implementation in C. Permission for free direct or 
+            derivative use is granted subject to compliance with any conditions that the 
+            originators of the algorithm place on its exploitation.
+            
+            The Rijndael home page is here:-
+            http://www.iaik.tu-graz.ac.at/research/krypto/AES/old/~rijmen/rijndael/
+            
+            NOTE: All string conversions assume strings are Unicode; this may yield different
+            results from other implementations if the other implementations are based 
+            on Ascii strings. Unicode is a 2-byte character set, and means that the routines
+            will work just fine on, for instance, Japanese text.
+            
+            MODIFICATION HISTORY:
+            16-Feb-2001		Phil Fresle		Initial VB6 Version
+            03-Apr-2001		Phil Fresle     Added EncryptData and DecryptData functions to 
+            								VB6 version.
+            19-Apr-2001		Phil Fresle     Thanks to Paolo Migliaccio for finding a bug
+            								with 256 bit key in VB6 version.
+            11-Jul-2005		Phil Fresle		Initial C# version.
+            </summary>
+            
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.EncryptData(System.Byte[],System.Byte[],System.Byte[],EsignBackend.Extensions.EncryptDecrypt.Rijndael.BlockSize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.KeySize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.EncryptionMode)">
+            <summary>This version of EncryptData takes the message, password 
+            and IV as byte arrays and encrypts the message, returning the encrypted text 
+            as a byte array.
+            
+            NOTE: In this implementation I add four bytes to the start of the message and
+            use that space to store the length of the message. Then the sister DecryptData
+            function knows where to trim the message before returning it. Not all
+            encryption routines will use this method. The only parts specified in the
+            Rijndael standard are for use of the gentables, gkey, encrypt and decrypt
+            functions. So if you have some data encrypted with another implementation
+            of Rijndael, or you are encypting data that will be decrypted with another
+            implementation, then you will need to know how they are recording the length of
+            the message (if at all), and if you are encrypting/decrypting strings whether
+            they based it on Ascii or Unicode (or some other character set).
+            </summary>
+            <param name="message">The encrypted message</param>
+            <param name="password">The password/key to encrypt the message with</param>
+            <param name="initialisationVector">The IV as a string</param>
+            <param name="blockSize">The block size used to encrypt the message</param>
+            <param name="keySize">The key size used to encrypt the message</param>
+            <param name="cryptMode">The encryption mode, CBC or ECB, used to encrypt the message</param>
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.EncryptData(System.String,System.String,System.String,EsignBackend.Extensions.EncryptDecrypt.Rijndael.BlockSize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.KeySize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.EncryptionMode,System.Boolean)">
+            <summary>This version of EncryptData takes the message, password 
+            and IV as strings and encrypts the message, returning the encrypted text as a string.
+            </summary>
+            <param name="message">The plain text message</param>
+            <param name="password">The password/key to encrypt the message with</param>
+            <param name="initialisationVector">The IV as a string</param>
+            <param name="blockSize">The block size used to encrypt the message</param>
+            <param name="keySize">The key size used to encrypt the message</param>
+            <param name="cryptMode">The encryption mode, CBC or ECB, used to encrypt the message</param>
+            <param name="returnAsHex">Whether the encrypted message is to be returned as Hex</param>
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.DecryptData(System.Byte[],System.Byte[],System.Byte[],EsignBackend.Extensions.EncryptDecrypt.Rijndael.BlockSize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.KeySize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.EncryptionMode)">
+            <summary>This version of DecryptData takes the encrypted message, password 
+            and IV as byte arrays and decrypts the message, returning the plain text as 
+            a byte array.
+            </summary>
+            <param name="message">The encrypted message</param>
+            <param name="password">The password/key that was used to encrypt the message</param>
+            <param name="initialisationVector">The IV</param>
+            <param name="blockSize">The block size used in encrypting the message</param>
+            <param name="keySize">The key size used in encrypting the message</param>
+            <param name="cryptMode">The encryption mode, CBC or ECB, used in encrypting the message</param>
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.DecryptData(System.String,System.String,System.String,EsignBackend.Extensions.EncryptDecrypt.Rijndael.BlockSize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.KeySize,EsignBackend.Extensions.EncryptDecrypt.Rijndael.EncryptionMode,System.Boolean)">
+            <summary>This version of DecryptData takes the encrypted message, password 
+            and IV as strings and decrypts the message, returning the plain text as a string.
+            </summary>
+            <param name="message">The encrypted message</param>
+            <param name="password">The password/key that was used to encrypt the message</param>
+            <param name="initialisationVector">The IV as a string</param>
+            <param name="blockSize">The block size used in encrypting the message</param>
+            <param name="keySize">The key size used in encrypting the message</param>
+            <param name="cryptMode">The encryption mode, CBC or ECB, used in encrypting the message</param>
+            <param name="messageAsHex">Whether the encrypted message was returned as Hex</param>
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.BytesToString(System.Byte[])">
+            <summary>Utility function to convert a byte array to a string</summary>
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.StringToBytes(System.String)">
+            <summary>Utility function to convert a string to a byte array</summary>
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.BytesToHex(System.Byte[])">
+            <summary>Utility function to convert a byte array to a string of hex</summary>
+        </member>
+        <member name="M:EsignBackend.Extensions.EncryptDecrypt.Rijndael.HexToBytes(System.String)">
+            <summary>Utility function to convert a string of hex to a byte array</summary>
+        </member>
+        <member name="M:EsignBackend.Services.CharacterService.UserService.AddNewUser(EsignBackend.Models.Buuser)">
+            <summary>
+            Creating new user to Buusers table. 
+            Success - returns the id of the new user.
+            Fails - returns -1.
+            </summary>
+            <param name="newUser"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
