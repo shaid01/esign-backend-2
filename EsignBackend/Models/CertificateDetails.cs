@@ -13,6 +13,10 @@ namespace EsignBackend.Models
         public CertificateDetails() { }
         public CertificateDetails(Certificate certificate)
         {
+            if(certificate == null)
+            {
+                return;
+            }
             this.Id = certificate.Id;
             this.Company = HttpUtility.HtmlDecode(certificate.Company);
             this.Hpnumber = certificate.Hpnumber;
