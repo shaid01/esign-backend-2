@@ -2,6 +2,7 @@
 using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
@@ -17,15 +18,16 @@ namespace EsignBackend.Services.CharacterService
     public class AuthenticationService : IAuthenticationService
     {
         private readonly AppDbContext _context;
-        private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
+        private readonly AppSettings _appSettings;
 
-        public AuthenticationService(AppDbContext context, IConfiguration configuration, ILogger logger)
+        public AuthenticationService(AppDbContext context, ILogger logger, IOptions<AppSettings> appSettings)
         {
             _context = context;
-            _configuration = configuration;
             _logger = logger;
+            _appSettings = appSettings.Value;
         }
+
         private bool VerifyPassword(string password, string userPassInDb)
         {
             _logger.Debug("VerifyPassword");
@@ -45,16 +47,12 @@ namespace EsignBackend.Services.CharacterService
                 new Claim(ClaimTypes.Role , user.Usergroup.ToString())
             };
 
-            SymmetricSecurityKey key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value)
-                );
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Token));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                // Expires = DateTime.Now.AddHours(1),
-                 //Expires = DateTime.Now.AddSeconds(8),
-                Expires = DateTime.Now.AddMinutes(30),
+                Expires = DateTime.Now.AddMinutes(_appSettings.SessionExpireMinuteTime),
                 SigningCredentials = creds
             };
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

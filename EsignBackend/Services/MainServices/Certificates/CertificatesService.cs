@@ -218,8 +218,9 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             var certificateSecurityAnswerMatches = certificate.Securityansware.Equals(secAns)
                 && certificate.Securityquestion == question;
-            var customerSecurityAnswerMatches = certificate.RelatedCustomer.Securityansware.Equals(secAns)
-                && certificate.RelatedCustomer.Securityquestion == question;
+            var customerSecurityAnswerMatches = certificate.RelatedCustomer.Securityansware != null &&
+                                                certificate.RelatedCustomer.Securityansware.Equals(secAns) && 
+                                                certificate.RelatedCustomer.Securityquestion == question;
 
             var foundMatch = certificateSecurityAnswerMatches || customerSecurityAnswerMatches;
 
