@@ -14,7 +14,7 @@ namespace EsignBackend.Models.Tools
         public string? CustomerId { get; set; }
         public int? Project { get; set; }
         public int? SubProject { get; set; }
-        public double CustomerIdNumber { get; set; }
+        public string CustomerIdNumber { get; set; }
         public int CertificateStatus { get; set; }
         public double CertificateIssuer { get; set; }
         public double CustomerIdentifier { get; set; }
