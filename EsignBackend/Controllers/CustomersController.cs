@@ -51,11 +51,10 @@ namespace EsignBackend.Controllers
             return Ok(await _customersService.UpdateCustomer(updatedCustomer));
         }
         [HttpPost("SearchCustomers")]
-        public async Task<IActionResult> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch,
-             int skip, int take)
+        public async Task<IActionResult> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCustomers");
-            return Ok(await _customersService.SearchCustomers(customerAdvancedSearch,skip,take));
+            return Ok(await _customersService.SearchCustomers(customerAdvancedSearch, skip, take));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewCustomer")]

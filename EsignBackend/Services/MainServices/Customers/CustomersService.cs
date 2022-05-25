@@ -18,6 +18,7 @@ namespace EsignBackend.Services.CharacterService
         private readonly ICash _cash;
         private readonly ILogger _logger;
         private static object _locker = new object();
+        private const int UNLIMITED = -1;
 
         public CustomersService(AppDbContext context, ILogger logger, ICash cash)
         {
@@ -91,9 +92,9 @@ namespace EsignBackend.Services.CharacterService
                 return serviceResponse;
             }
         }
-        public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch,
-            int skip, int take)
+        public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
+
             _logger.Debug("SearchCustomers");
             var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
             var dbCustomers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).Where(customer =>
@@ -109,7 +110,8 @@ namespace EsignBackend.Services.CharacterService
             serviceResponse.Amount = dbCustomers.Count();
 
             var customersDtoList = new List<CustomerDTO>();
-            foreach (var customer in dbCustomers.Skip(skip).Take(take).ToList())
+            var dbCustomersList = take == UNLIMITED ? dbCustomers.Skip(skip).ToList() : dbCustomers.Skip(skip).Take(take).ToList();
+            foreach (var customer in dbCustomersList)
             {
                 var newCustomerDto = new CustomerDTO(customer);
                 customersDtoList.Add(newCustomerDto);

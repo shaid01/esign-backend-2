@@ -19,6 +19,7 @@ namespace EsignBackend.Services.CharacterService
         private readonly ILogger _logger;
         private readonly ICash _cash;
         private static object _locker = new object();
+        private const int UNLIMITED = -1;
 
         public UserService(AppDbContext context, ILogger logger, ICash cash)
         {
@@ -148,7 +149,7 @@ namespace EsignBackend.Services.CharacterService
             ).ToListAsync();
             //serviceRespone.Message = dbUsers.Count().ToString();
             serviceRespone.Amount = dbUsers.Count();
-            serviceRespone.Data = dbUsers.Skip(skip).Take(take).ToList();
+            serviceRespone.Data = take == UNLIMITED ? dbUsers.Skip(skip).ToList() : dbUsers.Skip(skip).Take(take).ToList();
             return serviceRespone;
         }
         public async Task<ServiceResponse<int>> ChangeUserPassword(Buuser user)

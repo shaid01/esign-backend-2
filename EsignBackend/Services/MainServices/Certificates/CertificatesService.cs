@@ -19,6 +19,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         private readonly ILogger _logger;
         private readonly ICash _cash;
         private static object _locker = new object();
+        private const int UNLIMITED = -1;
 
         public CertificatesService(AppDbContext context, ILogger logger, ICash cash)
         {
@@ -171,12 +172,11 @@ namespace EsignBackend.Services.MainServices.Certificates
             serviceResponse.Data = customerCertificateList;
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch,
-            int skip, int take)
+        public async Task<ServiceResponse<List<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCertificates");
             var serviceRespone = new ServiceResponse<List<CertificateDetailsDTO>>();
-            
+
             var certificatesIds = _context.Certificates.Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCustomer)
                 .Where(cer =>
@@ -193,11 +193,11 @@ namespace EsignBackend.Services.MainServices.Certificates
             && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
             && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
             && (certificateAdvancedSearch.CustomerName == null || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
-            && (certificateAdvancedSearch.CustomerLastName == null || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname: string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
+            && (certificateAdvancedSearch.CustomerLastName == null || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
             ).Select(x => x.Id).ToHashSet();
 
             serviceRespone.Amount = certificatesIds.Count();
-            var certificatesIdList = certificatesIds.Skip(skip).Take(take).ToList();
+            var certificatesIdList = take == UNLIMITED ? certificatesIds.Skip(skip).ToList() : certificatesIds.Skip(skip).Take(take).ToList();
             _logger.Debug("Start converting the certificates to certificateDetails object");
             var certificateDetailsList = new List<CertificateDetailsDTO>();
             foreach (Double cerId in certificatesIdList)
@@ -222,7 +222,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             if (certificate.RelatedCustomer != null)
             {
                 customerSecurityAnswerMatches = certificate.RelatedCustomer.Securityansware != null &&
-                                                    certificate.RelatedCustomer.Securityansware.Equals(secAns) && 
+                                                    certificate.RelatedCustomer.Securityansware.Equals(secAns) &&
                                                     certificate.RelatedCustomer.Securityquestion == question;
             }
 
