@@ -111,7 +111,12 @@ namespace EsignBackend.Services.CharacterService
             _logger.Debug("UpdateUser");
             updatedUser.Updateddate = updatedUser.Updateddate.Value.ToLocalTime();
             var serviceResponse = new ServiceResponse<int>();
-            var updatedUserInDb = _context.Buusers.Update(updatedUser);
+            var dbUser = _context.Buusers.AsNoTracking().FirstOrDefault(x => x.Id == updatedUser.Id);
+            if(dbUser != null)
+            {
+                updatedUser.Pass = dbUser.Pass;
+            }
+           var updatedUserInDb = _context.Buusers.Update(updatedUser);
             try
             {
                 _context.SaveChanges();
