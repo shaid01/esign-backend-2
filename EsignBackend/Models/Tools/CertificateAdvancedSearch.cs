@@ -16,8 +16,8 @@ namespace EsignBackend.Models.Tools
         public int? SubProject { get; set; }
         public string CustomerIdNumber { get; set; }
         public int CertificateStatus { get; set; }
-        public double CertificateIssuer { get; set; }
-        public double CustomerIdentifier { get; set; }
+        public string CertificateIssuer { get; set; }
+        public string CustomerIdentifier { get; set; }
         public DateTime? StartExpDate { get; set; }
         public DateTime? EndExpDate { get; set; }
         public DateTime? StartIssueDate { get; set; }
