@@ -184,7 +184,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
             && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
             && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
-            && ((certificateAdvancedSearch.CustomerIdNumber == "0") || (cer.RelatedCustomer != null && (cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim())))
+            && ( string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && (cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim())))
             && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
             && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
             && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || cer.Identify == certificateAdvancedSearch.CustomerIdentifier)
