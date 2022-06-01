@@ -23,7 +23,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         private readonly ILogger _logger;
         private readonly ICash _cash;
         private static object _locker = new object();
-        private const int UNLIMITED = -1; 
+        private const int UNLIMITED = -1;
         private IServiceScopeFactory _scopeFactory;
 
         public CertificatesService(AppDbContext context, ILogger logger, ICash cash, IServiceScopeFactory scopeFactory)
@@ -152,24 +152,25 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             var certificatesIds = _context.Certificates.Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCustomer)
+                .Include(cer => cer.RelatedCustomerIdentifier)
                 .Where(cer =>
-            (
+
             ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
             && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
             && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
             && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
-            && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null &&
-            cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
+            && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
             && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
             && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
-            && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || cer.Identify == certificateAdvancedSearch.CustomerIdentifier)
+            && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
             && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
             && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
             && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
-            && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
+            && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)            
             && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
             && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
-            )).Select(x => x.Id).ToHashSet();
+
+            ).Select(x => x.Id).ToHashSet();
 
             serviceRespone.Amount = certificatesIds.Count();
             var certificatesIdList = take == UNLIMITED ? certificatesIds.Skip(skip).ToList() : certificatesIds.Skip(skip).Take(take).ToList();
@@ -193,7 +194,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             return serviceRespone;
         }
 
-        
+
 
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
@@ -324,7 +325,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             using var scope = _scopeFactory.CreateScope();
             {
-                var dependencyService = scope.ServiceProvider.GetService<IAppDbContext>();                
+                var dependencyService = scope.ServiceProvider.GetService<IAppDbContext>();
                 var chosenCertificate = dependencyService.Certificates
                     .Include(cer => cer.RelatedCertificateissuer)
                     .Include(cer => cer.RelatedCertificatesstatus)
@@ -373,15 +374,14 @@ namespace EsignBackend.Services.MainServices.Certificates
                 worksheet.Cell(currentRow, 12).Value = "חברה";
                 worksheet.Cell(currentRow, 13).Value = "מספר ח.פ";
                 worksheet.Cell(currentRow, 14).Value = "אימייל";
-                worksheet.Cell(currentRow, 15).Value = "מספר דרכון";
-                worksheet.Cell(currentRow, 17).Value = "מספר רישיון";
-                worksheet.Cell(currentRow, 18).Value = "חותם";
-                worksheet.Cell(currentRow, 19).Value = "שאלת אבטחה";
-                worksheet.Cell(currentRow, 20).Value = "תשובת אבטחה";
-                worksheet.Cell(currentRow, 21).Value = "הערות";
-                worksheet.Cell(currentRow, 22).Value = "עבודה";
-                worksheet.Cell(currentRow, 23).Value = "תאריך הנפקה";
-                worksheet.Cell(currentRow, 24).Value = "תאריך תפוגה";
+                worksheet.Cell(currentRow, 15).Value = "מספר דרכון";                
+                worksheet.Cell(currentRow, 16).Value = "מספר רישיון";                
+                worksheet.Cell(currentRow, 17).Value = "שאלת אבטחה";
+                worksheet.Cell(currentRow, 18).Value = "תשובת אבטחה";
+                worksheet.Cell(currentRow, 19).Value = "הערות";
+                worksheet.Cell(currentRow, 20).Value = "עבודה";
+                worksheet.Cell(currentRow, 21).Value = "תאריך הנפקה";
+                worksheet.Cell(currentRow, 22).Value = "תאריך תפוגה";
                 foreach (var certificate in certificateDetails)
                 {
                     currentRow++;
@@ -389,25 +389,24 @@ namespace EsignBackend.Services.MainServices.Certificates
                     worksheet.Cell(currentRow, 2).Value = certificate.Docstype?.Title;
                     worksheet.Cell(currentRow, 3).Value = certificate.Project?.Title;
                     worksheet.Cell(currentRow, 4).Value = certificate.SubProject?.Title;
-                    worksheet.Cell(currentRow, 5).Value = certificate.Expiredate;
+                    worksheet.Cell(currentRow, 5).Value = certificate.Smartobject?.Title;
                     worksheet.Cell(currentRow, 6).Value = certificate.Certificatesstatus?.Title;
-                    worksheet.Cell(currentRow, 7).Value = certificate.CustomerId;
+                    worksheet.Cell(currentRow, 7).Value = certificate.RelatedCustomerIdentifier?.Title;
                     worksheet.Cell(currentRow, 8).Value = certificate.CustomerName;
                     worksheet.Cell(currentRow, 9).Value = certificate.CertificateIssuer?.Title;
                     worksheet.Cell(currentRow, 10).Value = certificate.CertificateLocation?.Title;
-                    worksheet.Cell(currentRow, 11).Value = certificate.CustomerIdentifierId;
+                    worksheet.Cell(currentRow, 11).Value = certificate.RelatedCustomerIdentifier?.Id;
                     worksheet.Cell(currentRow, 12).Value = certificate.Company;
                     worksheet.Cell(currentRow, 13).Value = certificate.Hpnumber;
                     worksheet.Cell(currentRow, 14).Value = certificate.Email;
-                    worksheet.Cell(currentRow, 15).Value = certificate.Passportid;
-                    worksheet.Cell(currentRow, 17).Value = certificate.Licenseid;
-                    worksheet.Cell(currentRow, 18).Value = certificate.Signer;
-                    worksheet.Cell(currentRow, 19).Value = certificate.RelatedSecurityQuestion.Title;
-                    worksheet.Cell(currentRow, 20).Value = certificate.Securityanswer;
-                    worksheet.Cell(currentRow, 21).Value = certificate.Remarks;
-                    worksheet.Cell(currentRow, 22).Value = certificate.Job;
-                    worksheet.Cell(currentRow, 23).Value = certificate.Issuedate;
-                    worksheet.Cell(currentRow, 24).Value = certificate.Expiredate;
+                    worksheet.Cell(currentRow, 15).Value = certificate.Passportid;                    
+                    worksheet.Cell(currentRow, 16).Value = certificate.Licenseid;                    
+                    worksheet.Cell(currentRow, 17).Value = certificate.RelatedSecurityQuestion.Title;
+                    worksheet.Cell(currentRow, 18).Value = certificate.Securityanswer;
+                    worksheet.Cell(currentRow, 19).Value = certificate.Remarks;
+                    worksheet.Cell(currentRow, 20).Value = certificate.Job;
+                    worksheet.Cell(currentRow, 21).Value = certificate.Issuedate;
+                    worksheet.Cell(currentRow, 22).Value = certificate.Expiredate;
                 }
 
                 using (var stream = new MemoryStream())
@@ -415,7 +414,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                     workbook.SaveAs(stream);
                     var content = stream.ToArray();
                     return content;
-                    
+
                 }
             }
         }
