@@ -6,12 +6,11 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
-
 #nullable disable
 
 namespace EsignBackend.Models
 {
-    public partial class AppDbContext : DbContext
+    public partial class AppDbContext : DbContext ,IAppDbContext 
     {
         public AppDbContext()
         {
@@ -23,36 +22,36 @@ namespace EsignBackend.Models
         {
         }
 
-        public virtual DbSet<Attachment> Attachments { get; set; }
-        public virtual DbSet<Budesign> Budesigns { get; set; }
-        public virtual DbSet<Bulanguage> Bulanguages { get; set; }
-        public virtual DbSet<Bumodule> Bumodules { get; set; }
-        public virtual DbSet<Bumodulecoderep> Bumodulecodereps { get; set; }
-        public virtual DbSet<Bumodulefield> Bumodulefields { get; set; }
-        public virtual DbSet<Busetting> Busettings { get; set; }
-        public virtual DbSet<Buuser> Buusers { get; set; }
-        public virtual DbSet<Callpriority> Callpriorities { get; set; }
-        public virtual DbSet<Callstatus> Callstatuses { get; set; }
-        public virtual DbSet<Certificate> Certificates { get; set; }
-        public virtual DbSet<Certificatermeark> Certificatermearks { get; set; }
-        public virtual DbSet<Certificateshistory> Certificateshistories { get; set; }
-        public virtual DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
-       // public virtual DbSet<Character> Characters { get; set; }
-        public virtual DbSet<Custident> Custidents { get; set; }
-        public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<Departmant> Departmants { get; set; }
-        public virtual DbSet<Docstype> Docstypes { get; set; }
-        public virtual DbSet<Expirationtype> Expirationtypes { get; set; }
-        public virtual DbSet<Isscert> Isscerts { get; set; }
-        public virtual DbSet<Issplace> Issplaces { get; set; }
-        public virtual DbSet<Progressreport> Progressreports { get; set; }
-        public virtual DbSet<Project> Projects { get; set; }
-        public virtual DbSet<Securityquestion> Securityquestions { get; set; }
-        public virtual DbSet<Smartobject> Smartobjects { get; set; }
-        public virtual DbSet<Subproject> Subprojects { get; set; }
-        public virtual DbSet<Ticket> Tickets { get; set; }
-        public virtual DbSet<Userview> Userviews { get; set; }
-
+        public  DbSet<Attachment> Attachments { get; set; }
+        public  DbSet<Budesign> Budesigns { get; set; }
+        public  DbSet<Bulanguage> Bulanguages { get; set; }
+        public  DbSet<Bumodule> Bumodules { get; set; }
+        public  DbSet<Bumodulecoderep> Bumodulecodereps { get; set; }
+        public  DbSet<Bumodulefield> Bumodulefields { get; set; }
+        public  DbSet<Busetting> Busettings { get; set; }
+        public  DbSet<Buuser> Buusers { get; set; }
+        public  DbSet<Callpriority> Callpriorities { get; set; }
+        public  DbSet<Callstatus> Callstatuses { get; set; }
+        public  DbSet<Certificate> Certificates { get; set; }
+        public  DbSet<Certificatermeark> Certificatermearks { get; set; }
+        public  DbSet<Certificateshistory> Certificateshistories { get; set; }
+        public  DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
+       // publial DbSet<Character> Characters { get; set; }
+        public  DbSet<Custident> Custidents { get; set; }
+        public  DbSet<Customer> Customers { get; set; }
+        public  DbSet<Departmant> Departmants { get; set; }
+        public  DbSet<Docstype> Docstypes { get; set; }
+        public  DbSet<Expirationtype> Expirationtypes { get; set; }
+        public  DbSet<Isscert> Isscerts { get; set; }
+        public  DbSet<Issplace> Issplaces { get; set; }
+        public  DbSet<Progressreport> Progressreports { get; set; }
+        public  DbSet<Project> Projects { get; set; }
+        public  DbSet<Securityquestion> Securityquestions { get; set; }
+        public  DbSet<Smartobject> Smartobjects { get; set; }
+        public  DbSet<Subproject> Subprojects { get; set; }
+        public  DbSet<Ticket> Tickets { get; set; }
+        public  DbSet<Userview> Userviews { get; set; }
+       
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -1186,6 +1185,8 @@ namespace EsignBackend.Models
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        
     }
 
 }

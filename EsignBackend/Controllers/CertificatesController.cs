@@ -7,6 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
@@ -65,8 +66,27 @@ namespace EsignBackend.Controllers
         public async Task<IActionResult> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCertificates");
-            return Ok(await _certificatesService.SearchCertificates(certificateAdvancedSearch,skip, take));
+            var response = await _certificatesService.SearchCertificates(certificateAdvancedSearch, skip, take);
+
+            return Ok(response);
+            
         }
+
+        [HttpPost("export")]
+        public async Task<IActionResult> ExportCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
+        {
+            _logger.Debug("ExportCertificates");
+            var response = await _certificatesService.SearchCertificates(certificateAdvancedSearch, skip, take);
+
+            var fileContent = _certificatesService.GenerateXlsxFile(response.Data);
+            Response.Headers.Add("x-file-name", WebUtility.UrlEncode($"certificates_{DateTime.Now.Date.ToString("dd-MM-yyyy")}.xlsx"));
+
+            return File(
+                fileContent,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"certificates_{DateTime.Now.Date}.xlsx");
+        }
+
         [HttpGet ("CheckSecurityAnswer")]
         public async Task<IActionResult> CheckSecurityAnswer(int cerId, string secAns, int question)
         {

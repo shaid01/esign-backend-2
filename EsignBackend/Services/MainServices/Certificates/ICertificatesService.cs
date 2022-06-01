@@ -15,9 +15,11 @@ namespace EsignBackend.Services.MainServices.Certificates
         Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate);      
         Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId);
         Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId);        
-        Task<ServiceResponse<List<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take);
+        Task<ServiceResponse<IEnumerable<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take);
         Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns,int question);
         Task<ServiceResponse<int>> AddCertificate(Certificate certificate);
         Task<ServiceResponse<int>> UpdateExpiredCertificates();
+        byte[] GenerateXlsxFile(IEnumerable<CertificateDetailsDTO> certificateDetails);
+
     }
 }

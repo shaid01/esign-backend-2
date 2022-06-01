@@ -4,12 +4,16 @@ using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace EsignBackend.Services.MainServices.Certificates
 {
@@ -19,44 +23,15 @@ namespace EsignBackend.Services.MainServices.Certificates
         private readonly ILogger _logger;
         private readonly ICash _cash;
         private static object _locker = new object();
-        private const int UNLIMITED = -1;
+        private const int UNLIMITED = -1; 
+        private IServiceScopeFactory _scopeFactory;
 
-        public CertificatesService(AppDbContext context, ILogger logger, ICash cash)
+        public CertificatesService(AppDbContext context, ILogger logger, ICash cash, IServiceScopeFactory scopeFactory)
         {
             _context = context;
             _logger = logger;
             _cash = cash;
-        }
-
-        private CertificateDetails GenerateCertificateDetailsFromId(double cerId)
-        {
-            _logger.Debug("GenerateCertificateDetailsFromId");
-            var chosenCertificate = _context.Certificates
-                .Include(cer => cer.RelatedCertificateissuer)
-                .Include(cer => cer.RelatedCertificatesstatus)
-                .Include(cer => cer.RelatedCustomer)
-                .Include(cer => cer.RelatedCustomerIdentifier)
-                .Include(cer => cer.RelatedDocsType)
-                .Include(cer => cer.RelatedExpiration)
-                .Include(cer => cer.RelatedIssuerPlace)
-                .Include(cer => cer.RelatedProject)
-                .Include(cer => cer.RelatedSecurityquestion)
-                .Include(cer => cer.RelatedSmartObject)
-                .Include(cer => cer.RelatedSubProject)
-                .Where(cer => cer.Id.Equals(Convert.ToInt32(cerId))).FirstOrDefault();
-
-            var certificate = new CertificateDetails(chosenCertificate);
-            return certificate;
-        }
-
-        private int GenerateCertificateId()
-        {
-            _logger.Debug("GenerateCertificateId");
-            lock (_locker)
-            {
-                int maxId = _context.Certificates.OrderByDescending(cer => cer.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
+            _scopeFactory = scopeFactory;
         }
 
         public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
@@ -83,7 +58,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             return serviceResponse;
         }
-
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take)
         {
             _logger.Debug("GetCertificatesDetailsUpdate");
@@ -113,7 +87,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             serviceResponse.Data = certificateDetailsList;
             return serviceResponse;
         }
-
         public async Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId)
         {
             _logger.Debug("GetHistoryCertificates");
@@ -172,41 +145,56 @@ namespace EsignBackend.Services.MainServices.Certificates
             serviceResponse.Data = customerCertificateList;
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
+        public async Task<ServiceResponse<IEnumerable<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCertificates");
-            var serviceRespone = new ServiceResponse<List<CertificateDetailsDTO>>();
+            var serviceRespone = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
 
             var certificatesIds = _context.Certificates.Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCustomer)
                 .Where(cer =>
+            (
             ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
             && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
             && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
             && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
-            && ( string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && (cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim())))
+            && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null &&
+            cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
             && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
-            && ( string.IsNullOrWhiteSpace(certificateAdvancedSearch.CertificateIssuer)  || cer.Certificateissuer.ToString() == certificateAdvancedSearch.CertificateIssuer)
-            && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdentifier) || cer.Identify.ToString() == certificateAdvancedSearch.CustomerIdentifier)
+            && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
+            && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || cer.Identify == certificateAdvancedSearch.CustomerIdentifier)
             && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
             && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
             && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
             && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
-            && (certificateAdvancedSearch.CustomerName == null || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
-            && (certificateAdvancedSearch.CustomerLastName == null || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
-            ).Select(x => x.Id).ToHashSet();
+            && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
+            && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
+            )).Select(x => x.Id).ToHashSet();
 
             serviceRespone.Amount = certificatesIds.Count();
             var certificatesIdList = take == UNLIMITED ? certificatesIds.Skip(skip).ToList() : certificatesIds.Skip(skip).Take(take).ToList();
             _logger.Debug("Start converting the certificates to certificateDetails object");
-            var certificateDetailsList = new List<CertificateDetailsDTO>();
-            foreach (Double cerId in certificatesIdList)
-            {
-                certificateDetailsList.Add(new CertificateDetailsDTO(GenerateCertificateDetailsFromId(cerId)));
-            }
-            serviceRespone.Data = certificateDetailsList;
+            var certificateDetails = new ConcurrentBag<CertificateDetailsDTO>();
+
+            Parallel.For(0, certificatesIdList.Count(),
+                    index =>
+                    {
+                        try
+                        {
+                            certificateDetails.Add(new CertificateDetailsDTO(GenerateCertificateDetailsFromId(certificatesIdList[index])));
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesIdList[index]}");
+                        }
+                    });
+            serviceRespone.Data = certificateDetails;
+
             return serviceRespone;
         }
+
+        
+
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
             _logger.Debug("CheckSecurityAnswer");
@@ -306,5 +294,131 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
         }
 
+        #region Private Functions
+
+        private List<Certificate> GetCertificateDbList(int offset, int limit)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            {
+                var dependencyService = scope.ServiceProvider.GetService<IAppDbContext>();
+                var certificates = dependencyService.Certificates
+                .Include(cer => cer.RelatedCertificateissuer)
+                .Include(cer => cer.RelatedCertificatesstatus)
+                .Include(cer => cer.RelatedCustomer)
+                .Include(cer => cer.RelatedCustomerIdentifier)
+                .Include(cer => cer.RelatedDocsType)
+                .Include(cer => cer.RelatedExpiration)
+                .Include(cer => cer.RelatedIssuerPlace)
+                .Include(cer => cer.RelatedProject)
+                .Include(cer => cer.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedSmartObject)
+                .Include(cer => cer.RelatedSubProject).Skip(offset).Take(limit).ToList();
+
+                return certificates;
+            }
+        }
+
+        private CertificateDetails GenerateCertificateDetailsFromId(double cerId)
+        {
+            _logger.Debug("GenerateCertificateDetailsFromId");
+
+            using var scope = _scopeFactory.CreateScope();
+            {
+                var dependencyService = scope.ServiceProvider.GetService<IAppDbContext>();                
+                var chosenCertificate = dependencyService.Certificates
+                    .Include(cer => cer.RelatedCertificateissuer)
+                    .Include(cer => cer.RelatedCertificatesstatus)
+                    .Include(cer => cer.RelatedCustomer)
+                    .Include(cer => cer.RelatedCustomerIdentifier)
+                    .Include(cer => cer.RelatedDocsType)
+                    .Include(cer => cer.RelatedExpiration)
+                    .Include(cer => cer.RelatedIssuerPlace)
+                    .Include(cer => cer.RelatedProject)
+                    .Include(cer => cer.RelatedSecurityquestion)
+                    .Include(cer => cer.RelatedSmartObject)
+                    .Include(cer => cer.RelatedSubProject)
+                    .FirstOrDefault(cer => cer.Id.Equals(Convert.ToInt32(cerId)));
+
+                var certificate = new CertificateDetails(chosenCertificate);
+                return certificate;
+            }
+        }
+        private int GenerateCertificateId()
+        {
+            _logger.Debug("GenerateCertificateId");
+            lock (_locker)
+            {
+                int maxId = _context.Certificates.OrderByDescending(cer => cer.Id).Take(1).ToList()[0].Id;
+                return maxId + 1;
+            }
+        }
+
+        public byte[] GenerateXlsxFile(IEnumerable<CertificateDetailsDTO> certificateDetails)
+        {
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Certificates");
+                var currentRow = 1;
+                worksheet.Cell(currentRow, 1).Value = "מספר מזהה";
+                worksheet.Cell(currentRow, 2).Value = "סוג תעודה";
+                worksheet.Cell(currentRow, 3).Value = "פרויקט";
+                worksheet.Cell(currentRow, 4).Value = "תת פרויקט";
+                worksheet.Cell(currentRow, 5).Value = "רכיב חכם";
+                worksheet.Cell(currentRow, 6).Value = "סטאטוס תעודה";
+                worksheet.Cell(currentRow, 7).Value = "מזהה לקוח";
+                worksheet.Cell(currentRow, 8).Value = "שם לקוח";
+                worksheet.Cell(currentRow, 9).Value = "מנפיק תעודה";
+                worksheet.Cell(currentRow, 10).Value = "מיקום הנפקה";
+                worksheet.Cell(currentRow, 11).Value = "מזהה לקוח ייחודי";
+                worksheet.Cell(currentRow, 12).Value = "חברה";
+                worksheet.Cell(currentRow, 13).Value = "מספר ח.פ";
+                worksheet.Cell(currentRow, 14).Value = "אימייל";
+                worksheet.Cell(currentRow, 15).Value = "מספר דרכון";
+                worksheet.Cell(currentRow, 17).Value = "מספר רישיון";
+                worksheet.Cell(currentRow, 18).Value = "חותם";
+                worksheet.Cell(currentRow, 19).Value = "שאלת אבטחה";
+                worksheet.Cell(currentRow, 20).Value = "תשובת אבטחה";
+                worksheet.Cell(currentRow, 21).Value = "הערות";
+                worksheet.Cell(currentRow, 22).Value = "עבודה";
+                worksheet.Cell(currentRow, 23).Value = "תאריך הנפקה";
+                worksheet.Cell(currentRow, 24).Value = "תאריך תפוגה";
+                foreach (var certificate in certificateDetails)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = certificate.Id;
+                    worksheet.Cell(currentRow, 2).Value = certificate.Docstype?.Title;
+                    worksheet.Cell(currentRow, 3).Value = certificate.Project?.Title;
+                    worksheet.Cell(currentRow, 4).Value = certificate.SubProject?.Title;
+                    worksheet.Cell(currentRow, 5).Value = certificate.Expiredate;
+                    worksheet.Cell(currentRow, 6).Value = certificate.Certificatesstatus?.Title;
+                    worksheet.Cell(currentRow, 7).Value = certificate.CustomerId;
+                    worksheet.Cell(currentRow, 8).Value = certificate.CustomerName;
+                    worksheet.Cell(currentRow, 9).Value = certificate.CertificateIssuer?.Title;
+                    worksheet.Cell(currentRow, 10).Value = certificate.CertificateLocation?.Title;
+                    worksheet.Cell(currentRow, 11).Value = certificate.CustomerIdentifierId;
+                    worksheet.Cell(currentRow, 12).Value = certificate.Company;
+                    worksheet.Cell(currentRow, 13).Value = certificate.Hpnumber;
+                    worksheet.Cell(currentRow, 14).Value = certificate.Email;
+                    worksheet.Cell(currentRow, 15).Value = certificate.Passportid;
+                    worksheet.Cell(currentRow, 17).Value = certificate.Licenseid;
+                    worksheet.Cell(currentRow, 18).Value = certificate.Signer;
+                    worksheet.Cell(currentRow, 19).Value = certificate.RelatedSecurityQuestion.Title;
+                    worksheet.Cell(currentRow, 20).Value = certificate.Securityanswer;
+                    worksheet.Cell(currentRow, 21).Value = certificate.Remarks;
+                    worksheet.Cell(currentRow, 22).Value = certificate.Job;
+                    worksheet.Cell(currentRow, 23).Value = certificate.Issuedate;
+                    worksheet.Cell(currentRow, 24).Value = certificate.Expiredate;
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+                    return content;
+                    
+                }
+            }
+        }
+        #endregion
     }
 }

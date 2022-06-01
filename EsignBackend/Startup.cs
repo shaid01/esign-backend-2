@@ -115,6 +115,7 @@ namespace EsignBackend
             services.AddScoped<ICertificateIssuerService, CertificateIssuerService>();
             services.AddScoped<IIssueLocationService, IssueLocationService>();
             services.AddScoped<ICertificatesService, CertificatesService>();
+            services.AddScoped<IAppDbContext, AppDbContext>();
 
             services.AddSingleton<ICash, CashHandler>();
 
@@ -162,7 +163,7 @@ namespace EsignBackend
                 //builder.WithOrigins("http://localhost:81");
                 builder.AllowAnyOrigin();
                 builder.AllowAnyMethod();
-                builder.AllowAnyHeader();
+                builder.AllowAnyHeader().WithExposedHeaders("x-file-name");
               //  builder.AllowCredentials();
             });
 

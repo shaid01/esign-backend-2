@@ -31,6 +31,10 @@ namespace EsignBackend.Extensions.EncryptDecrypt
 
         public static string decryptSecurityAns(string encryptedSecurityAns)
         {
+            if (string.IsNullOrWhiteSpace(encryptedSecurityAns))
+            {
+                return encryptedSecurityAns;
+            }
             var aes = new AspRijndael();
             var decPhase2 = aes.DecryptData(encryptedSecurityAns, DPAPI.GetPhase2Password());
             var decPhase1 = ESignEncrypt.Decrypt(decPhase2, DPAPI.GetPhase1Password());
