@@ -15,7 +15,7 @@ namespace EsignBackend.Services.SettingsService
         Task<ServiceResponse<int>> UpdateSubproject(Subproject updatedSubproject);
         Task<ServiceResponse<int>> AddNewProject(Project newProject);
         Task<ServiceResponse<int>> AddNewSubroject(Subproject newSubproject);
-        Task<ServiceResponse<List<SubprojectDTO>>> GetAllSubprojects();
+        Task<ServiceResponse<List<SubprojectDTO>>> GetAllSubprojects(int projectId = -1);
 
         Task<ServiceResponse<List<ProjectDTO>>> GetProjectsInRange(int skip, int take);
     }

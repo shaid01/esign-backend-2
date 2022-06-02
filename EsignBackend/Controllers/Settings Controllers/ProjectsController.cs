@@ -65,9 +65,9 @@ namespace EsignBackend.Controllers
         }
 
         [HttpGet("GetAllSubprojects")]
-        public async Task<IActionResult> GetAllSubprojects()
+        public async Task<IActionResult> GetAllSubprojects(int projectId = -1)
         {
-            return Ok(await _projectsService.GetAllSubprojects());
+            return Ok(await _projectsService.GetAllSubprojects(projectId));
         }
     }
 }

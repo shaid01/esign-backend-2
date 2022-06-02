@@ -77,7 +77,6 @@ namespace EsignBackend.Controllers
         {
             _logger.Debug("ExportCertificates");
             var response = await _certificatesService.SearchCertificates(certificateAdvancedSearch, skip, take);
-
             var fileContent = _certificatesService.GenerateXlsxFile(response.Data);
             Response.Headers.Add("x-file-name", WebUtility.UrlEncode($"certificates_{DateTime.Now.Date.ToString("dd-MM-yyyy")}.xlsx"));
 
