@@ -203,7 +203,7 @@ namespace EsignBackend.Services.SettingsService
             {
                 outputList.Add(new SubprojectDTO(sp));
             }
-            serviceResponse.Amount = _context.Subprojects.Count();
+            serviceResponse.Amount = outputList.Count();
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
