@@ -23,7 +23,7 @@ namespace EsignBackend.Validation
             RuleFor(x => x.Docstype).NotEmpty().WithMessage("Identification document is missing");
             RuleFor(x => x.Securityquestion).NotEmpty().WithMessage("חסרה שאלת אבטחה");
             RuleFor(x => x.Securityansware).NotEmpty().WithMessage("תשובה לשאלת אבטחה חסרה");
-            RuleFor(x => x.Issuerplace).NotEmpty().WithMessage("מיקום הנפקה חסר");
+            RuleFor(x => x.Issuerplace).NotEmpty().When(x=> x.Certificatestatus !=7 && x.Certificatestatus !=11).WithMessage("מיקום הנפקה חסר");
             RuleFor(x => x.Certificateissuer).NotEmpty().WithMessage("מנפיק תעודה חסר");
             RuleFor(x => x.Identify).NotEmpty().WithMessage("מזהה הלקוח חסר");
             RuleFor(x => x.Licenceid).Matches(@"^[0-9]*$").WithMessage("מספר רישיון לא תקין");
