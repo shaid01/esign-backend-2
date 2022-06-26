@@ -243,7 +243,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             {
                 var certificateStatus = cert.Id;
                 var now = DateTime.Now.ToLocalTime();
-                var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now).ToListAsync();
+                var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now && x.Certificatestatus != certificateStatus).ToListAsync();
                 foreach (Certificate c in expiredCertificates)
                 {
                     c.Certificatestatus = certificateStatus;
