@@ -236,7 +236,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         }
         public async Task<ServiceResponse<int>> UpdateExpiredCertificates()
         {
-            _logger.Debug("UpdateExpiredCertificates");
+            _logger.Debug("Hangfire Job - *************** UpdateExpiredCertificates ***************");
             var cert = _context.Certificatesstatuses.FirstOrDefault(cer => cer.Title.Equals("פג תוקף"));
             var serviceRespone = new ServiceResponse<int>();
             if (cert != null)
