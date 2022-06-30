@@ -27,6 +27,9 @@ namespace EsignBackend.Models.DTOs
             Address = customer.Address;
             Email = customer.Email;
             Company = customer.Company;
+            //TODO after alex update db table 
+            //and than:
+            //IsConfirmMarketingMailing = customer.IsConfirmMarketingMailing;
         }
         public int Id { get; set; }
         public string Idnumber { get; set; }
@@ -43,5 +46,7 @@ namespace EsignBackend.Models.DTOs
         public string Address { get; set; }
         public string Email { get; set; }
         public string Company { get; set; }
+        public bool IsConfirmMarketingMailing { get; set; }
+
     }
 }

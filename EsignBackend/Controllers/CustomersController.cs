@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
 using EsignBackend.Services.CharacterService;
 using Microsoft.AspNetCore.Authorization;
@@ -45,10 +46,11 @@ namespace EsignBackend.Controllers
             return Ok(await _customersService.GetSecurityQuestions());
         }
         [HttpPut("UpdateCustomer")]
-        public async Task<IActionResult> UpdateUser(Customer updatedCustomer)
+        public async Task<IActionResult> UpdateUser(CustomerDTO updatedCustomer)
         {
             _logger.Debug("UpdateUser");
-            return Ok(await _customersService.UpdateCustomer(updatedCustomer));
+            var customer = new Customer(updatedCustomer);
+            return Ok(await _customersService.UpdateCustomer(customer));
         }
         [HttpPost("SearchCustomers")]
         public async Task<IActionResult> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
