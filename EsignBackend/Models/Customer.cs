@@ -16,7 +16,7 @@ namespace EsignBackend.Models
         public string Lastname { get; set; }
         public string Phone1 { get; set; }
         public string Mobile1 { get; set; }
-        [Column(TypeName = "float")]
+        //[Column(TypeName = "float")]
         public int? Securityquestion { get; set; }
         public virtual Securityquestion RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
