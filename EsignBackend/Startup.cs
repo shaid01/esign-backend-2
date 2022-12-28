@@ -97,27 +97,8 @@ namespace EsignBackend
                 });
             services.AddHttpContextAccessor();
 
+            services.AddHandlers(env);
             // services.AddScoped<ICharacterService, CharacterService>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<IUsersService, UserService>();
-            services.AddScoped<ICustomersService, CustomersService>();
-            services.AddScoped<IProjectsService, ProjectsService>();
-            services.AddScoped<ICertificatesstatusService, CertificatesstatusService>();
-            services.AddScoped<ISmartObjectService, SmartObjectService>();
-            services.AddScoped<IExpirationTypeService, ExpirationTypeService>();
-            services.AddScoped<ICertificateRemarksService, CertificateRemarksService>();
-            services.AddScoped<ISecurityQuestionsService, SecurityQuestionsService>();
-            services.AddScoped<ICallStatusService, CallStatusService>();
-            services.AddScoped<IDepartmentsService, DepartmentsService>();
-            services.AddScoped<IIdentificationDocumentService, IdentificationDocumentService>();
-            services.AddScoped<ICallsPriorityService, CallsPriorityService>();
-            services.AddScoped<ICustomerIdentifierService, CustomerIdentifierService>();
-            services.AddScoped<ICertificateIssuerService, CertificateIssuerService>();
-            services.AddScoped<IIssueLocationService, IssueLocationService>();
-            services.AddScoped<ICertificatesService, CertificatesService>();
-            services.AddScoped<IAppDbContext, AppDbContext>();
-
-            services.AddSingleton<ICash, CashHandler>();
 
             var configuration = new ConfigurationBuilder()
                               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)                           
@@ -167,13 +148,12 @@ namespace EsignBackend
               //  builder.AllowCredentials();
             });
 
-
-
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseAuthentication();
 
-            app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseErrorHandlingMiddleware();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

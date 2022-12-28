@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Serilog;
 using System;
@@ -67,5 +68,14 @@ namespace EsignBackend.Middlewares
             return $"{request.Method} - {request.Scheme}://{request.Host}{request.Path} {request.QueryString} {Environment.NewLine}{bodyAsText}";
         }
 
+    }
+
+    public static class ErrorHandlingMiddlewareExtentions
+    {
+        public static IApplicationBuilder UseErrorHandlingMiddleware(
+            this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<ErrorHandlingMiddleware>();
+        }
     }
 }
