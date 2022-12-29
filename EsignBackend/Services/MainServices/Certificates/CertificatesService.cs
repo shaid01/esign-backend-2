@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using ClosedXML.Excel;
 using System.IO;
+using System.Collections;
 
 namespace EsignBackend.Services.MainServices.Certificates
 {
@@ -166,7 +167,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
             && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
             && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
-            && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)            
+            && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
             && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
             && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
 
@@ -374,8 +375,8 @@ namespace EsignBackend.Services.MainServices.Certificates
                 worksheet.Cell(currentRow, 12).Value = "חברה";
                 worksheet.Cell(currentRow, 13).Value = "מספר ח.פ";
                 worksheet.Cell(currentRow, 14).Value = "אימייל";
-                worksheet.Cell(currentRow, 15).Value = "מספר דרכון";                
-                worksheet.Cell(currentRow, 16).Value = "מספר רישיון";                
+                worksheet.Cell(currentRow, 15).Value = "מספר דרכון";
+                worksheet.Cell(currentRow, 16).Value = "מספר רישיון";
                 worksheet.Cell(currentRow, 17).Value = "שאלת אבטחה";
                 worksheet.Cell(currentRow, 18).Value = "תשובת אבטחה";
                 worksheet.Cell(currentRow, 19).Value = "הערות";
@@ -384,6 +385,11 @@ namespace EsignBackend.Services.MainServices.Certificates
                 worksheet.Cell(currentRow, 22).Value = "תאריך תפוגה";
                 foreach (var certificate in certificateDetails)
                 {
+                    if (!IsCertificateValid(certificate))
+                    {
+                        throw new Exception("Suspected CSV injection");
+                        break;
+                    }
                     currentRow++;
                     worksheet.Cell(currentRow, 1).Value = certificate.Id;
                     worksheet.Cell(currentRow, 2).Value = certificate.Docstype?.Title;
@@ -399,8 +405,8 @@ namespace EsignBackend.Services.MainServices.Certificates
                     worksheet.Cell(currentRow, 12).Value = certificate.Company;
                     worksheet.Cell(currentRow, 13).Value = certificate.Hpnumber;
                     worksheet.Cell(currentRow, 14).Value = certificate.Email;
-                    worksheet.Cell(currentRow, 15).Value = certificate.Passportid;                    
-                    worksheet.Cell(currentRow, 16).Value = certificate.Licenseid;                    
+                    worksheet.Cell(currentRow, 15).Value = certificate.Passportid;
+                    worksheet.Cell(currentRow, 16).Value = certificate.Licenseid;
                     worksheet.Cell(currentRow, 17).Value = certificate.RelatedSecurityQuestion.Title;
                     worksheet.Cell(currentRow, 18).Value = certificate.Securityanswer;
                     worksheet.Cell(currentRow, 19).Value = certificate.Remarks;
@@ -414,10 +420,56 @@ namespace EsignBackend.Services.MainServices.Certificates
                     workbook.SaveAs(stream);
                     var content = stream.ToArray();
                     return content;
-
                 }
             }
         }
+
+        private bool IsCertificateValid(CertificateDetailsDTO certificate)
+        {
+            if (IsFieldValueHasInjectionPotencial(certificate.Docstype?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.Project?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.SubProject?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.Smartobject?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.Certificatesstatus?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.RelatedCustomerIdentifier?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.CustomerName) ||
+                IsFieldValueHasInjectionPotencial(certificate.CertificateIssuer?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.CertificateLocation?.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.Company) ||
+                IsFieldValueHasInjectionPotencial(certificate.Hpnumber) ||
+                IsFieldValueHasInjectionPotencial(certificate.Email) ||
+                IsFieldValueHasInjectionPotencial(certificate.Passportid) ||
+                IsFieldValueHasInjectionPotencial(certificate.Licenseid) ||
+                IsFieldValueHasInjectionPotencial(certificate.RelatedSecurityQuestion.Title) ||
+                IsFieldValueHasInjectionPotencial(certificate.Securityanswer) ||
+                IsFieldValueHasInjectionPotencial(certificate.Remarks) ||
+                IsFieldValueHasInjectionPotencial(certificate.Job))
+                
+                return false;
+
+            return true;
+        }
+
+        private bool IsFieldValueHasInjectionPotencial(string input)
+        {
+            char doubleQuate = '"';
+            char singleQuate = '\'';
+            char comaQuate = ',';
+            char semicolonQuate = ';';
+
+            if (!Char.IsLetterOrDigit(input[0]))
+                return true;
+           else if (input.StartsWith('-') || input.StartsWith('+') || input.StartsWith('=') || input.StartsWith('@'))
+                return true;
+            else if (input.Count(c => c == doubleQuate) % 2 != 0 ||
+                input.Count(c => c == singleQuate) % 2 != 0 ||
+                input.Count(c => c == comaQuate) % 2 != 0 ||
+                input.Count(c => c == semicolonQuate) % 2 != 0)
+                return true;
+
+            return false;
+        }
+
         #endregion
     }
 }

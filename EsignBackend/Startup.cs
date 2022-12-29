@@ -109,6 +109,8 @@ namespace EsignBackend
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger());
 
+            services.AddRateLimiting(Configuration);
+
             var address = configuration.GetSection("AppSettings").GetSection("FrontURL").Value;
             services.AddCors(options =>
             {
@@ -116,18 +118,26 @@ namespace EsignBackend
                 builder => builder.WithOrigins(address)
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader()                );
+                .AllowAnyHeader()                
+                );
             });
-
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
 
             services.AddValidation();
             services.AddConfiguration(Configuration);
             services.AddSwagger();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, ICertificatesService certificatesService, IRecurringJobManager recurringJobManager, IBackgroundJobClient backgroundJobs, IWebHostEnvironment env)
         {
+            app.UseRateLimiting();
 
             if (env.IsDevelopment())
             {
@@ -139,14 +149,15 @@ namespace EsignBackend
             }
 
             app.UseCors("CorsPolicy");
-            app.UseCors(builder =>
-            {
-                //builder.WithOrigins("http://localhost:81");
-                builder.AllowAnyOrigin();
-                builder.AllowAnyMethod();
-                builder.AllowAnyHeader().WithExposedHeaders("x-file-name");
-              //  builder.AllowCredentials();
-            });
+        
+            //app.UseCors(builder =>
+            //{
+            //    builder.WithOrigins("http://localhost:81");
+            //    builder.AllowAnyOrigin();
+            //    builder.AllowAnyMethod();
+            //    builder.AllowAnyHeader().WithExposedHeaders("x-file-name");
+            //    builder.AllowCredentials();
+            //});
 
             app.UseRouting();
             app.UseHttpsRedirection();
@@ -161,8 +172,12 @@ namespace EsignBackend
                 endpoints.MapControllers();
                 endpoints.MapHangfireDashboard();
             });
+
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ESign API V1");
+            });
 
             app.UseHangfireDashboard();
             backgroundJobs.Enqueue(() => certificatesService.UpdateExpiredCertificates());
