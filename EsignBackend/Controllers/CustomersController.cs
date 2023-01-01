@@ -44,6 +44,7 @@ namespace EsignBackend.Controllers
             _logger.Debug("GetSecurityQuestions");
             return Ok(await _customersService.GetSecurityQuestions());
         }
+        [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateCustomer")]
         public async Task<IActionResult> UpdateUser(Customer updatedCustomer)
         {

@@ -71,7 +71,7 @@ namespace EsignBackend.Services.CharacterService
             {
                 _logger.Debug("user is null");
                 response.Success = false;
-                response.Message = "User Not Found";
+                response.Message = "Username or Password incorrect";
             }
             else if (!VerifyPassword(password, user.Pass))
             {
