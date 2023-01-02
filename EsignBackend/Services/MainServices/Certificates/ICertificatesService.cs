@@ -1,6 +1,7 @@
 ﻿using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 {
     public interface ICertificatesService
     {
-
+        Task<CertificateDetailsExtendedDTO> GetCertificateExtendedDetails(int id);
         Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take);
         Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate);      
         Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId);

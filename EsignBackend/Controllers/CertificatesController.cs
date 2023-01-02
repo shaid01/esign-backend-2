@@ -26,9 +26,16 @@ namespace EsignBackend.Controllers
             _logger = logger;
         }
 
-        // [Authorize]
+        [Authorize]
+        [HttpGet("GetCertificateExtendedDetails")]
+        public async Task<IActionResult> GetCertificateExtendedDetails(int id)
+        {
+            _logger.Debug("GetCertificateExtendedDetails");
+            return Ok(await _certificatesService.GetCertificateExtendedDetails(id));
+        }
+
+        [Authorize]
         [HttpGet("GetCertificatesDetails")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetCertificatesDetails(int skip, int take)
         {
             _logger.Debug("GetCertificatesDetails");

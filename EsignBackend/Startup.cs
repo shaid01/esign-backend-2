@@ -150,15 +150,6 @@ namespace EsignBackend
 
             app.UseCors("CorsPolicy");
         
-            //app.UseCors(builder =>
-            //{
-            //    builder.WithOrigins("http://localhost:81");
-            //    builder.AllowAnyOrigin();
-            //    builder.AllowAnyMethod();
-            //    builder.AllowAnyHeader().WithExposedHeaders("x-file-name");
-            //    builder.AllowCredentials();
-            //});
-
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseAuthentication();

@@ -59,14 +59,14 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take)
+
+        public async Task<CertificateDetailsExtendedDTO> GetCertificateExtendedDetails(int id)
         {
             _logger.Debug("GetCertificatesDetailsUpdate");
 
-            var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
+            var serviceResponse = new ServiceResponse<CertificateDetailsDTO>();
             serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
-            var certificateDetailsList = new List<CertificateDetailsDTO>();
-            var certificates = _context.Certificates
+            var certificate = _context.Certificates
                 .Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCertificatesstatus)
                 .Include(cer => cer.RelatedCustomer).ThenInclude(cus => cus.RelatedSecurityquestion)
@@ -77,6 +77,33 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedProject)
                 .Include(cer => cer.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedSmartObject)
+                .Include(cer => cer.RelatedSubProject)
+                .Where(x => x.Id == id)
+                .First();
+
+
+            var newCertificateDetail = new CertificateDetailsExtendedDTO(new CertificateDetails(certificate));
+            return newCertificateDetail;
+        }
+
+        public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take)
+        {
+            _logger.Debug("GetCertificatesDetailsUpdate");
+
+            var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
+            serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
+            var certificateDetailsList = new List<CertificateDetailsDTO>();
+            var certificates = _context.Certificates
+                .Include(cer => cer.RelatedCertificateissuer)
+                .Include(cer => cer.RelatedCertificatesstatus)
+                .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedCustomerIdentifier)
+                .Include(cer => cer.RelatedDocsType)
+                .Include(cer => cer.RelatedExpiration)
+                .Include(cer => cer.RelatedIssuerPlace)
+                .Include(cer => cer.RelatedProject)
+                //  .Include(cer => cer.RelatedSecurityquestion)
+                // .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
                 .Skip(skip).Take(take).ToList();
 
@@ -444,7 +471,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 IsFieldValueHasInjectionPotencial(certificate.Securityanswer) ||
                 IsFieldValueHasInjectionPotencial(certificate.Remarks) ||
                 IsFieldValueHasInjectionPotencial(certificate.Job))
-                
+
                 return false;
 
             return true;
@@ -459,7 +486,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             if (!Char.IsLetterOrDigit(input[0]))
                 return true;
-           else if (input.StartsWith('-') || input.StartsWith('+') || input.StartsWith('=') || input.StartsWith('@'))
+            else if (input.StartsWith('-') || input.StartsWith('+') || input.StartsWith('=') || input.StartsWith('@'))
                 return true;
             else if (input.Count(c => c == doubleQuate) % 2 != 0 ||
                 input.Count(c => c == singleQuate) % 2 != 0 ||
