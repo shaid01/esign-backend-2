@@ -103,7 +103,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedIssuerPlace)
                 .Include(cer => cer.RelatedProject)
                 //  .Include(cer => cer.RelatedSecurityquestion)
-                // .Include(cer => cer.RelatedSmartObject)
+                .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
                 .Skip(skip).Take(take).ToList();
 
@@ -122,30 +122,38 @@ namespace EsignBackend.Services.MainServices.Certificates
             var serviceResponse = new ServiceResponse<List<HistoryCertificateDTO>>();
             var historyCertificateDeatailsList = new List<HistoryCertificateDTO>();
 
-            var historyCertificateDeatailsUpdate = await _context.Certificateshistories
-                .Include(hc => hc.RelatedCertificate)
-                .Include(hc => hc.RelatedCertificateStatus)
-                .Include(hc => hc.RelatedCustomer)
-                .Include(hc => hc.RelatedDocsType)
-                .Include(hc => hc.RelatedExpiration)
-                .Include(hc => hc.RelatedProject)
-                .Include(hc => hc.RelatedSecurityQuestion)
-                .Include(hc => hc.RelatedSmartObject)
-                .Include(hc => hc.RelatedSubProject)
-                .Include(hc => hc.RelatedUser)
-                .Where(hc => hc.Certificateid == certificateId).ToListAsync();
-
-
-            foreach (var historyCer in historyCertificateDeatailsUpdate)
+            try
             {
-                var newHistoryCertificateDetail = new HistoryCertificateDTO(new HistoryCertificateDetails(historyCer));
-                historyCertificateDeatailsList.Add(newHistoryCertificateDetail);
-            }
+                var historyCertificateDeatailsUpdate = await _context.Certificateshistories
+                    .Include(hc => hc.RelatedCertificate)
+                    .Include(hc => hc.RelatedCertificateStatus)
+                    .Include(hc => hc.RelatedCustomer)
+                    .Include(hc => hc.RelatedDocsType)
+                    .Include(hc => hc.RelatedExpiration)
+                    .Include(hc => hc.RelatedProject)
+                    .Include(hc => hc.RelatedSecurityQuestion)
+                    .Include(hc => hc.RelatedSmartObject)
+                    .Include(hc => hc.RelatedSubProject)
+                    .Include(hc => hc.RelatedUser)
+                    .Where(hc => hc.Certificateid == certificateId).ToListAsync();
 
-            serviceResponse.Data = historyCertificateDeatailsList;
-            serviceResponse.Amount = historyCertificateDeatailsUpdate.Count();
-            return serviceResponse;
+                foreach (var historyCer in historyCertificateDeatailsUpdate)
+                {
+                    var newHistoryCertificateDetail = new HistoryCertificateDTO(new HistoryCertificateDetails(historyCer));
+                    historyCertificateDeatailsList.Add(newHistoryCertificateDetail);
+                }
+
+                serviceResponse.Data = historyCertificateDeatailsList;
+                serviceResponse.Amount = historyCertificateDeatailsUpdate.Count();
+                return serviceResponse;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
         }
+
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId)
         {
             _logger.Debug("GetCustomerCertificatesDetailsById");

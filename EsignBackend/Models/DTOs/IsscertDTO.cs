@@ -1,4 +1,6 @@
-﻿using System.Web;
+﻿using System.Composition;
+using System;
+using System.Web;
 
 namespace EsignBackend.Models.DTOs
 {
@@ -9,7 +11,8 @@ namespace EsignBackend.Models.DTOs
             if (certificateIssuer == null)
                 return;
             Id = certificateIssuer.Id;
-            Title = HttpUtility.HtmlDecode(certificateIssuer.Title);
+            var title = certificateIssuer.Title != null ? HttpUtility.HtmlDecode(certificateIssuer.Title) : String.Empty;
+            Title = title;
             Active = certificateIssuer.Active;
         }
 

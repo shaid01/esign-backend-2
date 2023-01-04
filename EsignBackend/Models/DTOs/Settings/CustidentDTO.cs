@@ -14,7 +14,8 @@ namespace EsignBackend.Models.DTOs.Settings
                 return;
 
             Id = custident.Id;
-            Title = HttpUtility.HtmlDecode(custident.Title);
+            var title = custident.Title != null ? HttpUtility.HtmlDecode(custident.Title) : String.Empty;
+            Title = title;
             Active = custident.Active;
         }
         public int Id { get; set; }

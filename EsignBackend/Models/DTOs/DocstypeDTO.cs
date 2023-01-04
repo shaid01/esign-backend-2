@@ -1,4 +1,6 @@
-﻿using System.Web;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using System;
+using System.Web;
 
 namespace EsignBackend.Models.DTOs
 {
@@ -9,7 +11,8 @@ namespace EsignBackend.Models.DTOs
             if (docstype == null)
                 return;
             Id = docstype.Id;
-            Title = HttpUtility.HtmlDecode(docstype.Title); 
+            var title = docstype.Title != null ? HttpUtility.HtmlDecode(docstype.Title) : String.Empty;
+            Title = title;
         }
         public int Id { get; set; }
         public string Title { get; set; }

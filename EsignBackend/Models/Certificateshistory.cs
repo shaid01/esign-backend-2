@@ -27,7 +27,7 @@ namespace EsignBackend.Models
         public int? Expire { get; set; }
         public virtual Expirationtype? RelatedExpiration { get; set; }
         public DateTime? Expiredate { get; set; }
-        [Column(TypeName = "float")]
+        //[Column(TypeName = "float")]
         public int Certificatestatus { get; set; }
         public virtual Certificatesstatus RelatedCertificateStatus { get; set; }
         [Column(TypeName = "float")]
@@ -46,7 +46,7 @@ namespace EsignBackend.Models
         public string Identify { get; set; }
         public string Certificateissuer { get; set; }
         public string Issuerplace { get; set; }
-        [Column(TypeName = "float")]
+        //[Column(TypeName = "float")]
         public int? Certificateid { get; set; }
         public Certificate RelatedCertificate { get; set; }
         [Column(TypeName = "float")]

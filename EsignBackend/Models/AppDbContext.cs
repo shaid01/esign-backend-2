@@ -735,7 +735,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Securityquestion).HasColumnName("securityquestion");
 
-                entity.Property(e => e.Smartobject).HasColumnName("smartobject");
+                //entity.Property(e => e.Smartobject).HasColumnName("smartobject");
 
                 entity.Property(e => e.Subproject).HasColumnName("subproject");
 

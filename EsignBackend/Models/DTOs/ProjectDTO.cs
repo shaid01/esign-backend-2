@@ -15,7 +15,8 @@ namespace EsignBackend.Models.DTOs
                 return;
             }
             Id = project.Id;
-            Title = HttpUtility.HtmlDecode(project.Title);
+            var title = project.Title != null ? HttpUtility.HtmlDecode(project.Title) : String.Empty;
+            Title = title;
         }
 
         public int Id { get; set; }

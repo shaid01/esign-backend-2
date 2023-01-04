@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace EsignBackend.Models.DTOs
 {
@@ -13,7 +14,8 @@ namespace EsignBackend.Models.DTOs
                 return;
 
             Id = certificatesstatus.Id;
-            Title = certificatesstatus.Title;
+            var title = certificatesstatus.Title != null ? HttpUtility.HtmlDecode(certificatesstatus.Title) : String.Empty;
+            Title = title;
             Color = certificatesstatus.Color;
         }
         public int Id { get; set; }
