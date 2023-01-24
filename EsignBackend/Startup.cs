@@ -44,6 +44,8 @@ using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Text.Json;
 using EsignBackend.Extensions.CashHandlers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 
 namespace EsignBackend
 {
@@ -101,7 +103,7 @@ namespace EsignBackend
             // services.AddScoped<ICharacterService, CharacterService>();
 
             var configuration = new ConfigurationBuilder()
-                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)                           
+                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                               .Build();
 
             services.AddSingleton<ILogger>(
@@ -111,14 +113,16 @@ namespace EsignBackend
 
             services.AddRateLimiting(Configuration);
 
+            services.AddResponseCaching();
+
             var address = configuration.GetSection("AppSettings").GetSection("FrontURL").Value;
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
                 builder => builder.WithOrigins(address)
-                .AllowAnyOrigin()
+                //.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader()                
+                .AllowAnyHeader()
                 );
             });
             services.AddHsts(options =>
@@ -149,7 +153,25 @@ namespace EsignBackend
             }
 
             app.UseCors("CorsPolicy");
-        
+
+            app.UseResponseCaching();
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.GetTypedHeaders().CacheControl =
+                new CacheControlHeaderValue()
+                {
+                    NoCache = true,
+                    Private = true,
+                    MaxAge = TimeSpan.FromMinutes(3)
+                };
+
+                context.Response.Headers[HeaderNames.Pragma] =
+                        new string[] { "no-cache" };
+
+                await next();
+            });
+
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseAuthentication();
@@ -157,6 +179,19 @@ namespace EsignBackend
             app.UseErrorHandlingMiddleware();
 
             app.UseAuthorization();
+
+            app.Use(async (context, next) =>
+            {
+
+                // Add if you need Swagger UI
+                context.Response.Headers.Add("Content-Security-Policy", "unsafe-eval;");
+
+                // Add if you don't need Swagger UI
+                //context.Response.Headers.Add("Content-Security-Policy", "default-src 'self';");
+
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                await next();
+            });
 
             app.UseEndpoints(endpoints =>
             {
