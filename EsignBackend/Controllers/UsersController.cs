@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
 {
-    //[Authorize(Roles = "אדמין,מנהל")]
+    [Authorize(Roles = "אדמין,מנהל")]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase

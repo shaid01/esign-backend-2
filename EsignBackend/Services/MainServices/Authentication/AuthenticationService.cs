@@ -1,4 +1,5 @@
-﻿using EsignBackend.Extensions.EncryptDecrypt;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,6 +50,7 @@ namespace EsignBackend.Services.CharacterService
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Token));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -61,8 +63,7 @@ namespace EsignBackend.Services.CharacterService
         }
         public async Task<ServiceResponse<string>> Login(string username, string password)
         {
-           
-           // password = "123456";
+            // password = "123456";
             _logger.Debug("Login");
 
             var response = new ServiceResponse<string>();
