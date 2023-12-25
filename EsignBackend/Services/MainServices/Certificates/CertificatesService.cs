@@ -188,36 +188,34 @@ namespace EsignBackend.Services.MainServices.Certificates
             var serviceRespone = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
 
             var query = _context.Certificates.AsNoTracking().Include(cer => cer.RelatedCertificateissuer)
-                           .Include(cer => cer.RelatedCertificateissuer)
-                           .Include(cer => cer.RelatedCertificatesstatus)
-                           .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
-                           .Include(cer => cer.RelatedCustomerIdentifier)
-                           .Include(cer => cer.RelatedDocsType)
-                           .Include(cer => cer.RelatedExpiration)
-                           .Include(cer => cer.RelatedIssuerPlace)
-                           .Include(cer => cer.RelatedProject)
-                           //  .Include(cer => cer.RelatedSecurityquestion)
-                           .Include(cer => cer.RelatedSmartObject)
-                           .Include(cer => cer.RelatedSubProject)
-                            .Where(cer =>
-                        ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
-                        && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
-                        && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
-                        && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
-                        && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
-                        && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
-                        && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
-                        && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
-                        && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
-                        && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
-                        && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
-                        && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
-                        && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
-                        && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
-                        );
-
+                    .Include(cer => cer.RelatedCertificateissuer)
+                    .Include(cer => cer.RelatedCertificatesstatus)
+                    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
+                    .Include(cer => cer.RelatedCustomerIdentifier)
+                    .Include(cer => cer.RelatedDocsType)
+                    .Include(cer => cer.RelatedExpiration)
+                    .Include(cer => cer.RelatedIssuerPlace)
+                    .Include(cer => cer.RelatedProject)
+                    //  .Include(cer => cer.RelatedSecurityquestion)
+                    .Include(cer => cer.RelatedSmartObject)
+                    .Include(cer => cer.RelatedSubProject)
+                    .Where(cer =>
+                ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
+                && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
+                && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
+                && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
+                && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
+                && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
+                && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
+                && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
+                && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
+                && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
+                && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
+                );
             serviceRespone.Amount = await query.CountAsync();
-
             query = query.Skip(skip);
             if (take != UNLIMITED)
             {
@@ -233,7 +231,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificate}");
+                    _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificate.Id}");
                 }
             }
 
