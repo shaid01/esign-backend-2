@@ -225,64 +225,31 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             var certificatesList = await query.ToListAsync();
             var certificateDetails = new List<CertificateDetailsDTO>();
+            foreach (var certificate in certificatesList)
+            {
+                try
+                {
+                    certificateDetails.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificate}");
+                }
+            }
 
-            Parallel.For(0, query.Count(),
-                    index =>
-                    {
-                        try
-                        {
-                            certificateDetails.Add(new CertificateDetailsDTO(new CertificateDetails(certificatesList[index])));
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesList[index]}");
-                        }
-                    });
-            serviceRespone.Data = certificateDetails;
-
-
-
-            //var certificatesIds = _context.Certificates.Include(cer => cer.RelatedCertificateissuer)
-            //    .Include(cer => cer.RelatedCustomer)
-            //    .Include(cer => cer.RelatedCustomerIdentifier)
-            //    .Where(cer =>
-
-            //((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
-            //&& ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
-            //&& ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
-            //&& ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
-            //&& (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
-            //&& ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
-            //&& ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
-            //&& ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
-            //&& (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
-            //&& (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
-            //&& (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
-            //&& (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
-            //&& (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
-            //&& (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
-
-            //).Select(x => x.Id).ToHashSet();
-
-            //serviceRespone.Amount = certificatesIds.Count();
-            //var certificatesIdList = take == UNLIMITED ? certificatesIds.Skip(skip).ToList() : certificatesIds.Skip(skip).Take(take).ToList();
-            //_logger.Debug("Start converting the certificates to certificateDetails object");
-            //var certificateDetails = new ConcurrentBag<CertificateDetailsDTO>();
-
-            //Parallel.For(0, certificatesIdList.Count(),
+            //Parallel.For(0, query.Count(),
             //        index =>
             //        {
             //            try
             //            {
-            //                certificateDetails.Add(new CertificateDetailsDTO(GenerateCertificateDetailsFromId(certificatesIdList[index])));
+            //                certificateDetails.Add(new CertificateDetailsDTO(new CertificateDetails(certificatesList[index])));
             //            }
             //            catch (Exception ex)
             //            {
-            //                _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesIdList[index]}");
+            //                _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesList[index]}");
             //            }
             //        });
-            //serviceRespone.Data = certificateDetails;
-
+            serviceRespone.Data = certificateDetails;
             return serviceRespone;
         }
 
