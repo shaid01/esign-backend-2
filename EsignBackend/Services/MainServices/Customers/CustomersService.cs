@@ -1,4 +1,5 @@
-﻿using EsignBackend.Extensions.CashHandlers;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using EsignBackend.Extensions.CashHandlers;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
@@ -94,27 +95,37 @@ namespace EsignBackend.Services.CharacterService
         }
         public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
-
             _logger.Debug("SearchCustomers");
             var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
-            var dbCustomers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).Where(customer =>
-            (customer.Id > 0) &&
-            ((customerAdvancedSearch.CustomerId == null) || EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
-            && ((customerAdvancedSearch.FirstName == null) || EF.Functions.Like(customer.Firstname, $"%{customerAdvancedSearch.FirstName}%"))
-            && ((customerAdvancedSearch.LastName == null) || EF.Functions.Like(customer.Lastname, $"%{customerAdvancedSearch.LastName}%"))
-            && ((customerAdvancedSearch.Email == null) || EF.Functions.Like(customer.Email, $"%{customerAdvancedSearch.Email}%"))
-            && ((customerAdvancedSearch.Company == null) || EF.Functions.Like(customer.Company, $"%{customerAdvancedSearch.Company}%"))
-            && (((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Phone1, $"%{customerAdvancedSearch.Phone}%"))
-            || ((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Mobile1, $"%{customerAdvancedSearch.Phone}%")))
-            ).ToListAsync();
-            serviceResponse.Amount = dbCustomers.Count();
+            var query =  _context.Customers.AsNoTracking().Include(cu => cu.RelatedSecurityquestion).Where(customer =>
+                (customer.Id > 0) &&
+                ((customerAdvancedSearch.CustomerId == null) || EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
+                && ((customerAdvancedSearch.FirstName == null) || EF.Functions.Like(customer.Firstname, $"%{customerAdvancedSearch.FirstName}%"))
+                && ((customerAdvancedSearch.LastName == null) || EF.Functions.Like(customer.Lastname, $"%{customerAdvancedSearch.LastName}%"))
+                && ((customerAdvancedSearch.Email == null) || EF.Functions.Like(customer.Email, $"%{customerAdvancedSearch.Email}%"))
+                && ((customerAdvancedSearch.Company == null) || EF.Functions.Like(customer.Company, $"%{customerAdvancedSearch.Company}%"))
+                && (((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Phone1, $"%{customerAdvancedSearch.Phone}%"))
+                || ((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Mobile1, $"%{customerAdvancedSearch.Phone}%")))
+                );
+            serviceResponse.Amount = await query.CountAsync();
+            query = query.Skip(skip);
+            if (take != UNLIMITED)
+            {
+                query = query.Take(take);
+            }
+            var customerList = await query.ToListAsync();
 
             var customersDtoList = new List<CustomerDTO>();
-            var dbCustomersList = take == UNLIMITED ? dbCustomers.Skip(skip).ToList() : dbCustomers.Skip(skip).Take(take).ToList();
-            foreach (var customer in dbCustomersList)
+            foreach (var customer in customerList)
             {
-                var newCustomerDto = new CustomerDTO(customer);
-                customersDtoList.Add(newCustomerDto);
+                try
+                {
+                    customersDtoList.Add(new CustomerDTO(customer));
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Error in add user to customersDtoList, user id - {customer.Id}");
+                }
             }
             serviceResponse.Data = customersDtoList;
             return serviceResponse;

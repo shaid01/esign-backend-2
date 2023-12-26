@@ -160,7 +160,7 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchUsers");
-            var serviceRespone = new ServiceResponse<List<UserDTO>>();
+            var serviceResponse = new ServiceResponse<List<UserDTO>>();
 
             var query = _context.Buusers.AsNoTracking().Where(user =>
                 ((userAdvancedSearch.UserName == null) || EF.Functions.Like(user.Username, $"%{userAdvancedSearch.UserName}%"))
@@ -169,28 +169,28 @@ namespace EsignBackend.Services.CharacterService
                 && ((userAdvancedSearch.Email == null) || EF.Functions.Like(user.Email, $"%{userAdvancedSearch.Email}%"))
                 && ((userAdvancedSearch.UserGroup == null) || EF.Functions.Like(user.Usergroup, userAdvancedSearch.UserGroup))
                 );
-            //serviceRespone.Message = dbUsers.Count().ToString();
-            serviceRespone.Amount = await query.CountAsync();
+            serviceResponse.Amount = await query.CountAsync();
             query = query.Skip(skip);
             if (take != UNLIMITED)
             {
                 query = query.Take(take);
             }
             var userList = await query.ToListAsync();
-            var userDetails = new List<UserDTO>();
+
+            var userDtoList = new List<UserDTO>();
             foreach (var user in userList)
             {
                 try
                 {
-                    userDetails.Add(new UserDTO(user));
+                    userDtoList.Add(new UserDTO(user));
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error in add user to userDetailsList, user id - {user.Id}");
+                    _logger.Error($"Error in add user to userDtoList, user id - {user.Id}");
                 }
             }
-            serviceRespone.Data = userDetails;
-            return serviceRespone;
+            serviceResponse.Data = userDtoList;
+            return serviceResponse;
 
             //serviceRespone.Amount = dbUsers.Count();
             //serviceRespone.Data = take == UNLIMITED ? dbUsers.Skip(skip).ToList() : dbUsers.Skip(skip).Take(take).ToList();

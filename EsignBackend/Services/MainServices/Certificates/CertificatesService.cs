@@ -222,16 +222,16 @@ namespace EsignBackend.Services.MainServices.Certificates
                 query = query.Take(take);
             }
             var certificatesList = await query.ToListAsync();
-            var certificateDetails = new List<CertificateDetailsDTO>();
+            var certificateDetailsDtoList = new List<CertificateDetailsDTO>();
             foreach (var certificate in certificatesList)
             {
                 try
                 {
-                    certificateDetails.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
+                    certificateDetailsDtoList.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificate.Id}");
+                    _logger.Error($"Error in add certificate to certificateDetailsDtoList, cert id - {certificate.Id}");
                 }
             }
 
@@ -247,11 +247,9 @@ namespace EsignBackend.Services.MainServices.Certificates
             //                _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesList[index]}");
             //            }
             //        });
-            serviceRespone.Data = certificateDetails;
+            serviceRespone.Data = certificateDetailsDtoList;
             return serviceRespone;
         }
-
-
 
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
