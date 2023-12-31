@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -90,7 +92,7 @@ namespace EsignBackend.Services.CharacterService
             {
                 _logger.Debug("user successfully login");
                 response.Data = CreateToken(user);
-                response.Message = user.Id.ToString();
+                response.Message = JsonConvert.SerializeObject(user);
                 response.Success = true;
             }
             return response;

@@ -31,8 +31,7 @@ namespace EsignBackend.Controllers
         {
             _logger.Debug("Login");
 
-            var response = await _authenticateService.Login(
-                request.UserName, request.Password);
+            var response = await _authenticateService.Login(request.UserName, request.Password);
             if (!response.Success)
             {
                 return BadRequest(response);

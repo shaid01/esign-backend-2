@@ -8,7 +8,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class UserDTO
     {
-        public UserDTO(Buuser user)
+        public UserDTO(Buuser user, string? departmentTitle = null)
         {
             if (user == null)
                 return;
@@ -34,6 +34,10 @@ namespace EsignBackend.Models.DTOs
             Provider = user.Provider;
             Elang = user.Elang;
             Departmantid = user.Departmantid;
+            if (departmentTitle != null)
+            {
+                DepartmantTitle = departmentTitle;
+            }
         }
 
         public int Id { get; set; }
@@ -57,5 +61,6 @@ namespace EsignBackend.Models.DTOs
         public double? Provider { get; set; }
         public double? Elang { get; set; }
         public string Departmantid { get; set; }
+        public string DepartmantTitle { get; set; }
     }
 }

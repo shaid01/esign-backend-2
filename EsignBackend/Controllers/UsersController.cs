@@ -32,6 +32,13 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.GetAllUsers(skip, take));
         }
 
+        [HttpGet("GetUserByUsername")]
+        public async Task<IActionResult> GetUserByUsername(string username)
+        {
+            _logger.Debug("GetUsersByUsername");
+            return Ok(await _usersService.GetUserByUsername(username));
+        }
+
         [HttpGet("GetAmountOfUsers")]
         public async Task<IActionResult> GetAmountOfUsers()
         {
@@ -53,7 +60,7 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.UpdateUser(updatedUser));
         }
 
-        [HttpPost("SearchUsers")]
+        [HttpPost("SearchUsers")]  // TODO: change to Get
         public async Task<IActionResult> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchUsers");

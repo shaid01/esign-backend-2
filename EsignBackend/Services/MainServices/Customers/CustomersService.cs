@@ -45,7 +45,7 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetCustomers");
             var serviceRespone = new ServiceResponse<List<CustomerDTO>>();
-            var customers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).Skip(skip).Take(take).ToListAsync();
+            var customers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).AsNoTracking().Skip(skip).Take(take).ToListAsync();
             var customersList = new List<CustomerDTO>();
             foreach (var customer in customers)
             {

@@ -1,10 +1,10 @@
-﻿using EsignBackend.Extensions.CashHandlers;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using EsignBackend.Extensions.CashHandlers;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -77,6 +77,24 @@ namespace EsignBackend.Services.CharacterService
             return serviceRespone;
         }
 
+        public async Task<ServiceResponse<UserDTO>> GetUserByUsername(string username)
+        {
+            _logger.Debug("GetUsersByUsername");
+            var serviceRespone = new ServiceResponse<UserDTO>();
+            var user = await _context.Buusers.FirstOrDefaultAsync(u => u.Username.Equals(username));
+            if (user == null)
+            {
+                serviceRespone.Amount = 0;
+                _logger.Error($"Can not find user by GetUsersByUsername, user username - {username}");
+                return serviceRespone;
+            }
+            var department = await _context.Departmants.FirstOrDefaultAsync(d => d.Id.ToString() == user.Departmantid);
+            serviceRespone.Amount = 1;
+            var userDTO = new UserDTO(user, department.Title);
+            serviceRespone.Data = userDTO;
+            return serviceRespone;
+        }
+
         public async Task<ServiceResponse<int>> GetAmountOfUsers()
         {
             _logger.Debug("GetAmountOfUsers");
@@ -135,11 +153,11 @@ namespace EsignBackend.Services.CharacterService
             updatedUser.Updateddate = updatedUser.Updateddate.Value.ToLocalTime();
             var serviceResponse = new ServiceResponse<int>();
             var dbUser = _context.Buusers.AsNoTracking().FirstOrDefault(x => x.Id == updatedUser.Id);
-            if(dbUser != null)
+            if (dbUser != null)
             {
                 updatedUser.Pass = dbUser.Pass;
             }
-           var updatedUserInDb = _context.Buusers.Update(updatedUser);
+            var updatedUserInDb = _context.Buusers.Update(updatedUser);
             try
             {
                 _context.SaveChanges();
