@@ -89,9 +89,16 @@ namespace EsignBackend.Services.CharacterService
                 return serviceRespone;
             }
             var department = await _context.Departmants.FirstOrDefaultAsync(d => d.Id.ToString() == user.Departmantid);
+            if (department == null)
+            {
+                serviceRespone.Success = false;
+                serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmantid}";
+                serviceRespone.Data =new UserDTO(user, "???");
+                return serviceRespone;
+            }
+
             serviceRespone.Amount = 1;
-            var userDTO = new UserDTO(user, department.Title);
-            serviceRespone.Data = userDTO;
+            serviceRespone.Data = new UserDTO(user, department.Title);
             return serviceRespone;
         }
 
