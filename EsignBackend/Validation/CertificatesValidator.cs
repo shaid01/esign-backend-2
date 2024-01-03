@@ -17,11 +17,11 @@ namespace EsignBackend.Validation
             RuleFor(x => x.Issuedate).NotEmpty().WithMessage("תאריך הנפקה לא קיים");
             RuleFor(x => x.Company).NotEmpty().WithMessage("שם חברה לא קיים");
             RuleFor(x => x.ProjectId).NotEmpty().WithMessage("פרוייקט לא קיים");
-            RuleFor(x => x.Smartobject).NotEmpty().WithMessage("רכיב חכם לא קיים");
+            RuleFor(x => x.SmartobjectId).NotEmpty().WithMessage("רכיב חכם לא קיים");
             RuleFor(x => x.SubprojectId).NotEmpty().WithMessage("תת פרוייקט לא קיים");
             RuleFor(x => x.CertificatestatusId).NotEmpty().WithMessage("סטטוס תעודה לא קיים");
-            RuleFor(x => x.Docstype).NotEmpty().WithMessage("Identification document is missing");
-            RuleFor(x => x.Securityquestion).NotEmpty().WithMessage("חסרה שאלת אבטחה");
+            RuleFor(x => x.DocstypeId).NotEmpty().WithMessage("Identification document is missing");
+            RuleFor(x => x.SecurityquestionId).NotEmpty().WithMessage("חסרה שאלת אבטחה");
             RuleFor(x => x.Securityansware).NotEmpty().WithMessage("תשובה לשאלת אבטחה חסרה");
             RuleFor(x => x.IssuerplaceId).NotEmpty().When(x=> x.CertificatestatusId !=7 && x.CertificatestatusId !=11).WithMessage("מיקום הנפקה חסר");
             RuleFor(x => x.CertificateissuerId).NotEmpty().WithMessage("מנפיק תעודה חסר");

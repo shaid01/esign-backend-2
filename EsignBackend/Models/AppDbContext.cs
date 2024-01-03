@@ -570,7 +570,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Customerid).HasColumnName("customerid");
 
-                entity.Property(e => e.Docstype).HasColumnName("docstype");
+                entity.Property(e => e.DocstypeId).HasColumnName("docstypeid");
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(70)
@@ -624,9 +624,9 @@ namespace EsignBackend.Models
                     //.HasMaxLength(70)
                     .HasColumnName("securityansware");
 
-                entity.Property(e => e.Securityquestion).HasColumnName("securityquestion");
+                entity.Property(e => e.SecurityquestionId).HasColumnName("securityquestionid");
 
-                entity.Property(e => e.Smartobject).HasColumnName("smartobject");
+                entity.Property(e => e.SmartobjectId).HasColumnName("smartobjectid");
 
                 entity.Property(e => e.SubprojectId).HasColumnName("subprojectid");
             });
@@ -667,9 +667,9 @@ namespace EsignBackend.Models
                     .HasColumnName("company")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Customerid).HasColumnName("customerid");
+                entity.Property(e => e.CustomerId).HasColumnName("customerid");
 
-                entity.Property(e => e.Docstype).HasColumnName("docstype");
+                entity.Property(e => e.DocstypeId).HasColumnName("docstypeid");
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(70)
@@ -733,7 +733,7 @@ namespace EsignBackend.Models
                     .HasColumnName("securityansware")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Securityquestion).HasColumnName("securityquestion");
+                entity.Property(e => e.SecurityquestionId).HasColumnName("securityquestionid");
 
                 //entity.Property(e => e.Smartobject).HasColumnName("smartobject");
 
@@ -851,7 +851,7 @@ namespace EsignBackend.Models
                     .HasColumnName("securityansware")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Securityquestion).HasColumnName("securityquestion");
+                entity.Property(e => e.Securityquestion).HasColumnName("securityquestionid");
 
                 entity.Property(e => e.Temp)
                     .HasMaxLength(50)
@@ -1067,17 +1067,17 @@ namespace EsignBackend.Models
                 WithMany(cerStatus => cerStatus.Certificates).HasForeignKey(c => c.CertificatestatusId);
 
             modelBuilder.Entity<Certificate>().HasOne<Smartobject>(c => c.RelatedSmartObject).
-                WithMany(so => so.Certificates).HasForeignKey(c => c.Smartobject);
+                WithMany(so => so.Certificates).HasForeignKey(c => c.SmartobjectId);
 
             modelBuilder.Entity<Certificate>().HasOne<Expirationtype>(c => c.RelatedExpiration).
                 WithMany(et => et.Certificates).HasForeignKey(c => c.Expire);
 
             modelBuilder.Entity<Certificate>().HasOne<Securityquestion>(c => c.RelatedSecurityquestion).
-                WithMany(sq => sq.Certificates).HasForeignKey(c => c.Securityquestion).
+                WithMany(sq => sq.Certificates).HasForeignKey(c => c.SecurityquestionId).
                 OnDelete(DeleteBehavior.Restrict); ;
 
             modelBuilder.Entity<Certificate>().HasOne<Docstype>(c => c.RelatedDocsType).
-                WithMany(dt => dt.Certificates).HasForeignKey(c => c.Docstype);
+                WithMany(dt => dt.Certificates).HasForeignKey(c => c.DocstypeId);
 
 
             modelBuilder.Entity<Customer>().HasOne<Securityquestion>(cu => cu.RelatedSecurityquestion)
@@ -1090,9 +1090,9 @@ namespace EsignBackend.Models
             modelBuilder.Entity<Certificateshistory>().HasOne<Subproject>(ch => ch.RelatedSubProject).WithMany(sp => sp.HistoryCertificates).HasForeignKey(ch => ch.SubprojectId).OnDelete(DeleteBehavior.NoAction).IsRequired();
             modelBuilder.Entity<Certificateshistory>().HasOne<Expirationtype>(ch => ch.RelatedExpiration).WithMany(et => et.HistoryCertificates).HasForeignKey(ch => ch.Expire);
             modelBuilder.Entity<Certificateshistory>().HasOne<Certificatesstatus>(ch => ch.RelatedCertificateStatus).WithMany(cs => cs.HistoryCertificates).HasForeignKey(ch => ch.CertificatestatusId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Smartobject>(ch => ch.RelatedSmartObject).WithMany(so => so.HistoryCertificates).HasForeignKey(ch => ch.Smartobject);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Securityquestion>(ch => ch.RelatedSecurityQuestion).WithMany(sq => sq.HistoryCertificates).HasForeignKey(ch => ch.Securityquestion);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Docstype>(ch => ch.RelatedDocsType).WithMany(dt => dt.HistoryCertificates).HasForeignKey(ch => ch.Docstype);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Smartobject>(ch => ch.RelatedSmartObject).WithMany(so => so.HistoryCertificates).HasForeignKey(ch => ch.SmartobjectId);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Securityquestion>(ch => ch.RelatedSecurityQuestion).WithMany(sq => sq.HistoryCertificates).HasForeignKey(ch => ch.SecurityquestionId);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Docstype>(ch => ch.RelatedDocsType).WithMany(dt => dt.HistoryCertificates).HasForeignKey(ch => ch.DocstypeId);
             modelBuilder.Entity<Certificateshistory>().HasOne<Certificate>(ch => ch.RelatedCertificate).WithMany(c => c.HistoryCertificates).HasForeignKey(ch => ch.CertificateId);
             modelBuilder.Entity<Certificateshistory>().HasOne<Buuser>(ch => ch.RelatedUser).WithMany(us => us.HistoryCertificates).HasForeignKey(ch => ch.UpdateduserId);
 

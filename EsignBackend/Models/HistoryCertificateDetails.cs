@@ -29,7 +29,7 @@ namespace EsignBackend.Models
             this.Licenseid = certificateshistory.Licenceid;
             this.Signer = certificateshistory.Hotem;
             this.RelatedSecurityquestion = certificateshistory.RelatedSecurityQuestion;
-            this.Securityquestion = certificateshistory.Securityquestion;
+            this.Securityquestion = certificateshistory.SecurityquestionId;
             this.Securityanswer = certificateshistory.Securityansware;
             this.Remarks = certificateshistory.Remarks;
             this.Remarkdesc = certificateshistory.Remarksdesc;

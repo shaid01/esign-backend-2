@@ -261,7 +261,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Where(cer => cer.Id == cerId).ToListAsync().Result.FirstOrDefault();
 
             var certificateSecurityAnswerMatches = certificate.Securityansware.Equals(secAns)
-                && certificate.Securityquestion == question;
+                && certificate.SecurityquestionId == question;
             bool customerSecurityAnswerMatches = false;
             if (certificate.RelatedCustomer != null)
             {
@@ -279,7 +279,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 var customersCertificates = await _context.Certificates.Where(cer => (cer.Customerid == certificate.Customerid)).ToListAsync();
                 foreach (Certificate cer in customersCertificates)
                 {
-                    if (cer.Securityansware.Equals(secAns) && cer.Securityquestion == question)
+                    if (cer.Securityansware.Equals(secAns) && cer.SecurityquestionId == question)
                     {
                         foundMatch = true;
                         break;

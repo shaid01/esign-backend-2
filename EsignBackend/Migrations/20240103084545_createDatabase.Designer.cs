@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240103083423_createDatabase")]
+    [Migration("20240103084545_createDatabase")]
     partial class createDatabase
     {
         /// <inheritdoc />
@@ -658,9 +658,9 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("customerid");
 
-                    b.Property<int?>("Docstype")
+                    b.Property<int?>("DocstypeId")
                         .HasColumnType("int")
-                        .HasColumnName("docstype");
+                        .HasColumnName("docstypeid");
 
                     b.Property<string>("Email")
                         .HasMaxLength(70)
@@ -729,13 +729,13 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("securityansware");
 
-                    b.Property<int?>("Securityquestion")
+                    b.Property<int?>("SecurityquestionId")
                         .HasColumnType("int")
-                        .HasColumnName("securityquestion");
+                        .HasColumnName("securityquestionid");
 
-                    b.Property<int?>("Smartobject")
+                    b.Property<int?>("SmartobjectId")
                         .HasColumnType("int")
-                        .HasColumnName("smartobject");
+                        .HasColumnName("smartobjectid");
 
                     b.Property<int?>("SubprojectId")
                         .HasColumnType("int")
@@ -749,7 +749,7 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("Customerid");
 
-                    b.HasIndex("Docstype");
+                    b.HasIndex("DocstypeId");
 
                     b.HasIndex("Expire");
 
@@ -759,9 +759,9 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("Securityquestion");
+                    b.HasIndex("SecurityquestionId");
 
-                    b.HasIndex("Smartobject");
+                    b.HasIndex("SmartobjectId");
 
                     b.HasIndex("SubprojectId");
 
@@ -816,13 +816,13 @@ namespace EsignBackend.Migrations
                         .HasColumnName("company")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<int?>("Customerid")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int")
                         .HasColumnName("customerid");
 
-                    b.Property<int?>("Docstype")
+                    b.Property<int?>("DocstypeId")
                         .HasColumnType("int")
-                        .HasColumnName("docstype");
+                        .HasColumnName("docstypeid");
 
                     b.Property<string>("Email")
                         .HasMaxLength(70)
@@ -897,11 +897,11 @@ namespace EsignBackend.Migrations
                         .HasColumnName("securityansware")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<int?>("Securityquestion")
+                    b.Property<int?>("SecurityquestionId")
                         .HasColumnType("int")
-                        .HasColumnName("securityquestion");
+                        .HasColumnName("securityquestionid");
 
-                    b.Property<int?>("Smartobject")
+                    b.Property<int?>("SmartobjectId")
                         .HasColumnType("int");
 
                     b.Property<int>("SubprojectId")
@@ -922,15 +922,15 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("CertificatestatusId");
 
-                    b.HasIndex("Docstype");
+                    b.HasIndex("DocstypeId");
 
                     b.HasIndex("Expire");
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("Securityquestion");
+                    b.HasIndex("SecurityquestionId");
 
-                    b.HasIndex("Smartobject");
+                    b.HasIndex("SmartobjectId");
 
                     b.HasIndex("SubprojectId");
 
@@ -1063,7 +1063,7 @@ namespace EsignBackend.Migrations
 
                     b.Property<int?>("Securityquestion")
                         .HasColumnType("int")
-                        .HasColumnName("securityquestion");
+                        .HasColumnName("securityquestionid");
 
                     b.Property<string>("Temp")
                         .HasMaxLength(50)
@@ -1428,7 +1428,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Docstype", "RelatedDocsType")
                         .WithMany("Certificates")
-                        .HasForeignKey("Docstype");
+                        .HasForeignKey("DocstypeId");
 
                     b.HasOne("EsignBackend.Models.Expirationtype", "RelatedExpiration")
                         .WithMany("Certificates")
@@ -1450,12 +1450,12 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
                         .WithMany("Certificates")
-                        .HasForeignKey("Securityquestion")
+                        .HasForeignKey("SecurityquestionId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("EsignBackend.Models.Smartobject", "RelatedSmartObject")
                         .WithMany("Certificates")
-                        .HasForeignKey("Smartobject");
+                        .HasForeignKey("SmartobjectId");
 
                     b.HasOne("EsignBackend.Models.Subproject", "RelatedSubProject")
                         .WithMany("Certificates")
@@ -1498,7 +1498,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Docstype", "RelatedDocsType")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Docstype");
+                        .HasForeignKey("DocstypeId");
 
                     b.HasOne("EsignBackend.Models.Expirationtype", "RelatedExpiration")
                         .WithMany("HistoryCertificates")
@@ -1512,11 +1512,11 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityQuestion")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Securityquestion");
+                        .HasForeignKey("SecurityquestionId");
 
                     b.HasOne("EsignBackend.Models.Smartobject", "RelatedSmartObject")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Smartobject");
+                        .HasForeignKey("SmartobjectId");
 
                     b.HasOne("EsignBackend.Models.Subproject", "RelatedSubProject")
                         .WithMany("HistoryCertificates")

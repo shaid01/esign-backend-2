@@ -442,7 +442,7 @@ namespace EsignBackend.Migrations
                     lastname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     phone1 = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     mobile1 = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    securityquestion = table.Column<int>(type: "int", nullable: true),
+                    securityquestionid = table.Column<int>(type: "int", nullable: true),
                     securityansware = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     certificates = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     temp = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
@@ -455,8 +455,8 @@ namespace EsignBackend.Migrations
                 {
                     table.PrimaryKey("PK_customers", x => x.id);
                     table.ForeignKey(
-                        name: "FK_customers_securityquestions_securityquestion",
-                        column: x => x.securityquestion,
+                        name: "FK_customers_securityquestions_securityquestionid",
+                        column: x => x.securityquestionid,
                         principalTable: "securityquestions",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
@@ -475,15 +475,15 @@ namespace EsignBackend.Migrations
                     issuedate = table.Column<DateTime>(type: "datetime", nullable: true),
                     expiredate = table.Column<DateTime>(type: "datetime", nullable: true),
                     expire = table.Column<int>(type: "int", nullable: true),
-                    smartobject = table.Column<int>(type: "int", nullable: true),
+                    smartobjectid = table.Column<int>(type: "int", nullable: true),
                     certificatestatusid = table.Column<int>(type: "int", nullable: true),
                     customerid = table.Column<int>(type: "int", nullable: true),
                     subprojectid = table.Column<int>(type: "int", nullable: true),
-                    docstype = table.Column<int>(type: "int", nullable: true),
+                    docstypeid = table.Column<int>(type: "int", nullable: true),
                     passportid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     licenceid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     hotem = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    securityquestion = table.Column<int>(type: "int", nullable: true),
+                    securityquestionid = table.Column<int>(type: "int", nullable: true),
                     securityansware = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     remarksdesc = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     job = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
@@ -512,8 +512,8 @@ namespace EsignBackend.Migrations
                         principalTable: "customers",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_certificates_docstype_docstype",
-                        column: x => x.docstype,
+                        name: "FK_certificates_docstype_docstypeid",
+                        column: x => x.docstypeid,
                         principalTable: "docstype",
                         principalColumn: "id");
                     table.ForeignKey(
@@ -538,14 +538,14 @@ namespace EsignBackend.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_certificates_securityquestions_securityquestion",
-                        column: x => x.securityquestion,
+                        name: "FK_certificates_securityquestions_securityquestionid",
+                        column: x => x.securityquestionid,
                         principalTable: "securityquestions",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_certificates_smartobjects_smartobject",
-                        column: x => x.smartobject,
+                        name: "FK_certificates_smartobjects_smartobjectid",
+                        column: x => x.smartobjectid,
                         principalTable: "smartobjects",
                         principalColumn: "id");
                     table.ForeignKey(
@@ -572,11 +572,11 @@ namespace EsignBackend.Migrations
                     expire = table.Column<int>(type: "int", nullable: true),
                     expiredate = table.Column<DateTime>(type: "datetime", nullable: true),
                     certificatestatusid = table.Column<int>(type: "int", nullable: false),
-                    Smartobject = table.Column<int>(type: "int", nullable: true),
+                    SmartobjectId = table.Column<int>(type: "int", nullable: true),
                     remarksdesc = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    securityquestion = table.Column<int>(type: "int", nullable: true),
+                    securityquestionid = table.Column<int>(type: "int", nullable: true),
                     securityansware = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    docstype = table.Column<int>(type: "int", nullable: true),
+                    docstypeid = table.Column<int>(type: "int", nullable: true),
                     passportid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     licenceid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     identify = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
@@ -612,8 +612,8 @@ namespace EsignBackend.Migrations
                         principalTable: "customers",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_certificateshistory_docstype_docstype",
-                        column: x => x.docstype,
+                        name: "FK_certificateshistory_docstype_docstypeid",
+                        column: x => x.docstypeid,
                         principalTable: "docstype",
                         principalColumn: "id");
                     table.ForeignKey(
@@ -628,13 +628,13 @@ namespace EsignBackend.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_certificateshistory_securityquestions_securityquestion",
-                        column: x => x.securityquestion,
+                        name: "FK_certificateshistory_securityquestions_securityquestionid",
+                        column: x => x.securityquestionid,
                         principalTable: "securityquestions",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_certificateshistory_smartobjects_Smartobject",
-                        column: x => x.Smartobject,
+                        name: "FK_certificateshistory_smartobjects_SmartobjectId",
+                        column: x => x.SmartobjectId,
                         principalTable: "smartobjects",
                         principalColumn: "id");
                     table.ForeignKey(
@@ -660,9 +660,9 @@ namespace EsignBackend.Migrations
                 column: "customerid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_certificates_docstype",
+                name: "IX_certificates_docstypeid",
                 table: "certificates",
-                column: "docstype");
+                column: "docstypeid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_certificates_expire",
@@ -685,14 +685,14 @@ namespace EsignBackend.Migrations
                 column: "projectid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_certificates_securityquestion",
+                name: "IX_certificates_securityquestionid",
                 table: "certificates",
-                column: "securityquestion");
+                column: "securityquestionid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_certificates_smartobject",
+                name: "IX_certificates_smartobjectid",
                 table: "certificates",
-                column: "smartobject");
+                column: "smartobjectid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_certificates_subprojectid",
@@ -710,9 +710,9 @@ namespace EsignBackend.Migrations
                 column: "certificatestatusid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_certificateshistory_docstype",
+                name: "IX_certificateshistory_docstypeid",
                 table: "certificateshistory",
-                column: "docstype");
+                column: "docstypeid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_certificateshistory_expire",
@@ -725,14 +725,14 @@ namespace EsignBackend.Migrations
                 column: "projectid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_certificateshistory_securityquestion",
+                name: "IX_certificateshistory_securityquestionid",
                 table: "certificateshistory",
-                column: "securityquestion");
+                column: "securityquestionid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_certificateshistory_Smartobject",
+                name: "IX_certificateshistory_SmartobjectId",
                 table: "certificateshistory",
-                column: "Smartobject");
+                column: "SmartobjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_certificateshistory_subprojectid",
@@ -745,9 +745,9 @@ namespace EsignBackend.Migrations
                 column: "updateduserid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_customers_securityquestion",
+                name: "IX_customers_securityquestionid",
                 table: "customers",
-                column: "securityquestion");
+                column: "securityquestionid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_subproject_projectid",

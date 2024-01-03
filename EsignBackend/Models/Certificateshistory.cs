@@ -10,7 +10,7 @@ namespace EsignBackend.Models
     {
         public int Id { get; set; }
         //[Column(TypeName = "float")]
-        public int? Customerid { get; set; }
+        public int? CustomerId { get; set; }
         public virtual Customer RelatedCustomer { get; set; }
         public string Email { get; set; }
         //[Column(TypeName = "float")]
@@ -31,15 +31,15 @@ namespace EsignBackend.Models
         public int CertificatestatusId { get; set; }
         public virtual Certificatesstatus RelatedCertificateStatus { get; set; }
         //[Column(TypeName = "float")]
-        public int? Smartobject { get; set; }
+        public int? SmartobjectId { get; set; }
         public virtual Smartobject RelatedSmartObject {get; set;}
         public string Remarksdesc { get; set; }
         //[Column(TypeName = "float")]
-        public int? Securityquestion { get; set; }
+        public int? SecurityquestionId { get; set; }
         public virtual Securityquestion RelatedSecurityQuestion { get; set; }
         public string Securityansware { get; set; }
         //[Column(TypeName = "float")]
-        public int? Docstype { get; set; }
+        public int? DocstypeId { get; set; }
         public virtual Docstype RelatedDocsType { get; set; }
         public string Passportid { get; set; }
         public string Licenceid { get; set; }

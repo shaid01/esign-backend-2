@@ -21,7 +21,7 @@ namespace EsignBackend.Models
         public int? Expire { get; set; }
         public virtual Expirationtype? RelatedExpiration { get; set; }
         //[Column(TypeName = "float")]
-        public int? Smartobject { get; set; }
+        public int? SmartobjectId { get; set; }
         public virtual Smartobject? RelatedSmartObject { get; set; }
         //[Column(TypeName = "float")]
         public int? CertificatestatusId { get; set; }
@@ -33,13 +33,13 @@ namespace EsignBackend.Models
         public int? SubprojectId { get; set; }
         public virtual Subproject RelatedSubProject { get; set; }
         //[Column(TypeName = "float")]
-        public int? Docstype { get; set; }
+        public int? DocstypeId { get; set; }
         public virtual Docstype RelatedDocsType { get; set; }
         public string Passportid { get; set; }
         public string Licenceid { get; set; }
         public string Hotem { get; set; }
         //[Column(TypeName = "float")]
-        public int? Securityquestion { get; set; }
+        public int? SecurityquestionId { get; set; }
         public virtual Securityquestion RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
         public string Remarksdesc { get; set; }
