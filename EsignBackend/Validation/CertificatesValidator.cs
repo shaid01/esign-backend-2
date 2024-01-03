@@ -26,7 +26,7 @@ namespace EsignBackend.Validation
             RuleFor(x => x.IssuerplaceId).NotEmpty().When(x=> x.CertificatestatusId !=7 && x.CertificatestatusId !=11).WithMessage("מיקום הנפקה חסר");
             RuleFor(x => x.CertificateissuerId).NotEmpty().WithMessage("מנפיק תעודה חסר");
             RuleFor(x => x.Identify).NotEmpty().WithMessage("מזהה הלקוח חסר");
-            RuleFor(x => x.Licenceid).Matches(@"^[0-9]*$").WithMessage("מספר רישיון לא תקין");
+            RuleFor(x => x.LicenceId).Matches(@"^[0-9]*$").WithMessage("מספר רישיון לא תקין");
             RuleFor(x => x.Hpnumber).Matches(@"^[0-9]*$").WithMessage("מספר ח.פ. לא תקין");
         }
     }

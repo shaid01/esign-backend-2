@@ -8,16 +8,16 @@ namespace EsignBackend.Models
     public partial class Ticket
     {
         public int Id { get; set; }
-        public double? Departmantid { get; set; }
-        public double? Status { get; set; }
-        public double? Priorityd { get; set; }
-        public double? Updateduserid { get; set; }
+        public int? Departmantid { get; set; }
+        public int? Status { get; set; }
+        public int? Priorityd { get; set; }
+        public int? UpdateduserId { get; set; }
         public DateTime? Updateddate { get; set; }
-        public double? Transferto { get; set; }
+        public int? Transferto { get; set; }
         public DateTime? Schedule { get; set; }
-        public double? Lastupdater { get; set; }
+        public int? Lastupdater { get; set; }
         public string Lastdescription { get; set; }
-        public double? Calleruserid { get; set; }
+        public int? CalleruserId { get; set; }
         public DateTime? Donedate { get; set; }
         public string Closerequest { get; set; }
         public DateTime? Duedate { get; set; }

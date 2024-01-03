@@ -33,7 +33,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             _logger.Debug("isTheNameAlreadyInUse");
             return _context.Departmants.Where(item => item.Title.Equals(title)).Count() != 0;
         }
-        public async Task<ServiceResponse<int>> AddNewDepartment(Departmant department)
+        public async Task<ServiceResponse<int>> AddNewDepartment(Department department)
         {
             _logger.Debug($"Add new Department {department.Id}, {department.Title}");
             _logger.Debug("AddNewDepartment");
@@ -49,7 +49,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             lock (_locker)
             {
                 //department.Id = GenerateId();
-                var newDepartmentInDb = _context.Departmants.Add(new Departmant() { Title = department.Title });
+                var newDepartmentInDb = _context.Departmants.Add(new Department() { Title = department.Title });
                 try
                 {
                     _context.SaveChanges();
@@ -88,7 +88,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateDepartment(Departmant updatedDepartment)
+        public async Task<ServiceResponse<int>> UpdateDepartment(Department updatedDepartment)
         {
             _logger.Debug("UpdateDepartment");
             var serviceResponse = new ServiceResponse<int>();

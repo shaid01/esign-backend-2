@@ -27,7 +27,7 @@ namespace EsignBackend.Models
         public int? CertificatestatusId { get; set; }
         public virtual Certificatesstatus? RelatedCertificatesstatus { get; set; }
         //[Column(TypeName = "float")]
-        public int? Customerid { get; set; }
+        public int? CustomerId { get; set; }
         public virtual Customer RelatedCustomer { get; set; }
         //[Column(TypeName = "float")]
         public int? SubprojectId { get; set; }
@@ -35,8 +35,8 @@ namespace EsignBackend.Models
         //[Column(TypeName = "float")]
         public int? DocstypeId { get; set; }
         public virtual Docstype RelatedDocsType { get; set; }
-        public string Passportid { get; set; }
-        public string Licenceid { get; set; }
+        public string PassportId { get; set; }
+        public string LicenceId { get; set; }
         public string Hotem { get; set; }
         //[Column(TypeName = "float")]
         public int? SecurityquestionId { get; set; }

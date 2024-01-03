@@ -19,7 +19,7 @@ namespace EsignBackend.Migrations
                     title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     file1 = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    ticketid = table.Column<double>(type: "float", nullable: true)
+                    ticketid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,8 +47,8 @@ namespace EsignBackend.Migrations
                     id = table.Column<int>(type: "int", nullable: false),
                     title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    parentid = table.Column<double>(type: "float", nullable: true),
-                    entityid = table.Column<double>(type: "float", nullable: true)
+                    parentid = table.Column<int>(type: "int", nullable: true),
+                    entityid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,11 +60,11 @@ namespace EsignBackend.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false),
                     title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    times = table.Column<double>(type: "float", nullable: true),
+                    times = table.Column<int>(type: "int", nullable: true),
                     text1 = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     text2 = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    tid = table.Column<double>(type: "float", nullable: true),
-                    parentid = table.Column<double>(type: "float", nullable: true),
+                    tid = table.Column<int>(type: "int", nullable: true),
+                    parentid = table.Column<int>(type: "int", nullable: true),
                     status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     applytoall = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
                 },
@@ -84,8 +84,8 @@ namespace EsignBackend.Migrations
                     tdefault = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     tdir = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     tcontrol = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    tpriority = table.Column<double>(type: "float", nullable: true),
-                    tid = table.Column<double>(type: "float", nullable: true),
+                    tpriority = table.Column<int>(type: "int", nullable: true),
+                    tid = table.Column<int>(type: "int", nullable: true),
                     tfilter = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     tmultiupdate = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     tdata = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
@@ -127,7 +127,7 @@ namespace EsignBackend.Migrations
                     addprint = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     monthviewfield = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     navgrouptitle = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    updateduserid = table.Column<double>(type: "float", nullable: true),
+                    updateduserid = table.Column<int>(type: "int", nullable: true),
                     updateddate = table.Column<DateTime>(type: "datetime", nullable: true),
                     defaultorder = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     permissions = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
@@ -149,38 +149,6 @@ namespace EsignBackend.Migrations
                 },
                 constraints: table =>
                 {
-                });
-
-            migrationBuilder.CreateTable(
-                name: "buusers",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    userlevel = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    usergroup = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    firstname = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    lastname = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    pass = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    picture = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    updateduserid = table.Column<double>(type: "float", nullable: true),
-                    updateddate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    parentid = table.Column<double>(type: "float", nullable: true),
-                    permissions = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    allowedips = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    expires = table.Column<DateTime>(type: "datetime", nullable: true),
-                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    sessionvalues = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    provider = table.Column<double>(type: "float", nullable: true),
-                    elang = table.Column<double>(type: "float", nullable: true),
-                    departmantid = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_buusers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -323,9 +291,9 @@ namespace EsignBackend.Migrations
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false),
-                    ticketid = table.Column<double>(type: "float", nullable: true),
+                    ticketid = table.Column<int>(type: "int", nullable: true),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    updateduserid = table.Column<double>(type: "float", nullable: true),
+                    updateduserid = table.Column<int>(type: "int", nullable: true),
                     updateddate = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
@@ -376,16 +344,16 @@ namespace EsignBackend.Migrations
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false),
-                    departmantid = table.Column<double>(type: "float", nullable: true),
-                    status = table.Column<double>(type: "float", nullable: true),
-                    priorityd = table.Column<double>(type: "float", nullable: true),
-                    updateduserid = table.Column<double>(type: "float", nullable: true),
+                    departmantid = table.Column<int>(type: "int", nullable: true),
+                    status = table.Column<int>(type: "int", nullable: true),
+                    priorityd = table.Column<int>(type: "int", nullable: true),
+                    updateduserid = table.Column<int>(type: "int", nullable: true),
                     updateddate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    transferto = table.Column<double>(type: "float", nullable: true),
+                    transferto = table.Column<int>(type: "int", nullable: true),
                     schedule = table.Column<DateTime>(type: "datetime", nullable: true),
-                    lastupdater = table.Column<double>(type: "float", nullable: true),
+                    lastupdater = table.Column<int>(type: "int", nullable: true),
                     lastdescription = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    calleruserid = table.Column<double>(type: "float", nullable: true),
+                    calleruserid = table.Column<int>(type: "int", nullable: true),
                     donedate = table.Column<DateTime>(type: "datetime", nullable: true),
                     closerequest = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     duedate = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -409,6 +377,44 @@ namespace EsignBackend.Migrations
                 },
                 constraints: table =>
                 {
+                });
+
+            migrationBuilder.CreateTable(
+                name: "buusers",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    userlevel = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    usergroup = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    firstname = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    lastname = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    pass = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    picture = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    updateduserid = table.Column<int>(type: "int", nullable: true),
+                    updateddate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    parentid = table.Column<double>(type: "float", nullable: true),
+                    permissions = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    allowedips = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    expires = table.Column<DateTime>(type: "datetime", nullable: true),
+                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    sessionvalues = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    provider = table.Column<double>(type: "float", nullable: true),
+                    elang = table.Column<double>(type: "float", nullable: true),
+                    departmantid = table.Column<int>(type: "int", nullable: true),
+                    DepartmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_buusers", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_buusers_departmants_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "departmants",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -645,6 +651,11 @@ namespace EsignBackend.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_buusers_DepartmentId",
+                table: "buusers",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_certificates_certificateissuerid",
                 table: "certificates",
                 column: "certificateissuerid");
@@ -792,9 +803,6 @@ namespace EsignBackend.Migrations
                 name: "certificateshistory");
 
             migrationBuilder.DropTable(
-                name: "departmants");
-
-            migrationBuilder.DropTable(
                 name: "progressreport");
 
             migrationBuilder.DropTable(
@@ -808,6 +816,9 @@ namespace EsignBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "certificates");
+
+            migrationBuilder.DropTable(
+                name: "departmants");
 
             migrationBuilder.DropTable(
                 name: "certificatesstatus");

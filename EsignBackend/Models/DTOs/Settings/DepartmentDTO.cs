@@ -7,7 +7,7 @@ namespace EsignBackend.Models.DTOs.Settings
 {
     public class DepartmentDTO
     {
-        public DepartmentDTO(Departmant departmant)
+        public DepartmentDTO(Department departmant)
         {
             if (departmant == null)
                 return;

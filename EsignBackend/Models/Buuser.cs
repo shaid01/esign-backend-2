@@ -19,7 +19,7 @@ namespace EsignBackend.Models
         public string Phone { get; set; }
         public string Pass { get; set; }
         public string Picture { get; set; }
-        public double? Updateduserid { get; set; }
+        public int? UpdateduserId { get; set; }
         public DateTime? Updateddate { get; set; }
         public double? Parentid { get; set; }
         public string Permissions { get; set; }
@@ -29,7 +29,8 @@ namespace EsignBackend.Models
         public string Sessionvalues { get; set; }
         public double? Provider { get; set; }
         public double? Elang { get; set; }
-        public string Departmantid { get; set; }
+        public int? DepartmantId { get; set; }
         public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
+        public virtual Department? Department { get; set; }
     }
 }

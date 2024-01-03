@@ -10,7 +10,7 @@ namespace EsignBackend.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public double? Parentid { get; set; }
-        public double? Entityid { get; set; }
+        public int? ParentId { get; set; }
+        public int? EntityId { get; set; }
     }
 }

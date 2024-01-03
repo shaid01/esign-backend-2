@@ -11,6 +11,6 @@ namespace EsignBackend.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string File1 { get; set; }
-        public double? Ticketid { get; set; }
+        public int? TicketId { get; set; }
     }
 }

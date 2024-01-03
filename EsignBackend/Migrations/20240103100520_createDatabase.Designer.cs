@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240103084545_createDatabase")]
+    [Migration("20240103100520_createDatabase")]
     partial class createDatabase
     {
         /// <inheritdoc />
@@ -43,8 +43,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<double?>("Ticketid")
-                        .HasColumnType("float")
+                    b.Property<int?>("TicketId")
+                        .HasColumnType("int")
                         .HasColumnName("ticketid");
 
                     b.Property<string>("Title")
@@ -101,16 +101,16 @@ namespace EsignBackend.Migrations
                         .HasColumnName("description")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<double?>("Entityid")
-                        .HasColumnType("float")
+                    b.Property<int?>("EntityId")
+                        .HasColumnType("int")
                         .HasColumnName("entityid");
 
                     b.Property<int>("Id")
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<double?>("Parentid")
-                        .HasColumnType("float")
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int")
                         .HasColumnName("parentid");
 
                     b.Property<string>("Title")
@@ -267,8 +267,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("updateddate");
 
-                    b.Property<double?>("Updateduserid")
-                        .HasColumnType("float")
+                    b.Property<int?>("UpdateduserId")
+                        .HasColumnType("int")
                         .HasColumnName("updateduserid");
 
                     b.ToTable("bumodules", (string)null);
@@ -286,8 +286,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<double?>("Parentid")
-                        .HasColumnType("float")
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int")
                         .HasColumnName("parentid");
 
                     b.Property<string>("Status")
@@ -306,12 +306,12 @@ namespace EsignBackend.Migrations
                         .HasColumnName("text2")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<double?>("Tid")
-                        .HasColumnType("float")
+                    b.Property<int?>("Tid")
+                        .HasColumnType("int")
                         .HasColumnName("tid");
 
-                    b.Property<double?>("Times")
-                        .HasColumnType("float")
+                    b.Property<int?>("Times")
+                        .HasColumnType("int")
                         .HasColumnName("times");
 
                     b.Property<string>("Title")
@@ -368,8 +368,8 @@ namespace EsignBackend.Migrations
                         .HasColumnName("thelp")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<double?>("Tid")
-                        .HasColumnType("float")
+                    b.Property<int?>("Tid")
+                        .HasColumnType("int")
                         .HasColumnName("tid");
 
                     b.Property<double?>("Tlength")
@@ -420,8 +420,8 @@ namespace EsignBackend.Migrations
                         .HasColumnName("tnotr")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<double?>("Tpriority")
-                        .HasColumnType("float")
+                    b.Property<int?>("Tpriority")
+                        .HasColumnType("int")
                         .HasColumnName("tpriority");
 
                     b.Property<string>("Ttype")
@@ -480,10 +480,12 @@ namespace EsignBackend.Migrations
                         .HasColumnName("allowedips")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<string>("Departmantid")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("departmantid")
-                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                    b.Property<int?>("DepartmantId")
+                        .HasColumnType("int")
+                        .HasColumnName("departmantid");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Elang")
                         .HasColumnType("float")
@@ -556,8 +558,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("updateddate");
 
-                    b.Property<double?>("Updateduserid")
-                        .HasColumnType("float")
+                    b.Property<int?>("UpdateduserId")
+                        .HasColumnType("int")
                         .HasColumnName("updateduserid");
 
                     b.Property<string>("Usergroup")
@@ -579,6 +581,8 @@ namespace EsignBackend.Migrations
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("buusers", (string)null);
                 });
@@ -654,7 +658,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("company");
 
-                    b.Property<int?>("Customerid")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int")
                         .HasColumnName("customerid");
 
@@ -702,12 +706,12 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("job");
 
-                    b.Property<string>("Licenceid")
+                    b.Property<string>("LicenceId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("licenceid");
 
-                    b.Property<string>("Passportid")
+                    b.Property<string>("PassportId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("passportid");
@@ -747,7 +751,7 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("CertificatestatusId");
 
-                    b.HasIndex("Customerid");
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("DocstypeId");
 
@@ -1078,7 +1082,7 @@ namespace EsignBackend.Migrations
                     b.ToTable("customers", (string)null);
                 });
 
-            modelBuilder.Entity("EsignBackend.Models.Departmant", b =>
+            modelBuilder.Entity("EsignBackend.Models.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1201,16 +1205,16 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<double?>("Ticketid")
-                        .HasColumnType("float")
+                    b.Property<int?>("TicketId")
+                        .HasColumnType("int")
                         .HasColumnName("ticketid");
 
                     b.Property<DateTime?>("Updateddate")
                         .HasColumnType("datetime")
                         .HasColumnName("updateddate");
 
-                    b.Property<double?>("Updateduserid")
-                        .HasColumnType("float")
+                    b.Property<int?>("UpdateduserId")
+                        .HasColumnType("int")
                         .HasColumnName("updateduserid");
 
                     b.ToTable("progressreport", (string)null);
@@ -1304,8 +1308,8 @@ namespace EsignBackend.Migrations
 
             modelBuilder.Entity("EsignBackend.Models.Ticket", b =>
                 {
-                    b.Property<double?>("Calleruserid")
-                        .HasColumnType("float")
+                    b.Property<int?>("CalleruserId")
+                        .HasColumnType("int")
                         .HasColumnName("calleruserid");
 
                     b.Property<string>("Closerequest")
@@ -1320,8 +1324,8 @@ namespace EsignBackend.Migrations
                         .HasColumnName("comefrom")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<double?>("Departmantid")
-                        .HasColumnType("float")
+                    b.Property<int?>("Departmantid")
+                        .HasColumnType("int")
                         .HasColumnName("departmantid");
 
                     b.Property<DateTime?>("Donedate")
@@ -1341,12 +1345,12 @@ namespace EsignBackend.Migrations
                         .HasColumnName("lastdescription")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<double?>("Lastupdater")
-                        .HasColumnType("float")
+                    b.Property<int?>("Lastupdater")
+                        .HasColumnType("int")
                         .HasColumnName("lastupdater");
 
-                    b.Property<double?>("Priorityd")
-                        .HasColumnType("float")
+                    b.Property<int?>("Priorityd")
+                        .HasColumnType("int")
                         .HasColumnName("priorityd");
 
                     b.Property<int?>("ProjectId")
@@ -1357,8 +1361,8 @@ namespace EsignBackend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("schedule");
 
-                    b.Property<double?>("Status")
-                        .HasColumnType("float")
+                    b.Property<int?>("Status")
+                        .HasColumnType("int")
                         .HasColumnName("status");
 
                     b.Property<string>("Sulution")
@@ -1373,16 +1377,16 @@ namespace EsignBackend.Migrations
                         .HasColumnName("ticketname")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<double?>("Transferto")
-                        .HasColumnType("float")
+                    b.Property<int?>("Transferto")
+                        .HasColumnType("int")
                         .HasColumnName("transferto");
 
                     b.Property<DateTime?>("Updateddate")
                         .HasColumnType("datetime")
                         .HasColumnName("updateddate");
 
-                    b.Property<double?>("Updateduserid")
-                        .HasColumnType("float")
+                    b.Property<int?>("UpdateduserId")
+                        .HasColumnType("int")
                         .HasColumnName("updateduserid");
 
                     b.ToTable("tickets", (string)null);
@@ -1412,6 +1416,15 @@ namespace EsignBackend.Migrations
                     b.ToTable("userviews", (string)null);
                 });
 
+            modelBuilder.Entity("EsignBackend.Models.Buuser", b =>
+                {
+                    b.HasOne("EsignBackend.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId");
+
+                    b.Navigation("Department");
+                });
+
             modelBuilder.Entity("EsignBackend.Models.Certificate", b =>
                 {
                     b.HasOne("EsignBackend.Models.Isscert", "RelatedCertificateissuer")
@@ -1424,7 +1437,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Customer", "RelatedCustomer")
                         .WithMany("CustomerCertificates")
-                        .HasForeignKey("Customerid");
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("EsignBackend.Models.Docstype", "RelatedDocsType")
                         .WithMany("Certificates")

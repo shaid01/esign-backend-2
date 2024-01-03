@@ -8,9 +8,9 @@ namespace EsignBackend.Models
     public partial class Progressreport
     {
         public int Id { get; set; }
-        public double? Ticketid { get; set; }
+        public int? TicketId { get; set; }
         public string Description { get; set; }
-        public double? Updateduserid { get; set; }
+        public int? UpdateduserId { get; set; }
         public DateTime? Updateddate { get; set; }
     }
 }

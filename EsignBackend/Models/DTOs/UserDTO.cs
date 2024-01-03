@@ -23,7 +23,7 @@ namespace EsignBackend.Models.DTOs
             Phone = user.Phone;
             Pass = user.Pass;
             Picture = user.Picture;
-            Updateduserid = user.Updateduserid;
+            UpdateduserId = user.UpdateduserId;
             Updateddate = user.Updateddate;
             Parentid = user.Parentid;
             Permissions = user.Permissions;
@@ -33,7 +33,7 @@ namespace EsignBackend.Models.DTOs
             Sessionvalues = user.Sessionvalues;
             Provider = user.Provider;
             Elang = user.Elang;
-            Departmantid = user.Departmantid;
+            DepartmantId = user.DepartmantId;
             if (departmentTitle != null)
             {
                 DepartmantTitle = departmentTitle;
@@ -50,7 +50,7 @@ namespace EsignBackend.Models.DTOs
         public string Phone { get; set; }
         public string Pass { get; set; }
         public string Picture { get; set; }
-        public double? Updateduserid { get; set; }
+        public int? UpdateduserId { get; set; }
         public DateTime? Updateddate { get; set; }
         public double? Parentid { get; set; }
         public string Permissions { get; set; }
@@ -60,7 +60,7 @@ namespace EsignBackend.Models.DTOs
         public string Sessionvalues { get; set; }
         public double? Provider { get; set; }
         public double? Elang { get; set; }
-        public string Departmantid { get; set; }
+        public int? DepartmantId { get; set; }
         public string DepartmantTitle { get; set; }
     }
 }

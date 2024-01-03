@@ -21,8 +21,8 @@ namespace EsignBackend.Models
             this.Company = HttpUtility.HtmlDecode(certificate.Company);
             this.Hpnumber = certificate.Hpnumber;
             this.Email = certificate.Email;
-            this.Passportid = certificate.Passportid;
-            this.Licenseid = certificate.Licenceid;
+            this.Passportid = certificate.PassportId;
+            this.Licenseid = certificate.LicenceId;
             this.Signer = HttpUtility.HtmlDecode(certificate.Hotem);
             this.Securityquestion = certificate.SecurityquestionId;
             this.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificate.Securityansware);

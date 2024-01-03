@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class DepartmentsValidator : AbstractValidator<Departmant>
+    public class DepartmentsValidator : AbstractValidator<Department>
     {
         public DepartmentsValidator()
         {

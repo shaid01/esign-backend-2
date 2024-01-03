@@ -88,11 +88,11 @@ namespace EsignBackend.Services.CharacterService
                 _logger.Error($"Can not find user by GetUsersByUsername, user username - {username}");
                 return serviceRespone;
             }
-            var department = await _context.Departmants.FirstOrDefaultAsync(d => d.Id.ToString() == user.Departmantid);
+            var department = await _context.Departmants.FirstOrDefaultAsync(d => d.Id == user.DepartmantId);
             if (department == null)
             {
                 serviceRespone.Success = false;
-                serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmantid}";
+                serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.DepartmantId}";
                 serviceRespone.Data =new UserDTO(user, "???");
                 return serviceRespone;
             }

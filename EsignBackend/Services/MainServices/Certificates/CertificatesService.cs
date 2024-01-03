@@ -172,7 +172,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
-                .Where(cer => cer.Customerid == customerId).ToList();
+                .Where(cer => cer.CustomerId == customerId).ToList();
 
             foreach (var cer in certificates)
             {
@@ -276,7 +276,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             {
                 // Checking in all other customer's certificates.
                 _logger.Debug("Checking security answer in all customer's certificates");
-                var customersCertificates = await _context.Certificates.Where(cer => (cer.Customerid == certificate.Customerid)).ToListAsync();
+                var customersCertificates = await _context.Certificates.Where(cer => (cer.CustomerId == certificate.CustomerId)).ToListAsync();
                 foreach (Certificate cer in customersCertificates)
                 {
                     if (cer.Securityansware.Equals(secAns) && cer.SecurityquestionId == question)

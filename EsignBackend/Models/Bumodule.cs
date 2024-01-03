@@ -29,7 +29,7 @@ namespace EsignBackend.Models
         public string Addprint { get; set; }
         public string Monthviewfield { get; set; }
         public string Navgrouptitle { get; set; }
-        public double? Updateduserid { get; set; }
+        public int? UpdateduserId { get; set; }
         public DateTime? Updateddate { get; set; }
         public string Defaultorder { get; set; }
         public string Permissions { get; set; }

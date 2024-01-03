@@ -25,7 +25,7 @@ namespace EsignBackend.Extensions
             services.AddTransient<IValidator<Certificatermeark>, CertificateRemarksValidator>();
             services.AddTransient<IValidator<Certificatesstatus>, CertificatesstatusValidator>();
             services.AddTransient<IValidator<Custident>, CustomerIdentifierValidator>();
-            services.AddTransient<IValidator<Departmant>, DepartmentsValidator>();
+            services.AddTransient<IValidator<Department>, DepartmentsValidator>();
             services.AddTransient<IValidator<Expirationtype>, ExpirationTypeValidator>();
             services.AddTransient<IValidator<Docstype>, IdentificationDocumentValidator>();
             services.AddTransient<IValidator<Issplace>, IssueLocationValidator>();

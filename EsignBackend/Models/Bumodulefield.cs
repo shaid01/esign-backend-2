@@ -15,8 +15,8 @@ namespace EsignBackend.Models
         public string Tdefault { get; set; }
         public string Tdir { get; set; }
         public string Tcontrol { get; set; }
-        public double? Tpriority { get; set; }
-        public double? Tid { get; set; }
+        public int? Tpriority { get; set; }
+        public int? Tid { get; set; }
         public string Tfilter { get; set; }
         public string Tmultiupdate { get; set; }
         public string Tdata { get; set; }

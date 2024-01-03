@@ -39,7 +39,7 @@ namespace EsignBackend.Models
        // publial DbSet<Character> Characters { get; set; }
         public  DbSet<Custident> Custidents { get; set; }
         public  DbSet<Customer> Customers { get; set; }
-        public  DbSet<Departmant> Departmants { get; set; }
+        public  DbSet<Department> Departmants { get; set; }
         public  DbSet<Docstype> Docstypes { get; set; }
         public  DbSet<Expirationtype> Expirationtypes { get; set; }
         public  DbSet<Isscert> Isscerts { get; set; }
@@ -84,7 +84,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Ticketid).HasColumnName("ticketid");
+                entity.Property(e => e.TicketId).HasColumnName("ticketid");
 
                 entity.Property(e => e.Title)
                     .HasMaxLength(50)
@@ -136,11 +136,11 @@ namespace EsignBackend.Models
                     .HasColumnName("description")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Entityid).HasColumnName("entityid");
+                entity.Property(e => e.EntityId).HasColumnName("entityid");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Parentid).HasColumnName("parentid");
+                entity.Property(e => e.ParentId).HasColumnName("parentid");
 
                 entity.Property(e => e.Title)
                     .HasMaxLength(100)
@@ -271,7 +271,7 @@ namespace EsignBackend.Models
                     .HasColumnType("datetime")
                     .HasColumnName("updateddate");
 
-                entity.Property(e => e.Updateduserid).HasColumnName("updateduserid");
+                entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
             });
 
             modelBuilder.Entity<Bumodulecoderep>(entity =>
@@ -287,7 +287,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Parentid).HasColumnName("parentid");
+                entity.Property(e => e.ParentId).HasColumnName("parentid");
 
                 entity.Property(e => e.Status)
                     .HasMaxLength(20)
@@ -438,9 +438,8 @@ namespace EsignBackend.Models
                     .HasColumnName("allowedips")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Departmantid)
-                    .HasColumnName("departmantid")
-                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                entity.Property(e => e.DepartmantId)
+                    .HasColumnName("departmantid");
 
                 entity.Property(e => e.Elang).HasColumnName("elang");
 
@@ -500,7 +499,7 @@ namespace EsignBackend.Models
                     .HasColumnType("datetime")
                     .HasColumnName("updateddate");
 
-                entity.Property(e => e.Updateduserid).HasColumnName("updateduserid");
+                entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
 
                 entity.Property(e => e.Usergroup)
                     .HasMaxLength(30)
@@ -568,7 +567,7 @@ namespace EsignBackend.Models
                     .HasMaxLength(50)
                     .HasColumnName("company");
 
-                entity.Property(e => e.Customerid).HasColumnName("customerid");
+                entity.Property(e => e.CustomerId).HasColumnName("customerid");
 
                 entity.Property(e => e.DocstypeId).HasColumnName("docstypeid");
 
@@ -604,11 +603,11 @@ namespace EsignBackend.Models
                     .HasMaxLength(50)
                     .HasColumnName("job");
 
-                entity.Property(e => e.Licenceid)
+                entity.Property(e => e.LicenceId)
                     .HasMaxLength(50)
                     .HasColumnName("licenceid");
 
-                entity.Property(e => e.Passportid)
+                entity.Property(e => e.PassportId)
                     .HasMaxLength(50)
                     .HasColumnName("passportid");
 
@@ -859,7 +858,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Departmant>(entity =>
+            modelBuilder.Entity<Department>(entity =>
             {
                 // entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -969,13 +968,13 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Ticketid).HasColumnName("ticketid");
+                entity.Property(e => e.TicketId).HasColumnName("ticketid");
 
                 entity.Property(e => e.Updateddate)
                     .HasColumnType("datetime")
                     .HasColumnName("updateddate");
 
-                entity.Property(e => e.Updateduserid).HasColumnName("updateduserid");
+                entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
             });
 
             modelBuilder.Entity<Project>(entity =>
@@ -1041,6 +1040,8 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
+            //modelBuilder.Entity<Buuser>().HasOne<Department>(sp => sp.Departmantid).
+            //   WithMany(p => p.Subprojects).HasForeignKey(sp => sp.ProjectId);
 
             modelBuilder.Entity<Subproject>().HasOne<Project>(sp => sp.RelatedProject).
                 WithMany(p => p.Subprojects).HasForeignKey(sp => sp.ProjectId);
@@ -1061,7 +1062,7 @@ namespace EsignBackend.Models
                 WithMany(ci => ci.Certificates).HasForeignKey(c => c.Identify);
 
             modelBuilder.Entity<Certificate>().HasOne<Customer>(c => c.RelatedCustomer).
-                WithMany(customer => customer.CustomerCertificates).HasForeignKey(c => c.Customerid);
+                WithMany(customer => customer.CustomerCertificates).HasForeignKey(c => c.CustomerId);
 
             modelBuilder.Entity<Certificate>().HasOne<Certificatesstatus>(c => c.RelatedCertificatesstatus).
                 WithMany(cerStatus => cerStatus.Certificates).HasForeignKey(c => c.CertificatestatusId);
@@ -1102,7 +1103,7 @@ namespace EsignBackend.Models
 
                 entity.ToTable("tickets");
 
-                entity.Property(e => e.Calleruserid).HasColumnName("calleruserid");
+                entity.Property(e => e.CalleruserId).HasColumnName("calleruserid");
 
                 entity.Property(e => e.Closerequest)
                     .HasMaxLength(2)
@@ -1158,7 +1159,7 @@ namespace EsignBackend.Models
                     .HasColumnType("datetime")
                     .HasColumnName("updateddate");
 
-                entity.Property(e => e.Updateduserid).HasColumnName("updateduserid");
+                entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
             });
 
             modelBuilder.Entity<Userview>(entity =>
