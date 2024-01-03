@@ -18,8 +18,8 @@ namespace EsignBackend.Models.DTOs
             this.Certificatesstatus = new CertificatesstatusDTO(historyCertificateDetails.Certificatesstatus);
             this.CustomerName = historyCertificateDetails.CustomerName;
             this.Docstype = new DocstypeDTO(historyCertificateDetails.Docstype);
-            this.CertificateIssuer = historyCertificateDetails.CertificateIssuer;
-            this.CertificateLocation = historyCertificateDetails.CertificateLocation;
+            this.CertificateIssuerId = historyCertificateDetails.CertificateIssuerId;
+            this.CertificateLocationId = historyCertificateDetails.CertificateLocationId;
             this.CustomerIdentifier = historyCertificateDetails.CustomerIdentifier;
             this.Company = historyCertificateDetails.Company;
             this.Hpnumber = historyCertificateDetails.Hpnumber;
@@ -49,8 +49,8 @@ namespace EsignBackend.Models.DTOs
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
         public DocstypeDTO Docstype { get; set; }
-        public string CertificateIssuer { get; set; }
-        public string CertificateLocation { get; set; }
+        public int? CertificateIssuerId { get; set; }
+        public int? CertificateLocationId { get; set; }
         public string CustomerIdentifier { get; set; }
         public string Company { get; set; }
         public string Hpnumber { get; set; }

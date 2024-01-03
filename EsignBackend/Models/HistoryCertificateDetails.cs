@@ -19,8 +19,8 @@ namespace EsignBackend.Models
             //this.CustomerId = certificateshistory.Customerid;
             this.CustomerName = certificateshistory.RelatedCustomer?.Firstname + " " + certificateshistory.RelatedCustomer?.Lastname;
             this.Docstype = certificateshistory.RelatedDocsType;
-            this.CertificateIssuer = certificateshistory.Certificateissuer;
-            this.CertificateLocation = certificateshistory.Issuerplace;
+            this.CertificateIssuerId = certificateshistory.CertificateissuerId;
+            this.CertificateLocationId = certificateshistory.IssuerplaceId;
             this.CustomerIdentifier = certificateshistory.Identify;
             this.Company = certificateshistory.Company;
             this.Hpnumber = certificateshistory.Hpnumber;
@@ -51,8 +51,8 @@ namespace EsignBackend.Models
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
         public Docstype Docstype { get; set; }
-        public string CertificateIssuer { get; set; }
-        public string CertificateLocation { get; set; }
+        public int? CertificateIssuerId { get; set; }
+        public int? CertificateLocationId { get; set; }
         public string CustomerIdentifier { get; set; }
         public string Company { get; set; }
         public string Hpnumber { get; set; }

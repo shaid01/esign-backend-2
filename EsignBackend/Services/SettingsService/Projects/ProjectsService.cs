@@ -3,7 +3,6 @@ using EsignBackend.Models.DTOs;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -198,7 +197,7 @@ namespace EsignBackend.Services.SettingsService
             _logger.Debug("GetAllSubprojects");
             var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
             var outputList = new List<SubprojectDTO>();
-            var data = projectId == -1 ? _context.Subprojects.ToList() : _context.Subprojects.Where(x=>x.Project == projectId).ToList();
+            var data = projectId == -1 ? _context.Subprojects.ToList() : _context.Subprojects.Where(x=>x.ProjectId == projectId).ToList();
             foreach (var sp in data)
             {
                 outputList.Add(new SubprojectDTO(sp));

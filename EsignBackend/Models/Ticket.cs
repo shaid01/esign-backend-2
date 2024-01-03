@@ -24,6 +24,6 @@ namespace EsignBackend.Models
         public string Ticketname { get; set; }
         public string Comefrom { get; set; }
         public string Sulution { get; set; }
-        public double? Project { get; set; }
+        public int? ProjectId { get; set; }
     }
 }

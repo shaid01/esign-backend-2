@@ -15,7 +15,7 @@ namespace EsignBackend.Models.DTOs
             Id = subProject.Id;
             var title = subProject.Title != null ? HttpUtility.HtmlDecode(subProject.Title): String.Empty;
             Title = title;
-            Project = subProject.Project;
+            Project = subProject.ProjectId;
         }
         public int Id { get; set; }
         public string Title { get; set; }

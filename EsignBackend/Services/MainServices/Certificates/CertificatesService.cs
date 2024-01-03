@@ -136,7 +136,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                     .Include(hc => hc.RelatedSmartObject)
                     .Include(hc => hc.RelatedSubProject)
                     .Include(hc => hc.RelatedUser)
-                    .Where(hc => hc.Certificateid == certificateId).ToListAsync();
+                    .Where(hc => hc.CertificateId == certificateId).ToListAsync();
 
                 foreach (var historyCer in historyCertificateDeatailsUpdate)
                 {
@@ -202,11 +202,11 @@ namespace EsignBackend.Services.MainServices.Certificates
                     .Where(cer =>
                 ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
                 && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
-                && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
-                && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
+                && ((certificateAdvancedSearch.Project == null) || cer.ProjectId == certificateAdvancedSearch.Project)
+                && ((certificateAdvancedSearch.SubProject == null) || cer.SubprojectId == certificateAdvancedSearch.SubProject)
                 && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
-                && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
-                && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
+                && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.CertificatestatusId == certificateAdvancedSearch.CertificateStatus)
+                && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.CertificateissuerId == certificateAdvancedSearch.CertificateIssuer)
                 && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
                 && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
                 && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
@@ -298,10 +298,10 @@ namespace EsignBackend.Services.MainServices.Certificates
             {
                 var certificateStatus = cert.Id;
                 var now = DateTime.Now.ToLocalTime();
-                var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now && x.Certificatestatus != certificateStatus).ToListAsync();
+                var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now && x.CertificatestatusId != certificateStatus).ToListAsync();
                 foreach (Certificate c in expiredCertificates)
                 {
-                    c.Certificatestatus = certificateStatus;
+                    c.CertificatestatusId = certificateStatus;
                     _context.Certificates.Update(c);
                 }
                 try

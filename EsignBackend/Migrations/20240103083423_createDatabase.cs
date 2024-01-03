@@ -1,10 +1,14 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace EsignBackend.Migrations
 {
-    public partial class InitialCreate : Migration
+    /// <inheritdoc />
+    public partial class createDatabase : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -220,78 +224,6 @@ namespace EsignBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "certificates",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    project = table.Column<double>(type: "float", nullable: true),
-                    company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    hpnumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
-                    issuedate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    expiredate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    expire = table.Column<double>(type: "float", nullable: true),
-                    smartobject = table.Column<double>(type: "float", nullable: true),
-                    certificatestatus = table.Column<double>(type: "float", nullable: true),
-                    customerid = table.Column<double>(type: "float", nullable: true),
-                    subproject = table.Column<double>(type: "float", nullable: true),
-                    docstype = table.Column<double>(type: "float", nullable: true),
-                    passportid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    licenceid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    hotem = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    securityquestion = table.Column<double>(type: "float", nullable: true),
-                    securityansware = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    remarksdesc = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    job = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    identify = table.Column<double>(type: "float", nullable: true),
-                    certificateissuer = table.Column<double>(type: "float", nullable: true),
-                    issuerplace = table.Column<double>(type: "float", nullable: true),
-                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_certificates", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "certificateshistory",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    customerid = table.Column<double>(type: "float", nullable: true),
-                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    project = table.Column<double>(type: "float", nullable: true),
-                    subproject = table.Column<double>(type: "float", nullable: true),
-                    company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    hpnumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    hotem = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    issuedate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    expire = table.Column<double>(type: "float", nullable: true),
-                    expiredate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    certificatestatus = table.Column<double>(type: "float", nullable: true),
-                    smartobject = table.Column<double>(type: "float", nullable: true),
-                    remarksdesc = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    securityquestion = table.Column<double>(type: "float", nullable: true),
-                    securityansware = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    docstype = table.Column<double>(type: "float", nullable: true),
-                    passportid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    licenceid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    identify = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    certificateissuer = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    issuerplace = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    certificateid = table.Column<double>(type: "float", nullable: true),
-                    updateduserid = table.Column<double>(type: "float", nullable: true),
-                    updateddate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_certificateshistory", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "certificatesstatus",
                 columns: table => new
                 {
@@ -306,19 +238,6 @@ namespace EsignBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "characters",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_characters", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "custident",
                 columns: table => new
                 {
@@ -330,31 +249,6 @@ namespace EsignBackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_custident", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "customers",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    idnumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    firstname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    lastname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    phone1 = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    mobile1 = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    securityquestion = table.Column<double>(type: "float", nullable: true),
-                    securityansware = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    certificates = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    temp = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    calleruserid = table.Column<double>(type: "float", nullable: true),
-                    address = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_customers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -478,20 +372,6 @@ namespace EsignBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "subproject",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    project = table.Column<double>(type: "float", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_subproject", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "tickets",
                 columns: table => new
                 {
@@ -512,7 +392,7 @@ namespace EsignBackend.Migrations
                     ticketname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     comefrom = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
                     sulution = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
-                    project = table.Column<double>(type: "float", nullable: true)
+                    projectid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -532,30 +412,350 @@ namespace EsignBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Persons",
+                name: "subproject",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProjectId = table.Column<int>(type: "int", nullable: true)
+                    title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    projectid = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Persons", x => x.Id);
+                    table.PrimaryKey("PK_subproject", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Persons_projects_ProjectId",
-                        column: x => x.ProjectId,
+                        name: "FK_subproject_projects_projectid",
+                        column: x => x.projectid,
                         principalTable: "projects",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "customers",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    idnumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    firstname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    lastname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    phone1 = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    mobile1 = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    securityquestion = table.Column<int>(type: "int", nullable: true),
+                    securityansware = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    certificates = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    temp = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    calleruserid = table.Column<double>(type: "float", nullable: true),
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_customers", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_customers_securityquestions_securityquestion",
+                        column: x => x.securityquestion,
+                        principalTable: "securityquestions",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "certificates",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    projectid = table.Column<int>(type: "int", nullable: false),
+                    company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    hpnumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
+                    issuedate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    expiredate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    expire = table.Column<int>(type: "int", nullable: true),
+                    smartobject = table.Column<int>(type: "int", nullable: true),
+                    certificatestatusid = table.Column<int>(type: "int", nullable: true),
+                    customerid = table.Column<int>(type: "int", nullable: true),
+                    subprojectid = table.Column<int>(type: "int", nullable: true),
+                    docstype = table.Column<int>(type: "int", nullable: true),
+                    passportid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    licenceid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    hotem = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    securityquestion = table.Column<int>(type: "int", nullable: true),
+                    securityansware = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    remarksdesc = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    job = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    identify = table.Column<int>(type: "int", nullable: true),
+                    certificateissuerid = table.Column<int>(type: "int", nullable: true),
+                    issuerplaceid = table.Column<int>(type: "int", nullable: true),
+                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    AttorneyLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_certificates", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_certificates_certificatesstatus_certificatestatusid",
+                        column: x => x.certificatestatusid,
+                        principalTable: "certificatesstatus",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_custident_identify",
+                        column: x => x.identify,
+                        principalTable: "custident",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_customers_customerid",
+                        column: x => x.customerid,
+                        principalTable: "customers",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_docstype_docstype",
+                        column: x => x.docstype,
+                        principalTable: "docstype",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_expirationtype_expire",
+                        column: x => x.expire,
+                        principalTable: "expirationtype",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_isscert_certificateissuerid",
+                        column: x => x.certificateissuerid,
+                        principalTable: "isscert",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_issplace_issuerplaceid",
+                        column: x => x.issuerplaceid,
+                        principalTable: "issplace",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_projects_projectid",
+                        column: x => x.projectid,
+                        principalTable: "projects",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_certificates_securityquestions_securityquestion",
+                        column: x => x.securityquestion,
+                        principalTable: "securityquestions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_certificates_smartobjects_smartobject",
+                        column: x => x.smartobject,
+                        principalTable: "smartobjects",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificates_subproject_subprojectid",
+                        column: x => x.subprojectid,
+                        principalTable: "subproject",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "certificateshistory",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    customerid = table.Column<int>(type: "int", nullable: true),
+                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    projectid = table.Column<int>(type: "int", nullable: false),
+                    subprojectid = table.Column<int>(type: "int", nullable: false),
+                    company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    hpnumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    hotem = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    issuedate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    expire = table.Column<int>(type: "int", nullable: true),
+                    expiredate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    certificatestatusid = table.Column<int>(type: "int", nullable: false),
+                    Smartobject = table.Column<int>(type: "int", nullable: true),
+                    remarksdesc = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    securityquestion = table.Column<int>(type: "int", nullable: true),
+                    securityansware = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    docstype = table.Column<int>(type: "int", nullable: true),
+                    passportid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    licenceid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    identify = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS"),
+                    certificateissuerid = table.Column<int>(type: "int", maxLength: 50, nullable: true),
+                    issuerplaceid = table.Column<int>(type: "int", maxLength: 50, nullable: true),
+                    certificateid = table.Column<int>(type: "int", nullable: true),
+                    updateduserid = table.Column<int>(type: "int", nullable: true),
+                    updateddate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true, collation: "SQL_Latin1_General_CP1_CI_AS")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_certificateshistory", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_buusers_updateduserid",
+                        column: x => x.updateduserid,
+                        principalTable: "buusers",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_certificates_certificateid",
+                        column: x => x.certificateid,
+                        principalTable: "certificates",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_certificatesstatus_certificatestatusid",
+                        column: x => x.certificatestatusid,
+                        principalTable: "certificatesstatus",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_customers_updateduserid",
+                        column: x => x.updateduserid,
+                        principalTable: "customers",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_docstype_docstype",
+                        column: x => x.docstype,
+                        principalTable: "docstype",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_expirationtype_expire",
+                        column: x => x.expire,
+                        principalTable: "expirationtype",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_projects_projectid",
+                        column: x => x.projectid,
+                        principalTable: "projects",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_securityquestions_securityquestion",
+                        column: x => x.securityquestion,
+                        principalTable: "securityquestions",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_smartobjects_Smartobject",
+                        column: x => x.Smartobject,
+                        principalTable: "smartobjects",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_certificateshistory_subproject_subprojectid",
+                        column: x => x.subprojectid,
+                        principalTable: "subproject",
+                        principalColumn: "id");
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Persons_ProjectId",
-                table: "Persons",
-                column: "ProjectId");
+                name: "IX_certificates_certificateissuerid",
+                table: "certificates",
+                column: "certificateissuerid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_certificatestatusid",
+                table: "certificates",
+                column: "certificatestatusid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_customerid",
+                table: "certificates",
+                column: "customerid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_docstype",
+                table: "certificates",
+                column: "docstype");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_expire",
+                table: "certificates",
+                column: "expire");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_identify",
+                table: "certificates",
+                column: "identify");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_issuerplaceid",
+                table: "certificates",
+                column: "issuerplaceid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_projectid",
+                table: "certificates",
+                column: "projectid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_securityquestion",
+                table: "certificates",
+                column: "securityquestion");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_smartobject",
+                table: "certificates",
+                column: "smartobject");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificates_subprojectid",
+                table: "certificates",
+                column: "subprojectid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_certificateid",
+                table: "certificateshistory",
+                column: "certificateid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_certificatestatusid",
+                table: "certificateshistory",
+                column: "certificatestatusid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_docstype",
+                table: "certificateshistory",
+                column: "docstype");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_expire",
+                table: "certificateshistory",
+                column: "expire");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_projectid",
+                table: "certificateshistory",
+                column: "projectid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_securityquestion",
+                table: "certificateshistory",
+                column: "securityquestion");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_Smartobject",
+                table: "certificateshistory",
+                column: "Smartobject");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_subprojectid",
+                table: "certificateshistory",
+                column: "subprojectid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_certificateshistory_updateduserid",
+                table: "certificateshistory",
+                column: "updateduserid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_customers_securityquestion",
+                table: "customers",
+                column: "securityquestion");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_subproject_projectid",
+                table: "subproject",
+                column: "projectid");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -580,9 +780,6 @@ namespace EsignBackend.Migrations
                 name: "busettings");
 
             migrationBuilder.DropTable(
-                name: "buusers");
-
-            migrationBuilder.DropTable(
                 name: "callpriority");
 
             migrationBuilder.DropTable(
@@ -592,25 +789,34 @@ namespace EsignBackend.Migrations
                 name: "certificatermearks");
 
             migrationBuilder.DropTable(
-                name: "certificates");
-
-            migrationBuilder.DropTable(
                 name: "certificateshistory");
 
             migrationBuilder.DropTable(
-                name: "certificatesstatus");
+                name: "departmants");
 
             migrationBuilder.DropTable(
-                name: "characters");
+                name: "progressreport");
+
+            migrationBuilder.DropTable(
+                name: "tickets");
+
+            migrationBuilder.DropTable(
+                name: "userviews");
+
+            migrationBuilder.DropTable(
+                name: "buusers");
+
+            migrationBuilder.DropTable(
+                name: "certificates");
+
+            migrationBuilder.DropTable(
+                name: "certificatesstatus");
 
             migrationBuilder.DropTable(
                 name: "custident");
 
             migrationBuilder.DropTable(
                 name: "customers");
-
-            migrationBuilder.DropTable(
-                name: "departmants");
 
             migrationBuilder.DropTable(
                 name: "docstype");
@@ -625,25 +831,13 @@ namespace EsignBackend.Migrations
                 name: "issplace");
 
             migrationBuilder.DropTable(
-                name: "Persons");
-
-            migrationBuilder.DropTable(
-                name: "progressreport");
-
-            migrationBuilder.DropTable(
-                name: "securityquestions");
-
-            migrationBuilder.DropTable(
                 name: "smartobjects");
 
             migrationBuilder.DropTable(
                 name: "subproject");
 
             migrationBuilder.DropTable(
-                name: "tickets");
-
-            migrationBuilder.DropTable(
-                name: "userviews");
+                name: "securityquestions");
 
             migrationBuilder.DropTable(
                 name: "projects");

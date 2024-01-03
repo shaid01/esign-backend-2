@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
@@ -15,10 +17,11 @@ namespace EsignBackend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityColumns()
-                .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1255_CI_AS")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.2");
+                .UseCollation("SQL_Latin1_General_CP1255_CI_AS")
+                .HasAnnotation("ProductVersion", "8.0.0-preview.6.23329.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("EsignBackend.Models.Attachment", b =>
                 {
@@ -47,7 +50,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("title")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.ToTable("attachments");
+                    b.ToTable("attachments", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Budesign", b =>
@@ -85,7 +88,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("value1")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.ToTable("budesign");
+                    b.ToTable("budesign", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Bulanguage", b =>
@@ -113,7 +116,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("title")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.ToTable("bulanguages");
+                    b.ToTable("bulanguages", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Bumodule", b =>
@@ -265,7 +268,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("float")
                         .HasColumnName("updateduserid");
 
-                    b.ToTable("bumodules");
+                    b.ToTable("bumodules", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Bumodulecoderep", b =>
@@ -314,7 +317,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("title")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.ToTable("bumodulecoderep");
+                    b.ToTable("bumodulecoderep", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Bumodulefield", b =>
@@ -424,7 +427,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("ttype")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.ToTable("bumodulefields");
+                    b.ToTable("bumodulefields", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Busetting", b =>
@@ -457,7 +460,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("title")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.ToTable("busettings");
+                    b.ToTable("busettings", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Buuser", b =>
@@ -465,8 +468,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Allowedips")
                         .HasColumnType("nvarchar(max)")
@@ -573,7 +577,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("buusers");
+                    b.ToTable("buusers", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Callpriority", b =>
@@ -581,8 +585,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -592,7 +597,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("callpriority");
+                    b.ToTable("callpriority", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Callstatus", b =>
@@ -600,8 +605,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
                         .HasMaxLength(50)
@@ -617,7 +623,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("callstatus");
+                    b.ToTable("callstatus", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Certificate", b =>
@@ -625,23 +631,27 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
 
-                    b.Property<int?>("Certificateissuer")
-                        .HasColumnType("int")
-                        .HasColumnName("certificateissuer");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Certificatestatus")
+                    b.Property<string>("AttorneyLicenseNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CertificateissuerId")
                         .HasColumnType("int")
-                        .HasColumnName("certificatestatus");
+                        .HasColumnName("certificateissuerid");
+
+                    b.Property<int?>("CertificatestatusId")
+                        .HasColumnType("int")
+                        .HasColumnName("certificatestatusid");
 
                     b.Property<string>("Company")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("company");
 
-                    b.Property<int>("Customerid")
+                    b.Property<int?>("Customerid")
                         .HasColumnType("int")
                         .HasColumnName("customerid");
 
@@ -680,9 +690,9 @@ namespace EsignBackend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("issuedate");
 
-                    b.Property<int?>("Issuerplace")
+                    b.Property<int?>("IssuerplaceId")
                         .HasColumnType("int")
-                        .HasColumnName("issuerplace");
+                        .HasColumnName("issuerplaceid");
 
                     b.Property<string>("Job")
                         .HasMaxLength(50)
@@ -699,9 +709,9 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("passportid");
 
-                    b.Property<int>("Project")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int")
-                        .HasColumnName("project");
+                        .HasColumnName("projectid");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)")
@@ -716,7 +726,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("securityansware");
 
-                    b.Property<int>("Securityquestion")
+                    b.Property<int?>("Securityquestion")
                         .HasColumnType("int")
                         .HasColumnName("securityquestion");
 
@@ -724,15 +734,15 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("smartobject");
 
-                    b.Property<int?>("Subproject")
+                    b.Property<int?>("SubprojectId")
                         .HasColumnType("int")
-                        .HasColumnName("subproject");
+                        .HasColumnName("subprojectid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Certificateissuer");
+                    b.HasIndex("CertificateissuerId");
 
-                    b.HasIndex("Certificatestatus");
+                    b.HasIndex("CertificatestatusId");
 
                     b.HasIndex("Customerid");
 
@@ -742,17 +752,17 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("Identify");
 
-                    b.HasIndex("Issuerplace");
+                    b.HasIndex("IssuerplaceId");
 
-                    b.HasIndex("Project");
+                    b.HasIndex("ProjectId");
 
                     b.HasIndex("Securityquestion");
 
                     b.HasIndex("Smartobject");
 
-                    b.HasIndex("Subproject");
+                    b.HasIndex("SubprojectId");
 
-                    b.ToTable("certificates");
+                    b.ToTable("certificates", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Certificatermeark", b =>
@@ -760,8 +770,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -771,7 +782,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("certificatermearks");
+                    b.ToTable("certificatermearks", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Certificateshistory", b =>
@@ -779,22 +790,22 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
 
-                    b.Property<int?>("Certificateid")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CertificateId")
                         .HasColumnType("int")
                         .HasColumnName("certificateid");
 
-                    b.Property<string>("Certificateissuer")
+                    b.Property<int?>("CertificateissuerId")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("certificateissuer")
-                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
-
-                    b.Property<int>("Certificatestatus")
                         .HasColumnType("int")
-                        .HasColumnName("certificatestatus");
+                        .HasColumnName("certificateissuerid");
+
+                    b.Property<int>("CertificatestatusId")
+                        .HasColumnType("int")
+                        .HasColumnName("certificatestatusid");
 
                     b.Property<string>("Company")
                         .HasMaxLength(50)
@@ -802,7 +813,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("company")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<int>("Customerid")
+                    b.Property<int?>("Customerid")
                         .HasColumnType("int")
                         .HasColumnName("customerid");
 
@@ -846,11 +857,10 @@ namespace EsignBackend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("issuedate");
 
-                    b.Property<string>("Issuerplace")
+                    b.Property<int?>("IssuerplaceId")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("issuerplace")
-                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                        .HasColumnType("int")
+                        .HasColumnName("issuerplaceid");
 
                     b.Property<string>("Licenceid")
                         .HasMaxLength(50)
@@ -864,9 +874,9 @@ namespace EsignBackend.Migrations
                         .HasColumnName("passportid")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<int>("Project")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int")
-                        .HasColumnName("project");
+                        .HasColumnName("projectid");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)")
@@ -889,42 +899,41 @@ namespace EsignBackend.Migrations
                         .HasColumnName("securityquestion");
 
                     b.Property<int?>("Smartobject")
-                        .HasColumnType("int")
-                        .HasColumnName("smartobject");
+                        .HasColumnType("int");
 
-                    b.Property<int>("Subproject")
+                    b.Property<int>("SubprojectId")
                         .HasColumnType("int")
-                        .HasColumnName("subproject");
+                        .HasColumnName("subprojectid");
 
                     b.Property<DateTime?>("Updateddate")
                         .HasColumnType("datetime")
                         .HasColumnName("updateddate");
 
-                    b.Property<int?>("Updateduserid")
+                    b.Property<int?>("UpdateduserId")
                         .HasColumnType("int")
                         .HasColumnName("updateduserid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Certificateid");
+                    b.HasIndex("CertificateId");
 
-                    b.HasIndex("Certificatestatus");
+                    b.HasIndex("CertificatestatusId");
 
                     b.HasIndex("Docstype");
 
                     b.HasIndex("Expire");
 
-                    b.HasIndex("Project");
+                    b.HasIndex("ProjectId");
 
                     b.HasIndex("Securityquestion");
 
                     b.HasIndex("Smartobject");
 
-                    b.HasIndex("Subproject");
+                    b.HasIndex("SubprojectId");
 
-                    b.HasIndex("Updateduserid");
+                    b.HasIndex("UpdateduserId");
 
-                    b.ToTable("certificateshistory");
+                    b.ToTable("certificateshistory", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Certificatesstatus", b =>
@@ -932,8 +941,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
                         .HasMaxLength(50)
@@ -949,22 +959,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("certificatesstatus");
-                });
-
-            modelBuilder.Entity("EsignBackend.Models.Character", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("characters");
+                    b.ToTable("certificatesstatus", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Custident", b =>
@@ -972,8 +967,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Active")
                         .HasMaxLength(2)
@@ -989,7 +985,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("custident");
+                    b.ToTable("custident", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Customer", b =>
@@ -997,8 +993,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)")
@@ -1061,7 +1058,7 @@ namespace EsignBackend.Migrations
                         .HasColumnName("securityansware")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                    b.Property<int>("Securityquestion")
+                    b.Property<int?>("Securityquestion")
                         .HasColumnType("int")
                         .HasColumnName("securityquestion");
 
@@ -1075,7 +1072,7 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("Securityquestion");
 
-                    b.ToTable("customers");
+                    b.ToTable("customers", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Departmant", b =>
@@ -1083,8 +1080,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(255)
@@ -1094,7 +1092,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("departmants");
+                    b.ToTable("departmants", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Docstype", b =>
@@ -1102,8 +1100,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -1113,7 +1112,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("docstype");
+                    b.ToTable("docstype", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Expirationtype", b =>
@@ -1121,8 +1120,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -1132,7 +1132,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("expirationtype");
+                    b.ToTable("expirationtype", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Isscert", b =>
@@ -1140,8 +1140,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Active")
                         .HasMaxLength(2)
@@ -1157,7 +1158,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("isscert");
+                    b.ToTable("isscert", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Issplace", b =>
@@ -1165,8 +1166,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Active")
                         .HasMaxLength(2)
@@ -1182,7 +1184,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("issplace");
+                    b.ToTable("issplace", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Progressreport", b =>
@@ -1208,7 +1210,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("float")
                         .HasColumnName("updateduserid");
 
-                    b.ToTable("progressreport");
+                    b.ToTable("progressreport", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Project", b =>
@@ -1216,8 +1218,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -1227,7 +1230,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("projects");
+                    b.ToTable("projects", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Securityquestion", b =>
@@ -1235,8 +1238,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -1246,7 +1250,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("securityquestions");
+                    b.ToTable("securityquestions", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Smartobject", b =>
@@ -1254,8 +1258,9 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -1265,7 +1270,7 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("smartobjects");
+                    b.ToTable("smartobjects", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Subproject", b =>
@@ -1273,12 +1278,13 @@ namespace EsignBackend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id")
-                        .UseIdentityColumn();
+                        .HasColumnName("id");
 
-                    b.Property<int>("Project")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int")
-                        .HasColumnName("project");
+                        .HasColumnName("projectid");
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
@@ -1288,9 +1294,9 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Project");
+                    b.HasIndex("ProjectId");
 
-                    b.ToTable("subproject");
+                    b.ToTable("subproject", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Ticket", b =>
@@ -1340,9 +1346,9 @@ namespace EsignBackend.Migrations
                         .HasColumnType("float")
                         .HasColumnName("priorityd");
 
-                    b.Property<double?>("Project")
-                        .HasColumnType("float")
-                        .HasColumnName("project");
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int")
+                        .HasColumnName("projectid");
 
                     b.Property<DateTime?>("Schedule")
                         .HasColumnType("datetime")
@@ -1376,7 +1382,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("float")
                         .HasColumnName("updateduserid");
 
-                    b.ToTable("tickets");
+                    b.ToTable("tickets", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Userview", b =>
@@ -1400,24 +1406,22 @@ namespace EsignBackend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("userid");
 
-                    b.ToTable("userviews");
+                    b.ToTable("userviews", (string)null);
                 });
 
             modelBuilder.Entity("EsignBackend.Models.Certificate", b =>
                 {
                     b.HasOne("EsignBackend.Models.Isscert", "RelatedCertificateissuer")
                         .WithMany("Certificates")
-                        .HasForeignKey("Certificateissuer");
+                        .HasForeignKey("CertificateissuerId");
 
                     b.HasOne("EsignBackend.Models.Certificatesstatus", "RelatedCertificatesstatus")
                         .WithMany("Certificates")
-                        .HasForeignKey("Certificatestatus");
+                        .HasForeignKey("CertificatestatusId");
 
                     b.HasOne("EsignBackend.Models.Customer", "RelatedCustomer")
                         .WithMany("CustomerCertificates")
-                        .HasForeignKey("Customerid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Customerid");
 
                     b.HasOne("EsignBackend.Models.Docstype", "RelatedDocsType")
                         .WithMany("Certificates")
@@ -1433,19 +1437,18 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Issplace", "RelatedIssuerPlace")
                         .WithMany("Certificates")
-                        .HasForeignKey("Issuerplace");
+                        .HasForeignKey("IssuerplaceId");
 
                     b.HasOne("EsignBackend.Models.Project", "RelatedProject")
                         .WithMany("Certificates")
-                        .HasForeignKey("Project")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
                         .WithMany("Certificates")
                         .HasForeignKey("Securityquestion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("EsignBackend.Models.Smartobject", "RelatedSmartObject")
                         .WithMany("Certificates")
@@ -1453,7 +1456,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Subproject", "RelatedSubProject")
                         .WithMany("Certificates")
-                        .HasForeignKey("Subproject");
+                        .HasForeignKey("SubprojectId");
 
                     b.Navigation("RelatedCertificateissuer");
 
@@ -1482,11 +1485,11 @@ namespace EsignBackend.Migrations
                 {
                     b.HasOne("EsignBackend.Models.Certificate", "RelatedCertificate")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Certificateid");
+                        .HasForeignKey("CertificateId");
 
                     b.HasOne("EsignBackend.Models.Certificatesstatus", "RelatedCertificateStatus")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Certificatestatus")
+                        .HasForeignKey("CertificatestatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1500,7 +1503,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Project", "RelatedProject")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Project")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1514,17 +1517,17 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Subproject", "RelatedSubProject")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Subproject")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasForeignKey("SubprojectId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("EsignBackend.Models.Buuser", "RelatedUser")
                         .WithMany("HistoryCertificates")
-                        .HasForeignKey("Updateduserid");
+                        .HasForeignKey("UpdateduserId");
 
                     b.HasOne("EsignBackend.Models.Customer", "RelatedCustomer")
                         .WithMany("CustomerHistoryCertificates")
-                        .HasForeignKey("Updateduserid");
+                        .HasForeignKey("UpdateduserId");
 
                     b.Navigation("RelatedCertificate");
 
@@ -1552,8 +1555,7 @@ namespace EsignBackend.Migrations
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
                         .WithMany("Customers")
                         .HasForeignKey("Securityquestion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("RelatedSecurityquestion");
                 });
@@ -1562,7 +1564,7 @@ namespace EsignBackend.Migrations
                 {
                     b.HasOne("EsignBackend.Models.Project", "RelatedProject")
                         .WithMany("Subprojects")
-                        .HasForeignKey("Project")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

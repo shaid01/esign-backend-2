@@ -560,9 +560,9 @@ namespace EsignBackend.Models
 
                 entity.ToTable("certificates");
 
-                entity.Property(e => e.Certificateissuer).HasColumnName("certificateissuer");
+                entity.Property(e => e.CertificateissuerId).HasColumnName("certificateissuerid");
 
-                entity.Property(e => e.Certificatestatus).HasColumnName("certificatestatus");
+                entity.Property(e => e.CertificatestatusId).HasColumnName("certificatestatusid");
 
                 entity.Property(e => e.Company)
                     .HasMaxLength(50)
@@ -598,7 +598,7 @@ namespace EsignBackend.Models
                     .HasColumnType("datetime")
                     .HasColumnName("issuedate");
 
-                entity.Property(e => e.Issuerplace).HasColumnName("issuerplace");
+                entity.Property(e => e.IssuerplaceId).HasColumnName("issuerplaceid");
 
                 entity.Property(e => e.Job)
                     .HasMaxLength(50)
@@ -612,7 +612,7 @@ namespace EsignBackend.Models
                     .HasMaxLength(50)
                     .HasColumnName("passportid");
 
-                entity.Property(e => e.Project).HasColumnName("project");
+                entity.Property(e => e.ProjectId).HasColumnName("projectid");
 
                 entity.Property(e => e.Remarks)
                     .HasColumnName("remarks")
@@ -628,7 +628,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Smartobject).HasColumnName("smartobject");
 
-                entity.Property(e => e.Subproject).HasColumnName("subproject");
+                entity.Property(e => e.SubprojectId).HasColumnName("subprojectid");
             });
 
             modelBuilder.Entity<Certificatermeark>(entity =>
@@ -653,14 +653,14 @@ namespace EsignBackend.Models
 
                 entity.ToTable("certificateshistory");
 
-                entity.Property(e => e.Certificateid).HasColumnName("certificateid");
+                entity.Property(e => e.CertificateId).HasColumnName("certificateid");
 
-                entity.Property(e => e.Certificateissuer)
+                entity.Property(e => e.CertificateissuerId)
                     .HasMaxLength(50)
-                    .HasColumnName("certificateissuer")
-                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                    .HasColumnName("certificateissuerid");
+                    //.UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Certificatestatus).HasColumnName("certificatestatus");
+                entity.Property(e => e.CertificatestatusId).HasColumnName("certificatestatusid");
 
                 entity.Property(e => e.Company)
                     .HasMaxLength(50)
@@ -703,10 +703,10 @@ namespace EsignBackend.Models
                     .HasColumnType("datetime")
                     .HasColumnName("issuedate");
 
-                entity.Property(e => e.Issuerplace)
+                entity.Property(e => e.IssuerplaceId)
                     .HasMaxLength(50)
-                    .HasColumnName("issuerplace")
-                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                    .HasColumnName("issuerplaceid");
+                    //.UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                 entity.Property(e => e.Licenceid)
                     .HasMaxLength(50)
@@ -718,7 +718,7 @@ namespace EsignBackend.Models
                     .HasColumnName("passportid")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Project).HasColumnName("project");
+                entity.Property(e => e.ProjectId).HasColumnName("projectid");
 
                 entity.Property(e => e.Remarks)
                     .HasColumnName("remarks")
@@ -737,13 +737,13 @@ namespace EsignBackend.Models
 
                 //entity.Property(e => e.Smartobject).HasColumnName("smartobject");
 
-                entity.Property(e => e.Subproject).HasColumnName("subproject");
+                entity.Property(e => e.SubprojectId).HasColumnName("subprojectid");
 
                 entity.Property(e => e.Updateddate)
                     .HasColumnType("datetime")
                     .HasColumnName("updateddate");
 
-                entity.Property(e => e.Updateduserid).HasColumnName("updateduserid");
+                entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
             });
 
             modelBuilder.Entity<Certificatesstatus>(entity =>
@@ -1033,7 +1033,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Project).HasColumnName("project");
+                entity.Property(e => e.ProjectId).HasColumnName("projectid");
 
                 entity.Property(e => e.Title)
                     .HasMaxLength(50)
@@ -1043,19 +1043,19 @@ namespace EsignBackend.Models
 
 
             modelBuilder.Entity<Subproject>().HasOne<Project>(sp => sp.RelatedProject).
-                WithMany(p => p.Subprojects).HasForeignKey(sp => sp.Project);
+                WithMany(p => p.Subprojects).HasForeignKey(sp => sp.ProjectId);
 
             modelBuilder.Entity<Certificate>().HasOne<Project>(c => c.RelatedProject).
-                WithMany(pr => pr.Certificates).HasForeignKey(c => c.Project);
+                WithMany(pr => pr.Certificates).HasForeignKey(c => c.ProjectId);
 
             modelBuilder.Entity<Certificate>().HasOne<Subproject>(c => c.RelatedSubProject).
-                WithMany(sp => sp.Certificates).HasForeignKey(c => c.Subproject);
+                WithMany(sp => sp.Certificates).HasForeignKey(c => c.SubprojectId);
 
             modelBuilder.Entity<Certificate>().HasOne<Issplace>(c => c.RelatedIssuerPlace).
-                WithMany(ip => ip.Certificates).HasForeignKey(c => c.Issuerplace);
+                WithMany(ip => ip.Certificates).HasForeignKey(c => c.IssuerplaceId);
 
             modelBuilder.Entity<Certificate>().HasOne<Isscert>(c => c.RelatedCertificateissuer).
-                WithMany(ci => ci.Certificates).HasForeignKey(c => c.Certificateissuer);
+                WithMany(ci => ci.Certificates).HasForeignKey(c => c.CertificateissuerId);
 
             modelBuilder.Entity<Certificate>().HasOne<Custident>(c => c.RelatedCustomerIdentifier).
                 WithMany(ci => ci.Certificates).HasForeignKey(c => c.Identify);
@@ -1064,7 +1064,7 @@ namespace EsignBackend.Models
                 WithMany(customer => customer.CustomerCertificates).HasForeignKey(c => c.Customerid);
 
             modelBuilder.Entity<Certificate>().HasOne<Certificatesstatus>(c => c.RelatedCertificatesstatus).
-                WithMany(cerStatus => cerStatus.Certificates).HasForeignKey(c => c.Certificatestatus);
+                WithMany(cerStatus => cerStatus.Certificates).HasForeignKey(c => c.CertificatestatusId);
 
             modelBuilder.Entity<Certificate>().HasOne<Smartobject>(c => c.RelatedSmartObject).
                 WithMany(so => so.Certificates).HasForeignKey(c => c.Smartobject);
@@ -1085,16 +1085,16 @@ namespace EsignBackend.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
 
-            modelBuilder.Entity<Certificateshistory>().HasOne<Customer>(ch => ch.RelatedCustomer).WithMany(cu => cu.CustomerHistoryCertificates).HasForeignKey(ch => ch.Updateduserid);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Project>(ch => ch.RelatedProject).WithMany(p => p.HistoryCertificates).HasForeignKey(ch => ch.Project);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Subproject>(ch => ch.RelatedSubProject).WithMany(sp => sp.HistoryCertificates).HasForeignKey(ch => ch.Subproject).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Customer>(ch => ch.RelatedCustomer).WithMany(cu => cu.CustomerHistoryCertificates).HasForeignKey(ch => ch.UpdateduserId);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Project>(ch => ch.RelatedProject).WithMany(p => p.HistoryCertificates).HasForeignKey(ch => ch.ProjectId);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Subproject>(ch => ch.RelatedSubProject).WithMany(sp => sp.HistoryCertificates).HasForeignKey(ch => ch.SubprojectId).OnDelete(DeleteBehavior.NoAction).IsRequired();
             modelBuilder.Entity<Certificateshistory>().HasOne<Expirationtype>(ch => ch.RelatedExpiration).WithMany(et => et.HistoryCertificates).HasForeignKey(ch => ch.Expire);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Certificatesstatus>(ch => ch.RelatedCertificateStatus).WithMany(cs => cs.HistoryCertificates).HasForeignKey(ch => ch.Certificatestatus);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Certificatesstatus>(ch => ch.RelatedCertificateStatus).WithMany(cs => cs.HistoryCertificates).HasForeignKey(ch => ch.CertificatestatusId);
             modelBuilder.Entity<Certificateshistory>().HasOne<Smartobject>(ch => ch.RelatedSmartObject).WithMany(so => so.HistoryCertificates).HasForeignKey(ch => ch.Smartobject);
             modelBuilder.Entity<Certificateshistory>().HasOne<Securityquestion>(ch => ch.RelatedSecurityQuestion).WithMany(sq => sq.HistoryCertificates).HasForeignKey(ch => ch.Securityquestion);
             modelBuilder.Entity<Certificateshistory>().HasOne<Docstype>(ch => ch.RelatedDocsType).WithMany(dt => dt.HistoryCertificates).HasForeignKey(ch => ch.Docstype);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Certificate>(ch => ch.RelatedCertificate).WithMany(c => c.HistoryCertificates).HasForeignKey(ch => ch.Certificateid);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Buuser>(ch => ch.RelatedUser).WithMany(us => us.HistoryCertificates).HasForeignKey(ch => ch.Updateduserid);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Certificate>(ch => ch.RelatedCertificate).WithMany(c => c.HistoryCertificates).HasForeignKey(ch => ch.CertificateId);
+            modelBuilder.Entity<Certificateshistory>().HasOne<Buuser>(ch => ch.RelatedUser).WithMany(us => us.HistoryCertificates).HasForeignKey(ch => ch.UpdateduserId);
 
             modelBuilder.Entity<Ticket>(entity =>
             {
@@ -1134,7 +1134,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Priorityd).HasColumnName("priorityd");
 
-                entity.Property(e => e.Project).HasColumnName("project");
+                entity.Property(e => e.ProjectId).HasColumnName("projectid");
 
                 entity.Property(e => e.Schedule)
                     .HasColumnType("datetime")
