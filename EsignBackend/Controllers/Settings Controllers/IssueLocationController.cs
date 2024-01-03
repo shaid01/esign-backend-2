@@ -27,13 +27,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateIssueLocation")]
-        public async Task<IActionResult> UpdateIssueLocation(Issplace updatedIssueLocation)
+        public async Task<IActionResult> UpdateIssueLocation(IssPlace updatedIssueLocation)
         {
             return Ok(await _issueLocationService.UpdateIssueLocation(updatedIssueLocation));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewIssueLocation")]
-        public async Task<IActionResult> AddNewIssueLocation(Issplace issueLocation)
+        public async Task<IActionResult> AddNewIssueLocation(IssPlace issueLocation)
         {
             return Ok(await _issueLocationService.AddNewIssueLocation(issueLocation));
         }

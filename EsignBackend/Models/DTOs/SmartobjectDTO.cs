@@ -9,7 +9,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class SmartobjectDTO
     {
-        public SmartobjectDTO(Smartobject smartobject)
+        public SmartobjectDTO(SmartObject smartobject)
         {
             if (smartobject == null)
                 return;

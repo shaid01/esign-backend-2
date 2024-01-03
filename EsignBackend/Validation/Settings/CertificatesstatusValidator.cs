@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class CertificatesstatusValidator : AbstractValidator<Certificatesstatus>
+    public class CertificatesstatusValidator : AbstractValidator<CertificatesStatus>
     {
         public CertificatesstatusValidator()
         {

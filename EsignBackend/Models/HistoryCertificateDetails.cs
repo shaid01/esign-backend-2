@@ -8,7 +8,7 @@ namespace EsignBackend.Models
     public class HistoryCertificateDetails
     {
         public HistoryCertificateDetails() { }
-        public HistoryCertificateDetails(Certificateshistory certificateshistory)
+        public HistoryCertificateDetails(CertificatesHistory certificateshistory)
         {
             this.Id = certificateshistory.Id;
             this.Project = certificateshistory.RelatedProject;
@@ -43,14 +43,14 @@ namespace EsignBackend.Models
 
         public int Id { get; set; }
         public Project Project { get; set; }
-        public Subproject SubProject { get; set; }
-        public Expirationtype Expire { get; set; }
-        public Smartobject Smartobject { get; set; }
-        public Certificatesstatus Certificatesstatus { get; set; }
-        public Securityquestion RelatedSecurityquestion { get; set; }
+        public SubProject SubProject { get; set; }
+        public ExpirationType Expire { get; set; }
+        public SmartObject Smartobject { get; set; }
+        public CertificatesStatus Certificatesstatus { get; set; }
+        public SecurityGuestion RelatedSecurityquestion { get; set; }
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
-        public Docstype Docstype { get; set; }
+        public DocsType Docstype { get; set; }
         public int? CertificateIssuerId { get; set; }
         public int? CertificateLocationId { get; set; }
         public string CustomerIdentifier { get; set; }

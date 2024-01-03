@@ -16,23 +16,23 @@ namespace EsignBackend.Extensions
         public static void AddValidation(this IServiceCollection services)
         {
             services.AddTransient<IValidator<LoginDto>, LoginDtoValidator>();
-            services.AddTransient<IValidator<Buuser>, UserValidator>();
+            services.AddTransient<IValidator<BuUser>, UserValidator>();
             services.AddTransient<IValidator<Customer>, CustomerValidator>();
             services.AddTransient<IValidator<Certificate>, CertificatesValidator>();
-            services.AddTransient<IValidator<Callpriority>, CallpriorityValidator>();
+            services.AddTransient<IValidator<CallPriority>, CallpriorityValidator>();
             services.AddTransient<IValidator<Callstatus>, CallStatusValidator>();
             services.AddTransient<IValidator<Isscert>, CertificateIssuerValidator>();
-            services.AddTransient<IValidator<Certificatermeark>, CertificateRemarksValidator>();
-            services.AddTransient<IValidator<Certificatesstatus>, CertificatesstatusValidator>();
+            services.AddTransient<IValidator<CertificaterMeark>, CertificateRemarksValidator>();
+            services.AddTransient<IValidator<CertificatesStatus>, CertificatesstatusValidator>();
             services.AddTransient<IValidator<Custident>, CustomerIdentifierValidator>();
             services.AddTransient<IValidator<Department>, DepartmentsValidator>();
-            services.AddTransient<IValidator<Expirationtype>, ExpirationTypeValidator>();
-            services.AddTransient<IValidator<Docstype>, IdentificationDocumentValidator>();
-            services.AddTransient<IValidator<Issplace>, IssueLocationValidator>();
+            services.AddTransient<IValidator<ExpirationType>, ExpirationTypeValidator>();
+            services.AddTransient<IValidator<DocsType>, IdentificationDocumentValidator>();
+            services.AddTransient<IValidator<IssPlace>, IssueLocationValidator>();
             services.AddTransient<IValidator<Project>, ProjectsValidator>();
-            services.AddTransient<IValidator<Subproject>, SubProjectValidator>();
-            services.AddTransient<IValidator<Securityquestion>, SecurityQuestionsValidator>();
-            services.AddTransient<IValidator<Smartobject>, SmartObjectValidator>();
+            services.AddTransient<IValidator<SubProject>, SubProjectValidator>();
+            services.AddTransient<IValidator<SecurityGuestion>, SecurityQuestionsValidator>();
+            services.AddTransient<IValidator<SmartObject>, SmartObjectValidator>();
 
         }
     }

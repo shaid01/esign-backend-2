@@ -8,33 +8,33 @@ namespace EsignBackend.Models
     public interface IAppDbContext
     {
         DbSet<Attachment> Attachments { get; set; }
-        DbSet<Budesign> Budesigns { get; set; }
-        DbSet<Bulanguage> Bulanguages { get; set; }
-        DbSet<Bumodule> Bumodules { get; set; }
-        DbSet<Bumodulecoderep> Bumodulecodereps { get; set; }
-        DbSet<Bumodulefield> Bumodulefields { get; set; }
-        DbSet<Busetting> Busettings { get; set; }
-        DbSet<Buuser> Buusers { get; set; }
-        DbSet<Callpriority> Callpriorities { get; set; }
+        DbSet<BuDesign> Budesigns { get; set; }
+        DbSet<BuLanguage> Bulanguages { get; set; }
+        DbSet<BuModule> Bumodules { get; set; }
+        DbSet<BuModuleCoderep> Bumodulecodereps { get; set; }
+        DbSet<BuModuleField> Bumodulefields { get; set; }
+        DbSet<BuSetting> Busettings { get; set; }
+        DbSet<BuUser> Buusers { get; set; }
+        DbSet<CallPriority> Callpriorities { get; set; }
         DbSet<Callstatus> Callstatuses { get; set; }
         DbSet<Certificate> Certificates { get; set; }
-        DbSet<Certificatermeark> Certificatermearks { get; set; }
-        DbSet<Certificateshistory> Certificateshistories { get; set; }
-        DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
+        DbSet<CertificaterMeark> Certificatermearks { get; set; }
+        DbSet<CertificatesHistory> Certificateshistories { get; set; }
+        DbSet<CertificatesStatus> Certificatesstatuses { get; set; }
         DbSet<Custident> Custidents { get; set; }
         DbSet<Customer> Customers { get; set; }
         DbSet<Department> Departmants { get; set; }
-        DbSet<Docstype> Docstypes { get; set; }
-        DbSet<Expirationtype> Expirationtypes { get; set; }
+        DbSet<DocsType> Docstypes { get; set; }
+        DbSet<ExpirationType> Expirationtypes { get; set; }
         DbSet<Isscert> Isscerts { get; set; }
-        DbSet<Issplace> Issplaces { get; set; }
-        DbSet<Progressreport> Progressreports { get; set; }
+        DbSet<IssPlace> Issplaces { get; set; }
+        DbSet<ProgressReport> Progressreports { get; set; }
         DbSet<Project> Projects { get; set; }
-        DbSet<Securityquestion> Securityquestions { get; set; }
-        DbSet<Smartobject> Smartobjects { get; set; }
-        DbSet<Subproject> Subprojects { get; set; }
+        DbSet<SecurityGuestion> Securityquestions { get; set; }
+        DbSet<SmartObject> Smartobjects { get; set; }
+        DbSet<SubProject> Subprojects { get; set; }
         DbSet<Ticket> Tickets { get; set; }
-        DbSet<Userview> Userviews { get; set; }
+        DbSet<UserView> Userviews { get; set; }
 
 
 

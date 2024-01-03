@@ -10,8 +10,8 @@ namespace EsignBackend.Services.SettingsService.SmartObject
     public interface ISmartObjectService
     {
         Task<ServiceResponse<List<SmartobjectDTO>>> GetSmartObjects(int skip, int take);
-        Task<ServiceResponse<int>> UpdateSmartObject(Smartobject updatedSmartObject);
-        Task<ServiceResponse<int>> AddNewSmartObject(Smartobject smartobject);
+        Task<ServiceResponse<int>> UpdateSmartObject(Models.SmartObject updatedSmartObject);
+        Task<ServiceResponse<int>> AddNewSmartObject(Models.SmartObject smartobject);
         Task<ServiceResponse<List<SmartobjectDTO>>> GetAllSmartObjects();
     }
 }

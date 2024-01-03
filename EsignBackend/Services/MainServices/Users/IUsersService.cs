@@ -11,9 +11,9 @@ namespace EsignBackend.Services.CharacterService
         Task<ServiceResponse<List<UserDTO>>> GetAllUsers(int skip,int take);
         Task<ServiceResponse<UserDTO>> GetUserByUsername(string username);
         Task<ServiceResponse<int>> GetAmountOfUsers();
-        Task<ServiceResponse<int>> AddNewUser(Buuser newUser);
-        Task<ServiceResponse<int>> UpdateUser(Buuser updatedUser);
+        Task<ServiceResponse<int>> AddNewUser(BuUser newUser);
+        Task<ServiceResponse<int>> UpdateUser(BuUser updatedUser);
         Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take);
-        Task<ServiceResponse<int>> ChangeUserPassword(Buuser user);
+        Task<ServiceResponse<int>> ChangeUserPassword(BuUser user);
     }
 }

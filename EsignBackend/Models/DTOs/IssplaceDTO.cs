@@ -8,7 +8,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class IssplaceDTO
     {
-        public IssplaceDTO(Issplace certificateLocation)
+        public IssplaceDTO(IssPlace certificateLocation)
         {
             if (certificateLocation == null)
                 return;
@@ -20,6 +20,6 @@ namespace EsignBackend.Models.DTOs
         }
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Active { get; set; }
+        public bool Active { get; set; }
     }
 }

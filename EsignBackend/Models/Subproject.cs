@@ -6,15 +6,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EsignBackend.Models
 {
-    public partial class Subproject
+    public partial class SubProject
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        //[Column(TypeName = "float")]
         public int ProjectId { get; set; }
         public virtual Project RelatedProject { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; }
-        public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
+        public virtual ICollection<CertificatesHistory> HistoryCertificates { get; set; }
 
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation
 {
-    public class UserValidator : AbstractValidator<Buuser>
+    public class UserValidator : AbstractValidator<BuUser>
     {
         public UserValidator()
         {

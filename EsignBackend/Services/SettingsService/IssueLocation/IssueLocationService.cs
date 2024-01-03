@@ -34,7 +34,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             _logger.Debug("isTheNameAlreadyInUse");
             return _context.Issplaces.Where(item => item.Title.Equals(title)).Count() != 0;
         }
-        public async Task<ServiceResponse<int>> AddNewIssueLocation(Issplace issueLocation)
+        public async Task<ServiceResponse<int>> AddNewIssueLocation(IssPlace issueLocation)
         {
             _logger.Debug("AddNewIssueLocation");
 
@@ -84,7 +84,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateIssueLocation(Issplace updatedIssueLocation)
+        public async Task<ServiceResponse<int>> UpdateIssueLocation(IssPlace updatedIssueLocation)
         {
             _logger.Debug("UpdateIssueLocation");
             var serviceResponse = new ServiceResponse<int>();

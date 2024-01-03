@@ -10,7 +10,7 @@ namespace EsignBackend.Models.DTOs
     public class SecurityquestionDTO
     {
 
-        public SecurityquestionDTO(Securityquestion securityquestion)
+        public SecurityquestionDTO(SecurityGuestion securityquestion)
         {
             if (securityquestion == null)
                 return;

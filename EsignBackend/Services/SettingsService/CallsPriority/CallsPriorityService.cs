@@ -34,7 +34,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Callpriorities.Where(item => item.Title.Equals(title)).Count() != 0;
         }
-        public async Task<ServiceResponse<int>> AddNewCallPriority(Callpriority callPriority)
+        public async Task<ServiceResponse<int>> AddNewCallPriority(CallPriority callPriority)
         {
             _logger.Debug("AddNewCallPriority");
             var serviceRespone = new ServiceResponse<int>();
@@ -84,7 +84,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority)
+        public async Task<ServiceResponse<int>> UpdateCallPriority(CallPriority updatedCallPriority)
         {
             _logger.Debug("UpdateCallPriority");
             var serviceResponse = new ServiceResponse<int>();

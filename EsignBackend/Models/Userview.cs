@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace EsignBackend.Models
 {
-    public partial class Userview
+    public partial class UserView
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Sessionvalues { get; set; }
+        public string SessionValues { get; set; }
         public int? Userid { get; set; }
     }
 }

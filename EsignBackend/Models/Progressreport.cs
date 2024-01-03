@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace EsignBackend.Models
 {
-    public partial class Progressreport
+    public partial class ProgressReport
     {
         public int Id { get; set; }
         public int? TicketId { get; set; }

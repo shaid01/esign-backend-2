@@ -9,52 +9,41 @@ namespace EsignBackend.Models
     public partial class Certificate
     {
         public int Id { get; set; }
-        //[Column(TypeName = "float")]
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
         public virtual Project RelatedProject { get; set; }
         public string Company { get; set; }
         public string Hpnumber { get; set; }
         public string Email { get; set; }
         public DateTime? Issuedate { get; set; }
         public DateTime? Expiredate { get; set; }
-        //[Column(TypeName = "float")]
-        public int? Expire { get; set; }
-        public virtual Expirationtype? RelatedExpiration { get; set; }
-        //[Column(TypeName = "float")]
+        public int? ExpirationtypeId { get; set; }
+        public virtual ExpirationType? RelatedExpiration { get; set; }
         public int? SmartobjectId { get; set; }
-        public virtual Smartobject? RelatedSmartObject { get; set; }
-        //[Column(TypeName = "float")]
+        public virtual SmartObject? RelatedSmartObject { get; set; }
         public int? CertificatestatusId { get; set; }
-        public virtual Certificatesstatus? RelatedCertificatesstatus { get; set; }
-        //[Column(TypeName = "float")]
+        public virtual CertificatesStatus? RelatedCertificatesstatus { get; set; }
         public int? CustomerId { get; set; }
         public virtual Customer RelatedCustomer { get; set; }
-        //[Column(TypeName = "float")]
         public int? SubprojectId { get; set; }
-        public virtual Subproject RelatedSubProject { get; set; }
-        //[Column(TypeName = "float")]
+        public virtual SubProject RelatedSubProject { get; set; }
         public int? DocstypeId { get; set; }
-        public virtual Docstype RelatedDocsType { get; set; }
+        public virtual DocsType RelatedDocsType { get; set; }
         public string PassportId { get; set; }
         public string LicenceId { get; set; }
         public string Hotem { get; set; }
-        //[Column(TypeName = "float")]
         public int? SecurityquestionId { get; set; }
-        public virtual Securityquestion RelatedSecurityquestion { get; set; }
+        public virtual SecurityGuestion RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
         public string Remarksdesc { get; set; }
         public string Job { get; set; }
-        //[Column(TypeName = "float")]
         public int? Identify { get; set; }
         public virtual Custident? RelatedCustomerIdentifier { get; set; }
-        //[Column(TypeName = "float")]
         public int? CertificateissuerId { get; set; }
         public virtual Isscert? RelatedCertificateissuer { get; set; }
-        //[Column(TypeName = "float")]
         public int? IssuerplaceId { get; set; }
-        public virtual Issplace? RelatedIssuerPlace { get; set; }
+        public virtual IssPlace? RelatedIssuerPlace { get; set; }
         public string Remarks { get; set; }
         public string AttorneyLicenseNumber { get; set; }
-        public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
+        public virtual ICollection<CertificatesHistory> HistoryCertificates { get; set; }
     }
 }

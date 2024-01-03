@@ -117,7 +117,7 @@ namespace EsignBackend.Services.CharacterService
         /// </summary>
         /// <param name="newUser"></param>
         /// <returns></returns>
-        public async Task<ServiceResponse<int>> AddNewUser(Buuser newUser)
+        public async Task<ServiceResponse<int>> AddNewUser(BuUser newUser)
         {
             _logger.Debug("AddNewUser");
             var serviceRespone = new ServiceResponse<int>();
@@ -154,7 +154,7 @@ namespace EsignBackend.Services.CharacterService
                 }
             }
         }
-        public async Task<ServiceResponse<int>> UpdateUser(Buuser updatedUser)
+        public async Task<ServiceResponse<int>> UpdateUser(BuUser updatedUser)
         {
             _logger.Debug("UpdateUser");
             updatedUser.Updateddate = updatedUser.Updateddate.Value.ToLocalTime();
@@ -221,7 +221,7 @@ namespace EsignBackend.Services.CharacterService
             //serviceRespone.Data = take == UNLIMITED ? dbUsers.Skip(skip).ToList() : dbUsers.Skip(skip).Take(take).ToList();
             //return serviceRespone;
         }
-        public async Task<ServiceResponse<int>> ChangeUserPassword(Buuser user)
+        public async Task<ServiceResponse<int>> ChangeUserPassword(BuUser user)
         {
             _logger.Debug("ChangeUserPassword");
 

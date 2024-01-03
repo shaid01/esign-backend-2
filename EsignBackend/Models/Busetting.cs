@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace EsignBackend.Models
 {
-    public partial class Busetting
+    public partial class BuSetting
     {
         public int Id { get; set; }
         public string Title { get; set; }

@@ -7,7 +7,7 @@ namespace EsignBackend.Models.DTOs.Settings
 {
     public class CallpriorityDTO
     {
-        public CallpriorityDTO(Callpriority callpriority)
+        public CallpriorityDTO(CallPriority callpriority)
         {
             if (callpriority == null)
                 return;

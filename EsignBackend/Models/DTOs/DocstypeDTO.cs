@@ -6,7 +6,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class DocstypeDTO
     {
-        public DocstypeDTO(Docstype docstype)
+        public DocstypeDTO(DocsType docstype)
         {
             if (docstype == null)
                 return;

@@ -63,10 +63,10 @@ namespace EsignBackend.Services.CharacterService
             return serviceRespone;
         }
 
-        public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions()
+        public async Task<ServiceResponse<List<SecurityGuestion>>> GetSecurityQuestions()
         {
             _logger.Debug("GetSecurityQuestions");
-            var serviceResponse = new ServiceResponse<List<Securityquestion>>();
+            var serviceResponse = new ServiceResponse<List<SecurityGuestion>>();
             var dbSecurityQuestions = await _context.Securityquestions.ToListAsync();
             serviceResponse.Data = dbSecurityQuestions;
             return serviceResponse;

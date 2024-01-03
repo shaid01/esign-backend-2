@@ -8,7 +8,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class CertificatesstatusDTO
     {
-        public CertificatesstatusDTO(Certificatesstatus certificatesstatus)
+        public CertificatesstatusDTO(CertificatesStatus certificatesstatus)
         {
             if (certificatesstatus == null)
                 return;

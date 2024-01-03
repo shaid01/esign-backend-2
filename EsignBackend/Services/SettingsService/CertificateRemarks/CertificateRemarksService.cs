@@ -56,7 +56,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             serviceResponse.Data = outputData;
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateCertificateRemarks(Certificatermeark updatedCertificateRemarks)
+        public async Task<ServiceResponse<int>> UpdateCertificateRemarks(CertificaterMeark updatedCertificateRemarks)
         {
             _logger.Debug("UpdateCertificateRemarks");
             var serviceResponse = new ServiceResponse<int>();
@@ -77,7 +77,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> AddNewCertificateRemarks(Certificatermeark certificateRemark)
+        public async Task<ServiceResponse<int>> AddNewCertificateRemarks(CertificaterMeark certificateRemark)
         {
             _logger.Debug("AddNewCertificateRemarks");
             var serviceRespone = new ServiceResponse<int>();
@@ -94,7 +94,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
                 //certificateRemark.Id = GenerateId();
                 //certificateRemark.Id = 0;
                
-                var newCertificateRemarksInDb = _context.Certificatermearks.Add(new Certificatermeark() { Title = certificateRemark.Title });
+                var newCertificateRemarksInDb = _context.Certificatermearks.Add(new CertificaterMeark() { Title = certificateRemark.Title });
                 try
                 {
                     _context.SaveChanges();

@@ -8,7 +8,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class UserDTO
     {
-        public UserDTO(Buuser user, string? departmentTitle = null)
+        public UserDTO(BuUser user, string? departmentTitle = null)
         {
             if (user == null)
                 return;
@@ -30,7 +30,7 @@ namespace EsignBackend.Models.DTOs
             Allowedips = user.Allowedips;
             Expires = user.Expires;
             Remarks = user.Remarks;
-            Sessionvalues = user.Sessionvalues;
+            SessionValues = user.SessionValues;
             Provider = user.Provider;
             Elang = user.Elang;
             DepartmantId = user.DepartmantId;
@@ -57,7 +57,7 @@ namespace EsignBackend.Models.DTOs
         public string Allowedips { get; set; }
         public DateTime? Expires { get; set; }
         public string Remarks { get; set; }
-        public string Sessionvalues { get; set; }
+        public string SessionValues { get; set; }
         public double? Provider { get; set; }
         public double? Elang { get; set; }
         public int? DepartmantId { get; set; }

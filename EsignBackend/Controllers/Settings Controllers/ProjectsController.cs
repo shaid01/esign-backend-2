@@ -47,7 +47,7 @@ namespace EsignBackend.Controllers
 
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateSubproject")]
-        public async Task<IActionResult> UpdateSubproject(Subproject updatedSubproject)
+        public async Task<IActionResult> UpdateSubproject(SubProject updatedSubproject)
         {
             return Ok(await _projectsService.UpdateSubproject(updatedSubproject));
         }
@@ -59,7 +59,7 @@ namespace EsignBackend.Controllers
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewSubproject")]
-        public async Task<IActionResult> AddNewSubproject(Subproject newSubproject)
+        public async Task<IActionResult> AddNewSubproject(SubProject newSubproject)
         {
             return Ok(await _projectsService.AddNewSubroject(newSubproject));
         }

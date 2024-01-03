@@ -39,7 +39,7 @@ namespace EsignBackend.Services.CharacterService
             return userPassInDb.Equals(encryptedPass);
         }
 
-        private string CreateToken(Buuser user)
+        private string CreateToken(BuUser user)
         {
             _logger.Debug("CreateToken");
 

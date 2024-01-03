@@ -27,13 +27,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateIdentificationDocument")]
-        public async Task<IActionResult> UpdateIdentificationDocument(Docstype UpdatedIdentificationDocument)
+        public async Task<IActionResult> UpdateIdentificationDocument(DocsType UpdatedIdentificationDocument)
         {
             return Ok(await _identificationDocumentService.UpdateIdentificationDocument(UpdatedIdentificationDocument));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewIdentificationDocument")]
-        public async Task<IActionResult> AddNewIdentificationDocument(Docstype identificationDocument)
+        public async Task<IActionResult> AddNewIdentificationDocument(DocsType identificationDocument)
         {
             return Ok(await _identificationDocumentService.AddNewIdentificationDocument(identificationDocument));
         }

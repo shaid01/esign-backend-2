@@ -56,7 +56,7 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
             serviceResponse.Amount = _context.Expirationtypes.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateExpirationType(Models.Expirationtype updatedExpirationType)
+        public async Task<ServiceResponse<int>> UpdateExpirationType(Models.ExpirationType updatedExpirationType)
         {
             _logger.Debug("UpdateExpirationType");
             var serviceResponse = new ServiceResponse<int>();
@@ -77,7 +77,7 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> AddNewExpirationType(Models.Expirationtype expirationType)
+        public async Task<ServiceResponse<int>> AddNewExpirationType(Models.ExpirationType expirationType)
         {
             _logger.Debug("AddNewExpirationType");
             var serviceRespone = new ServiceResponse<int>();

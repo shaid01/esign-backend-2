@@ -23,34 +23,34 @@ namespace EsignBackend.Models
         }
 
         public  DbSet<Attachment> Attachments { get; set; }
-        public  DbSet<Budesign> Budesigns { get; set; }
-        public  DbSet<Bulanguage> Bulanguages { get; set; }
-        public  DbSet<Bumodule> Bumodules { get; set; }
-        public  DbSet<Bumodulecoderep> Bumodulecodereps { get; set; }
-        public  DbSet<Bumodulefield> Bumodulefields { get; set; }
-        public  DbSet<Busetting> Busettings { get; set; }
-        public  DbSet<Buuser> Buusers { get; set; }
-        public  DbSet<Callpriority> Callpriorities { get; set; }
+        public  DbSet<BuDesign> Budesigns { get; set; }
+        public  DbSet<BuLanguage> Bulanguages { get; set; }
+        public  DbSet<BuModule> Bumodules { get; set; }
+        public  DbSet<BuModuleCoderep> Bumodulecodereps { get; set; }
+        public  DbSet<BuModuleField> Bumodulefields { get; set; }
+        public  DbSet<BuSetting> Busettings { get; set; }
+        public  DbSet<BuUser> Buusers { get; set; }
+        public  DbSet<CallPriority> Callpriorities { get; set; }
         public  DbSet<Callstatus> Callstatuses { get; set; }
         public  DbSet<Certificate> Certificates { get; set; }
-        public  DbSet<Certificatermeark> Certificatermearks { get; set; }
-        public  DbSet<Certificateshistory> Certificateshistories { get; set; }
-        public  DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
+        public  DbSet<CertificaterMeark> Certificatermearks { get; set; }
+        public  DbSet<CertificatesHistory> Certificateshistories { get; set; }
+        public  DbSet<CertificatesStatus> Certificatesstatuses { get; set; }
        // publial DbSet<Character> Characters { get; set; }
         public  DbSet<Custident> Custidents { get; set; }
         public  DbSet<Customer> Customers { get; set; }
         public  DbSet<Department> Departmants { get; set; }
-        public  DbSet<Docstype> Docstypes { get; set; }
-        public  DbSet<Expirationtype> Expirationtypes { get; set; }
+        public  DbSet<DocsType> Docstypes { get; set; }
+        public  DbSet<ExpirationType> Expirationtypes { get; set; }
         public  DbSet<Isscert> Isscerts { get; set; }
-        public  DbSet<Issplace> Issplaces { get; set; }
-        public  DbSet<Progressreport> Progressreports { get; set; }
+        public  DbSet<IssPlace> Issplaces { get; set; }
+        public  DbSet<ProgressReport> Progressreports { get; set; }
         public  DbSet<Project> Projects { get; set; }
-        public  DbSet<Securityquestion> Securityquestions { get; set; }
-        public  DbSet<Smartobject> Smartobjects { get; set; }
-        public  DbSet<Subproject> Subprojects { get; set; }
+        public  DbSet<SecurityGuestion> Securityquestions { get; set; }
+        public  DbSet<SmartObject> Smartobjects { get; set; }
+        public  DbSet<SubProject> Subprojects { get; set; }
         public  DbSet<Ticket> Tickets { get; set; }
-        public  DbSet<Userview> Userviews { get; set; }
+        public  DbSet<UserView> Userviews { get; set; }
        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -93,7 +93,7 @@ namespace EsignBackend.Models
             });
 
 
-            modelBuilder.Entity<Budesign>(entity =>
+            modelBuilder.Entity<BuDesign>(entity =>
             {
                 entity.HasNoKey();
 
@@ -126,7 +126,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Bulanguage>(entity =>
+            modelBuilder.Entity<BuLanguage>(entity =>
             {
                 entity.HasNoKey();
 
@@ -148,7 +148,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Bumodule>(entity =>
+            modelBuilder.Entity<BuModule>(entity =>
             {
                 entity.HasNoKey();
 
@@ -274,7 +274,7 @@ namespace EsignBackend.Models
                 entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
             });
 
-            modelBuilder.Entity<Bumodulecoderep>(entity =>
+            modelBuilder.Entity<BuModuleCoderep>(entity =>
             {
                 entity.HasNoKey();
 
@@ -312,7 +312,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Bumodulefield>(entity =>
+            modelBuilder.Entity<BuModuleField>(entity =>
             {
                 entity.HasNoKey();
 
@@ -398,7 +398,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Busetting>(entity =>
+            modelBuilder.Entity<BuSetting>(entity =>
             {
                 entity.HasNoKey();
 
@@ -424,7 +424,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Buuser>(entity =>
+            modelBuilder.Entity<BuUser>(entity =>
             {
                 //entity.HasNoKey();                
                 /*entity.HasKey(e => e.Id);
@@ -491,7 +491,7 @@ namespace EsignBackend.Models
                     .HasColumnName("remarks")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Sessionvalues)
+                entity.Property(e => e.SessionValues)
                     .HasColumnName("sessionvalues")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
@@ -517,7 +517,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Callpriority>(entity =>
+            modelBuilder.Entity<CallPriority>(entity =>
             {
                 //entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -564,7 +564,7 @@ namespace EsignBackend.Models
                 entity.Property(e => e.CertificatestatusId).HasColumnName("certificatestatusid");
 
                 entity.Property(e => e.Company)
-                    .HasMaxLength(50)
+                    .HasMaxLength(300)
                     .HasColumnName("company");
 
                 entity.Property(e => e.CustomerId).HasColumnName("customerid");
@@ -575,7 +575,7 @@ namespace EsignBackend.Models
                     .HasMaxLength(70)
                     .HasColumnName("email");
 
-                entity.Property(e => e.Expire).HasColumnName("expire");
+                entity.Property(e => e.ExpirationtypeId).HasColumnName("expirationtypeid");
 
                 entity.Property(e => e.Expiredate)
                     .HasColumnType("datetime")
@@ -630,7 +630,7 @@ namespace EsignBackend.Models
                 entity.Property(e => e.SubprojectId).HasColumnName("subprojectid");
             });
 
-            modelBuilder.Entity<Certificatermeark>(entity =>
+            modelBuilder.Entity<CertificaterMeark>(entity =>
             {
                 //entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -645,7 +645,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Certificateshistory>(entity =>
+            modelBuilder.Entity<CertificatesHistory>(entity =>
             {
                 //entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -662,7 +662,7 @@ namespace EsignBackend.Models
                 entity.Property(e => e.CertificatestatusId).HasColumnName("certificatestatusid");
 
                 entity.Property(e => e.Company)
-                    .HasMaxLength(50)
+                    .HasMaxLength(300)
                     .HasColumnName("company")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
@@ -675,7 +675,7 @@ namespace EsignBackend.Models
                     .HasColumnName("email")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Expire).HasColumnName("expire");
+                entity.Property(e => e.ExpirationtypeId).HasColumnName("expirationtypeid");
 
                 entity.Property(e => e.Expiredate)
                     .HasColumnType("datetime")
@@ -745,7 +745,7 @@ namespace EsignBackend.Models
                 entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
             });
 
-            modelBuilder.Entity<Certificatesstatus>(entity =>
+            modelBuilder.Entity<CertificatesStatus>(entity =>
             {
                 // entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -780,8 +780,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(2)
-                    .HasColumnName("active")
-                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                    .HasColumnName("active");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -804,13 +803,8 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Calleruserid).HasColumnName("calleruserid");
 
-                entity.Property(e => e.Certificates)
-                    .HasMaxLength(20)
-                    .HasColumnName("certificates")
-                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
-
                 entity.Property(e => e.Company)
-                    .HasMaxLength(50)
+                    .HasMaxLength(300)
                     .HasColumnName("company")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
@@ -850,7 +844,7 @@ namespace EsignBackend.Models
                     .HasColumnName("securityansware")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Securityquestion).HasColumnName("securityquestionid");
+                entity.Property(e => e.SecurityquestionId).HasColumnName("securityquestionid");
 
                 entity.Property(e => e.Temp)
                     .HasMaxLength(50)
@@ -873,7 +867,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Docstype>(entity =>
+            modelBuilder.Entity<DocsType>(entity =>
             {
                 // entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -888,7 +882,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Expirationtype>(entity =>
+            modelBuilder.Entity<ExpirationType>(entity =>
             {
                 //entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -923,7 +917,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Issplace>(entity =>
+            modelBuilder.Entity<IssPlace>(entity =>
             {
                 //entity.HasNoKey();
 
@@ -933,8 +927,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(2)
-                    .HasColumnName("active")
-                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                    .HasColumnName("active");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -956,7 +949,7 @@ namespace EsignBackend.Models
                      .HasConstraintName("FK_dbo.Posts_dbo.Blogs_BlogId");
              });*/
 
-            modelBuilder.Entity<Progressreport>(entity =>
+            modelBuilder.Entity<ProgressReport>(entity =>
             {
                 entity.HasNoKey();
 
@@ -992,7 +985,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Securityquestion>(entity =>
+            modelBuilder.Entity<SecurityGuestion>(entity =>
             {
                 //entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -1007,7 +1000,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Smartobject>(entity =>
+            modelBuilder.Entity<SmartObject>(entity =>
             {
                 // entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -1022,7 +1015,7 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Subproject>(entity =>
+            modelBuilder.Entity<SubProject>(entity =>
             {
                 //entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
@@ -1043,16 +1036,16 @@ namespace EsignBackend.Models
             //modelBuilder.Entity<Buuser>().HasOne<Department>(sp => sp.Departmantid).
             //   WithMany(p => p.Subprojects).HasForeignKey(sp => sp.ProjectId);
 
-            modelBuilder.Entity<Subproject>().HasOne<Project>(sp => sp.RelatedProject).
+            modelBuilder.Entity<SubProject>().HasOne<Project>(sp => sp.RelatedProject).
                 WithMany(p => p.Subprojects).HasForeignKey(sp => sp.ProjectId);
 
             modelBuilder.Entity<Certificate>().HasOne<Project>(c => c.RelatedProject).
                 WithMany(pr => pr.Certificates).HasForeignKey(c => c.ProjectId);
 
-            modelBuilder.Entity<Certificate>().HasOne<Subproject>(c => c.RelatedSubProject).
+            modelBuilder.Entity<Certificate>().HasOne<SubProject>(c => c.RelatedSubProject).
                 WithMany(sp => sp.Certificates).HasForeignKey(c => c.SubprojectId);
 
-            modelBuilder.Entity<Certificate>().HasOne<Issplace>(c => c.RelatedIssuerPlace).
+            modelBuilder.Entity<Certificate>().HasOne<IssPlace>(c => c.RelatedIssuerPlace).
                 WithMany(ip => ip.Certificates).HasForeignKey(c => c.IssuerplaceId);
 
             modelBuilder.Entity<Certificate>().HasOne<Isscert>(c => c.RelatedCertificateissuer).
@@ -1064,38 +1057,38 @@ namespace EsignBackend.Models
             modelBuilder.Entity<Certificate>().HasOne<Customer>(c => c.RelatedCustomer).
                 WithMany(customer => customer.CustomerCertificates).HasForeignKey(c => c.CustomerId);
 
-            modelBuilder.Entity<Certificate>().HasOne<Certificatesstatus>(c => c.RelatedCertificatesstatus).
+            modelBuilder.Entity<Certificate>().HasOne<CertificatesStatus>(c => c.RelatedCertificatesstatus).
                 WithMany(cerStatus => cerStatus.Certificates).HasForeignKey(c => c.CertificatestatusId);
 
-            modelBuilder.Entity<Certificate>().HasOne<Smartobject>(c => c.RelatedSmartObject).
+            modelBuilder.Entity<Certificate>().HasOne<SmartObject>(c => c.RelatedSmartObject).
                 WithMany(so => so.Certificates).HasForeignKey(c => c.SmartobjectId);
 
-            modelBuilder.Entity<Certificate>().HasOne<Expirationtype>(c => c.RelatedExpiration).
-                WithMany(et => et.Certificates).HasForeignKey(c => c.Expire);
+            modelBuilder.Entity<Certificate>().HasOne<ExpirationType>(c => c.RelatedExpiration).
+                WithMany(et => et.Certificates).HasForeignKey(c => c.ExpirationtypeId);
 
-            modelBuilder.Entity<Certificate>().HasOne<Securityquestion>(c => c.RelatedSecurityquestion).
+            modelBuilder.Entity<Certificate>().HasOne<SecurityGuestion>(c => c.RelatedSecurityquestion).
                 WithMany(sq => sq.Certificates).HasForeignKey(c => c.SecurityquestionId).
                 OnDelete(DeleteBehavior.Restrict); ;
 
-            modelBuilder.Entity<Certificate>().HasOne<Docstype>(c => c.RelatedDocsType).
+            modelBuilder.Entity<Certificate>().HasOne<DocsType>(c => c.RelatedDocsType).
                 WithMany(dt => dt.Certificates).HasForeignKey(c => c.DocstypeId);
 
 
-            modelBuilder.Entity<Customer>().HasOne<Securityquestion>(cu => cu.RelatedSecurityquestion)
-                .WithMany(sq => sq.Customers).HasForeignKey(cu => cu.Securityquestion)
+            modelBuilder.Entity<Customer>().HasOne<SecurityGuestion>(cu => cu.RelatedSecurityquestion)
+                .WithMany(sq => sq.Customers).HasForeignKey(cu => cu.SecurityquestionId)
                 .OnDelete(DeleteBehavior.Restrict);
 
 
-            modelBuilder.Entity<Certificateshistory>().HasOne<Customer>(ch => ch.RelatedCustomer).WithMany(cu => cu.CustomerHistoryCertificates).HasForeignKey(ch => ch.UpdateduserId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Project>(ch => ch.RelatedProject).WithMany(p => p.HistoryCertificates).HasForeignKey(ch => ch.ProjectId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Subproject>(ch => ch.RelatedSubProject).WithMany(sp => sp.HistoryCertificates).HasForeignKey(ch => ch.SubprojectId).OnDelete(DeleteBehavior.NoAction).IsRequired();
-            modelBuilder.Entity<Certificateshistory>().HasOne<Expirationtype>(ch => ch.RelatedExpiration).WithMany(et => et.HistoryCertificates).HasForeignKey(ch => ch.Expire);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Certificatesstatus>(ch => ch.RelatedCertificateStatus).WithMany(cs => cs.HistoryCertificates).HasForeignKey(ch => ch.CertificatestatusId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Smartobject>(ch => ch.RelatedSmartObject).WithMany(so => so.HistoryCertificates).HasForeignKey(ch => ch.SmartobjectId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Securityquestion>(ch => ch.RelatedSecurityQuestion).WithMany(sq => sq.HistoryCertificates).HasForeignKey(ch => ch.SecurityquestionId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Docstype>(ch => ch.RelatedDocsType).WithMany(dt => dt.HistoryCertificates).HasForeignKey(ch => ch.DocstypeId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Certificate>(ch => ch.RelatedCertificate).WithMany(c => c.HistoryCertificates).HasForeignKey(ch => ch.CertificateId);
-            modelBuilder.Entity<Certificateshistory>().HasOne<Buuser>(ch => ch.RelatedUser).WithMany(us => us.HistoryCertificates).HasForeignKey(ch => ch.UpdateduserId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<Customer>(ch => ch.RelatedCustomer).WithMany(cu => cu.CustomerHistoryCertificates).HasForeignKey(ch => ch.UpdateduserId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<Project>(ch => ch.RelatedProject).WithMany(p => p.HistoryCertificates).HasForeignKey(ch => ch.ProjectId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<SubProject>(ch => ch.RelatedSubProject).WithMany(sp => sp.HistoryCertificates).HasForeignKey(ch => ch.SubprojectId).OnDelete(DeleteBehavior.NoAction).IsRequired();
+            modelBuilder.Entity<CertificatesHistory>().HasOne<ExpirationType>(ch => ch.RelatedExpiration).WithMany(et => et.HistoryCertificates).HasForeignKey(ch => ch.ExpirationtypeId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<CertificatesStatus>(ch => ch.RelatedCertificateStatus).WithMany(cs => cs.HistoryCertificates).HasForeignKey(ch => ch.CertificatestatusId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<SmartObject>(ch => ch.RelatedSmartObject).WithMany(so => so.HistoryCertificates).HasForeignKey(ch => ch.SmartobjectId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<SecurityGuestion>(ch => ch.RelatedSecurityQuestion).WithMany(sq => sq.HistoryCertificates).HasForeignKey(ch => ch.SecurityquestionId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<DocsType>(ch => ch.RelatedDocsType).WithMany(dt => dt.HistoryCertificates).HasForeignKey(ch => ch.DocstypeId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<Certificate>(ch => ch.RelatedCertificate).WithMany(c => c.HistoryCertificates).HasForeignKey(ch => ch.CertificateId);
+            modelBuilder.Entity<CertificatesHistory>().HasOne<BuUser>(ch => ch.RelatedUser).WithMany(us => us.HistoryCertificates).HasForeignKey(ch => ch.UpdateduserId);
 
             modelBuilder.Entity<Ticket>(entity =>
             {
@@ -1162,7 +1155,7 @@ namespace EsignBackend.Models
                 entity.Property(e => e.UpdateduserId).HasColumnName("updateduserid");
             });
 
-            modelBuilder.Entity<Userview>(entity =>
+            modelBuilder.Entity<UserView>(entity =>
             {
                 entity.HasNoKey();
 
@@ -1170,7 +1163,7 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Sessionvalues)
+                entity.Property(e => e.SessionValues)
                     .HasColumnName("sessionvalues")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 

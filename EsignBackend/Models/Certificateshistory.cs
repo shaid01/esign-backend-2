@@ -6,52 +6,42 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EsignBackend.Models
 {
-    public partial class Certificateshistory
+    public partial class CertificatesHistory
     {
         public int Id { get; set; }
-        //[Column(TypeName = "float")]
         public int? CustomerId { get; set; }
         public virtual Customer RelatedCustomer { get; set; }
         public string Email { get; set; }
-        //[Column(TypeName = "float")]
         public int ProjectId { get; set; }
         public virtual Project RelatedProject { get; set; }
-        //[Column(TypeName = "float")]
         public int SubprojectId { get; set; }
-        public virtual Subproject RelatedSubProject { get; set; }
+        public virtual SubProject RelatedSubProject { get; set; }
         public string Company { get; set; }
         public string Hpnumber { get; set; }
         public string Hotem { get; set; }
         public DateTime? Issuedate { get; set; }
-        //[Column(TypeName = "float")]
-        public int? Expire { get; set; }
-        public virtual Expirationtype? RelatedExpiration { get; set; }
+        public int? ExpirationtypeId { get; set; }
+        public virtual ExpirationType? RelatedExpiration { get; set; }
         public DateTime? Expiredate { get; set; }
-        //[Column(TypeName = "float")]
         public int CertificatestatusId { get; set; }
-        public virtual Certificatesstatus RelatedCertificateStatus { get; set; }
-        //[Column(TypeName = "float")]
+        public virtual CertificatesStatus RelatedCertificateStatus { get; set; }
         public int? SmartobjectId { get; set; }
-        public virtual Smartobject RelatedSmartObject {get; set;}
+        public virtual SmartObject RelatedSmartObject {get; set;}
         public string Remarksdesc { get; set; }
-        //[Column(TypeName = "float")]
         public int? SecurityquestionId { get; set; }
-        public virtual Securityquestion RelatedSecurityQuestion { get; set; }
+        public virtual SecurityGuestion RelatedSecurityQuestion { get; set; }
         public string Securityansware { get; set; }
-        //[Column(TypeName = "float")]
         public int? DocstypeId { get; set; }
-        public virtual Docstype RelatedDocsType { get; set; }
+        public virtual DocsType RelatedDocsType { get; set; }
         public string Passportid { get; set; }
         public string Licenceid { get; set; }
         public string Identify { get; set; }
         public int? CertificateissuerId { get; set; }
         public int? IssuerplaceId { get; set; }
-        //[Column(TypeName = "float")]
         public int? CertificateId { get; set; }
         public Certificate RelatedCertificate { get; set; }
-        //[Column(TypeName = "float")]
         public int? UpdateduserId { get; set; }
-        public virtual Buuser RelatedUser { get; set; }
+        public virtual BuUser RelatedUser { get; set; }
         public DateTime? Updateddate { get; set; }
         public string Remarks { get; set; }
     }

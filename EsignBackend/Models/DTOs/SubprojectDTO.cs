@@ -8,7 +8,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class SubprojectDTO
     {
-        public SubprojectDTO(Subproject subProject)
+        public SubprojectDTO(SubProject subProject)
         {
             if (subProject == null)
                 return;

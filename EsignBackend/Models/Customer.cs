@@ -16,17 +16,15 @@ namespace EsignBackend.Models
         public string Lastname { get; set; }
         public string Phone1 { get; set; }
         public string Mobile1 { get; set; }
-        //[Column(TypeName = "float")]
-        public int? Securityquestion { get; set; }
-        public virtual Securityquestion RelatedSecurityquestion { get; set; }
+        public int? SecurityquestionId { get; set; }
+        public virtual SecurityGuestion RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
-        public string Certificates { get; set; }
         public string Temp { get; set; }
         public double? Calleruserid { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
         public string Company { get; set; }
         public virtual ICollection<Certificate> CustomerCertificates { get; set; }
-        public virtual ICollection<Certificateshistory> CustomerHistoryCertificates { get; set; }
+        public virtual ICollection<CertificatesHistory> CustomerHistoryCertificates { get; set; }
     }
 }

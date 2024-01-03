@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class CallpriorityValidator : AbstractValidator<Callpriority>
+    public class CallpriorityValidator : AbstractValidator<CallPriority>
     {
         public CallpriorityValidator()
         {

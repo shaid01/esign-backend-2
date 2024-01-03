@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class SubProjectValidator : AbstractValidator <Subproject>
+    public class SubProjectValidator : AbstractValidator <SubProject>
     {
         public SubProjectValidator()
         {

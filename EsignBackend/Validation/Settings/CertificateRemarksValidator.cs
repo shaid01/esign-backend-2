@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class CertificateRemarksValidator : AbstractValidator<Certificatermeark>
+    public class CertificateRemarksValidator : AbstractValidator<CertificaterMeark>
     {
         public CertificateRemarksValidator()
         {

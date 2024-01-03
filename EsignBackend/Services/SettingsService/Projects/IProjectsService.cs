@@ -12,9 +12,9 @@ namespace EsignBackend.Services.SettingsService
         Task<ServiceResponse<List<ProjectDTO>>> GetProjects();
         Task<ServiceResponse<List<SubprojectDTO>>> GetSubprojectsInRange(int skip, int take);
         Task<ServiceResponse<int>> UpdateProject(Project updatedProject);
-        Task<ServiceResponse<int>> UpdateSubproject(Subproject updatedSubproject);
+        Task<ServiceResponse<int>> UpdateSubproject(SubProject updatedSubproject);
         Task<ServiceResponse<int>> AddNewProject(Project newProject);
-        Task<ServiceResponse<int>> AddNewSubroject(Subproject newSubproject);
+        Task<ServiceResponse<int>> AddNewSubroject(SubProject newSubproject);
         Task<ServiceResponse<List<SubprojectDTO>>> GetAllSubprojects(int projectId = -1);
 
         Task<ServiceResponse<List<ProjectDTO>>> GetProjectsInRange(int skip, int take);

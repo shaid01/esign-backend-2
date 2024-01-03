@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class SecurityQuestionsValidator : AbstractValidator<Securityquestion>
+    public class SecurityQuestionsValidator : AbstractValidator<SecurityGuestion>
     {
         public SecurityQuestionsValidator()
         {

@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace EsignBackend.Models
 {
-    public partial class Certificatesstatus
+    public partial class CertificatesStatus
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Color { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; }
-        public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
+        public virtual ICollection<CertificatesHistory> HistoryCertificates { get; set; }
 
     }
 }

@@ -35,7 +35,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             return _context.Securityquestions.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
-        public async Task<ServiceResponse<int>> AddNewSecurityQuestion(Securityquestion securityQuestion)
+        public async Task<ServiceResponse<int>> AddNewSecurityQuestion(SecurityGuestion securityQuestion)
         {
             _logger.Debug("AddNewSecurityQuestion");
             var serviceRespone = new ServiceResponse<int>();
@@ -84,7 +84,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             serviceResponse.Amount = _context.Securityquestions.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateSecurityQuestion(Securityquestion updatedSecurityQuestion)
+        public async Task<ServiceResponse<int>> UpdateSecurityQuestion(SecurityGuestion updatedSecurityQuestion)
         {
             _logger.Debug("UpdateSecurityQuestion");
             var serviceResponse = new ServiceResponse<int>();

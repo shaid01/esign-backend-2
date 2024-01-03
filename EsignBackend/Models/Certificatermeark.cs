@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace EsignBackend.Models
 {
-    public partial class Certificatermeark
+    public partial class CertificaterMeark
     {
         public int Id { get; set; }
         public string Title { get; set; }

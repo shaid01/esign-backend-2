@@ -28,13 +28,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateExpirationType")]
-        public async Task<IActionResult> UpdateCertificatesStatus(Expirationtype updatedExpirationType)
+        public async Task<IActionResult> UpdateCertificatesStatus(ExpirationType updatedExpirationType)
         {
             return Ok(await _expirationTypeService.UpdateExpirationType(updatedExpirationType));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewExpirationType")]
-        public async Task<IActionResult> AddNewExpirationType(Expirationtype expirationType)
+        public async Task<IActionResult> AddNewExpirationType(ExpirationType expirationType)
         {
             return Ok(await _expirationTypeService.AddNewExpirationType(expirationType));
         }

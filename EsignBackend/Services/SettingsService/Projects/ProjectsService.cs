@@ -103,7 +103,7 @@ namespace EsignBackend.Services.SettingsService
             serviceResponse.Amount = _context.Subprojects.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateSubproject(Subproject updatedSubproject)
+        public async Task<ServiceResponse<int>> UpdateSubproject(SubProject updatedSubproject)
         {
             _logger.Debug("UpdateSubproject");
             var serviceResponse = new ServiceResponse<int>();
@@ -158,7 +158,7 @@ namespace EsignBackend.Services.SettingsService
                 }
             }
         }
-        public async Task<ServiceResponse<int>> AddNewSubroject(Subproject newSubproject)
+        public async Task<ServiceResponse<int>> AddNewSubroject(SubProject newSubproject)
         {
             _logger.Debug("AddNewSubroject");
             var serviceRespone = new ServiceResponse<int>();

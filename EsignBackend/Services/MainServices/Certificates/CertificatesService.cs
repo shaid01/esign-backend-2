@@ -267,7 +267,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             {
                 customerSecurityAnswerMatches = certificate.RelatedCustomer.Securityansware != null &&
                                                     certificate.RelatedCustomer.Securityansware.Equals(secAns) &&
-                                                    certificate.RelatedCustomer.Securityquestion == question;
+                                                    certificate.RelatedCustomer.SecurityquestionId == question;
             }
 
             var foundMatch = certificateSecurityAnswerMatches || customerSecurityAnswerMatches;

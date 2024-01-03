@@ -29,13 +29,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
 
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateCertificatesStatus")]
-        public async Task<IActionResult> UpdateCertificatesStatus(Certificatesstatus updatedCertificatestatus)
+        public async Task<IActionResult> UpdateCertificatesStatus(CertificatesStatus updatedCertificatestatus)
         {
             return Ok(await _certificatesstatusService.UpdateCertificatesStatus(updatedCertificatestatus));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewCertificatesStatus")]
-        public async Task<IActionResult> AddNewCertificatesStatus(Certificatesstatus certificatestatus)
+        public async Task<IActionResult> AddNewCertificatesStatus(CertificatesStatus certificatestatus)
         {
             return Ok(await _certificatesstatusService.AddNewCertificatesStatus(certificatestatus));
         }

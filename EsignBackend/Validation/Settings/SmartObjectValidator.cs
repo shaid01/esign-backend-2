@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class SmartObjectValidator : AbstractValidator<Smartobject>
+    public class SmartObjectValidator : AbstractValidator<SmartObject>
     {
         public SmartObjectValidator()
         {

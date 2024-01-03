@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class IdentificationDocumentValidator : AbstractValidator<Docstype>
+    public class IdentificationDocumentValidator : AbstractValidator<DocsType>
     {
         public IdentificationDocumentValidator()
         {

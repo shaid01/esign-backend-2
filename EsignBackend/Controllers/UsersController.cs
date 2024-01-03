@@ -47,14 +47,14 @@ namespace EsignBackend.Controllers
         }
 
         [HttpPost("AddNewUser")]
-        public async Task<IActionResult> AddNewUser(Buuser newUser)
+        public async Task<IActionResult> AddNewUser(BuUser newUser)
         {
             _logger.Debug("AddNewUser");
             return Ok(await _usersService.AddNewUser(newUser));
         }
 
         [HttpPut("UpdateUser")]
-        public async Task<IActionResult> UpdateUser(Buuser updatedUser)
+        public async Task<IActionResult> UpdateUser(BuUser updatedUser)
         {
             _logger.Debug("UpdateUser");
             return Ok(await _usersService.UpdateUser(updatedUser));
@@ -68,7 +68,7 @@ namespace EsignBackend.Controllers
         }
 
         [HttpPut("ChangeUserPassword")]
-        public async Task<IActionResult> ChangeUserPassword(Buuser User)
+        public async Task<IActionResult> ChangeUserPassword(BuUser User)
         {
             _logger.Debug("ChangeUserPassword");
             return Ok(await _usersService.ChangeUserPassword(User));

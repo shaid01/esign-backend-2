@@ -49,7 +49,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateSmartObject(Smartobject updatedSmartObject)
+        public async Task<ServiceResponse<int>> UpdateSmartObject(Models.SmartObject updatedSmartObject)
         {
             _logger.Debug("UpdateSmartObject");
             var serviceResponse = new ServiceResponse<int>();
@@ -70,7 +70,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> AddNewSmartObject(Smartobject smartobject)
+        public async Task<ServiceResponse<int>> AddNewSmartObject(Models.SmartObject smartobject)
         {
             _logger.Debug("AddNewSmartObject");
             var serviceRespone = new ServiceResponse<int>();

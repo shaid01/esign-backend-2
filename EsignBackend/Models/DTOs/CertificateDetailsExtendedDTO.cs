@@ -33,7 +33,7 @@ namespace EsignBackend.Models.DTOs
             Expiredate = certificate.Expiredate;
             Project = new ProjectDTO(certificate.Project);
             SubProject = new SubprojectDTO(certificate.SubProject);
-            Expire = new ExpirationtypeDTO(certificate.Expire);
+            Expire = new ExpirationtypeDTO(certificate.Expirationtype);
             Smartobject = new SmartobjectDTO(certificate.Smartobject);
             Certificatesstatus = new CertificatesstatusDTO(certificate.Certificatesstatus);
             Docstype = new DocstypeDTO(certificate.Docstype);

@@ -48,7 +48,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateCertificatesStatus(Certificatesstatus updatedCertificatestatus)
+        public async Task<ServiceResponse<int>> UpdateCertificatesStatus(Models.CertificatesStatus updatedCertificatestatus)
         {
             _logger.Debug("UpdateCertificatesStatus");
 
@@ -70,7 +70,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> AddNewCertificatesStatus(Certificatesstatus certificatestatus)
+        public async Task<ServiceResponse<int>> AddNewCertificatesStatus(Models.CertificatesStatus certificatestatus)
         {
             _logger.Debug("AddNewCertificatesStatus");
             var serviceRespone = new ServiceResponse<int>();

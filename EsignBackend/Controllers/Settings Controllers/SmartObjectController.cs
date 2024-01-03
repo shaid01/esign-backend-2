@@ -26,13 +26,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
 
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateSmartObject")]
-        public async Task<IActionResult> UpdateCertificatesStatus(Smartobject updatedSmartobject)
+        public async Task<IActionResult> UpdateCertificatesStatus(SmartObject updatedSmartobject)
         {
             return Ok(await _smartObjectService.UpdateSmartObject(updatedSmartobject));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewSmartObject")]
-        public async Task<IActionResult> AddNewCertificatesStatus(Smartobject smartobject)
+        public async Task<IActionResult> AddNewCertificatesStatus(SmartObject smartobject)
         {
             return Ok(await _smartObjectService.AddNewSmartObject(smartobject));
         }

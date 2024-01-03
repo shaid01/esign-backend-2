@@ -35,7 +35,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             _logger.Debug("isTheNameAlreadyInUse");
             return _context.Docstypes.Where(item => item.Title.Equals(title)).Count() != 0;
         }
-        public async Task<ServiceResponse<int>> AddNewIdentificationDocument(Docstype identificationDocument)
+        public async Task<ServiceResponse<int>> AddNewIdentificationDocument(DocsType identificationDocument)
         {
             _logger.Debug("AddNewIdentificationDocument");
             var serviceRespone = new ServiceResponse<int>();
@@ -83,7 +83,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             serviceResponse.Amount = _context.Docstypes.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateIdentificationDocument(Docstype updatedIdentificationDocument)
+        public async Task<ServiceResponse<int>> UpdateIdentificationDocument(DocsType updatedIdentificationDocument)
         {
             _logger.Debug("UpdateIdentificationDocument");
             var serviceResponse = new ServiceResponse<int>();

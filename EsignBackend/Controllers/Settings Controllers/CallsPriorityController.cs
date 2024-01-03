@@ -26,13 +26,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateCallPriority")]
-        public async Task<IActionResult> UpdateCallPriority(Callpriority UpdatedCallPriority)
+        public async Task<IActionResult> UpdateCallPriority(CallPriority UpdatedCallPriority)
         {
             return Ok(await _callsPriorityService.UpdateCallPriority(UpdatedCallPriority));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewCallpriority")]
-        public async Task<IActionResult> AddNewCallpriority(Callpriority callPriority)
+        public async Task<IActionResult> AddNewCallpriority(CallPriority callPriority)
         {
             return Ok(await _callsPriorityService.AddNewCallPriority(callPriority));
         }

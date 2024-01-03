@@ -10,8 +10,8 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
     public interface IExpirationTypeService
     {        
         Task<ServiceResponse<List<ExpirationtypeDTO>>> GetExpirationTypes(int skip, int take);
-        Task<ServiceResponse<int>> UpdateExpirationType(Models.Expirationtype updatedExpirationType);
-        Task<ServiceResponse<int>> AddNewExpirationType(Models.Expirationtype expirationType);
+        Task<ServiceResponse<int>> UpdateExpirationType(Models.ExpirationType updatedExpirationType);
+        Task<ServiceResponse<int>> AddNewExpirationType(Models.ExpirationType expirationType);
         Task<ServiceResponse<List<ExpirationtypeDTO>>> GetAllExpirationTypes();
     }
 }

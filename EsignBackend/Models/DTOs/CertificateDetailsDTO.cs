@@ -26,7 +26,7 @@ namespace EsignBackend.Models.DTOs
             Expiredate = certificate.Expiredate;
             Project = new ProjectDTO(certificate.Project);
             SubProject = new SubprojectDTO(certificate.SubProject);
-            Expire = new ExpirationtypeDTO(certificate.Expire);
+            Expire = new ExpirationtypeDTO(certificate.Expirationtype);
             Certificatesstatus = new CertificatesstatusDTO(certificate.Certificatesstatus);
             CertificateIssuer = new IsscertDTO(certificate.CertificateIssuer);
             CertificateLocation = new IssplaceDTO(certificate.CertificateLocation);

@@ -9,7 +9,7 @@ namespace EsignBackend.Models.DTOs
 {
     public class ExpirationtypeDTO
     {
-        public ExpirationtypeDTO(Expirationtype expire)
+        public ExpirationtypeDTO(ExpirationType expire)
         {
             if (expire == null)
                 return;

@@ -25,13 +25,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateSecurityQuestion")]
-        public async Task<IActionResult> UpdateSecurityQuestion(Securityquestion updatedSecurityQuestion)
+        public async Task<IActionResult> UpdateSecurityQuestion(SecurityGuestion updatedSecurityQuestion)
         {
             return Ok(await _securityQuestionsService.UpdateSecurityQuestion(updatedSecurityQuestion));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewSecurityQuestion")]
-        public async Task<IActionResult> AddNewSecurityQuestion(Securityquestion securityQuestion)
+        public async Task<IActionResult> AddNewSecurityQuestion(SecurityGuestion securityQuestion)
         {
             return Ok(await _securityQuestionsService.AddNewSecurityQuestion(securityQuestion));
         }

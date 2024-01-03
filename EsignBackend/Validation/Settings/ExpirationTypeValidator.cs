@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Validation.Settings
 {
-    public class ExpirationTypeValidator : AbstractValidator<Expirationtype>
+    public class ExpirationTypeValidator : AbstractValidator<ExpirationType>
     {
         public ExpirationTypeValidator()
         {

@@ -18,10 +18,9 @@ namespace EsignBackend.Models.DTOs
             Lastname = customer.Lastname;
             Phone1 = customer.Phone1;
             Mobile1 = customer.Mobile1;
-            Securityquestion = customer.Securityquestion;
+            Securityquestion = customer.SecurityquestionId;
             RelatedSecurityquestion = new SecurityquestionDTO(customer.RelatedSecurityquestion);
             Securityansware = customer.Securityansware;
-            Certificates = customer.Certificates;
             Temp = customer.Temp;
             Calleruserid = customer.Calleruserid;
             Address = customer.Address;
@@ -37,7 +36,6 @@ namespace EsignBackend.Models.DTOs
         public int? Securityquestion { get; set; }
         public SecurityquestionDTO RelatedSecurityquestion { get; set; }
         public string Securityansware { get; set; }
-        public string Certificates { get; set; }
         public string Temp { get; set; }
         public double? Calleruserid { get; set; }
         public string Address { get; set; }

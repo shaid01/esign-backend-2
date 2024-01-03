@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EsignBackend.Models
 {
-    public partial class Buuser
+    public partial class BuUser
     {
         [Key]
         public int Id { get; set; }
@@ -26,11 +26,11 @@ namespace EsignBackend.Models
         public string Allowedips { get; set; }
         public DateTime? Expires { get; set; }
         public string Remarks { get; set; }
-        public string Sessionvalues { get; set; }
+        public string SessionValues { get; set; }
         public double? Provider { get; set; }
         public double? Elang { get; set; }
         public int? DepartmantId { get; set; }
-        public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
+        public virtual ICollection<CertificatesHistory> HistoryCertificates { get; set; }
         public virtual Department? Department { get; set; }
     }
 }
