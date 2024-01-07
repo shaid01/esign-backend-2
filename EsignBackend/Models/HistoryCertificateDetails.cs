@@ -38,6 +38,7 @@ namespace EsignBackend.Models
             this.UpdatedDate = (DateTime)certificateshistory.Updateddate;
             this.UpdatedUserName = this.UpdatedUserName;
             this.Customer = certificateshistory.RelatedCustomer;
+            this.AttorneyLicenseNumber = certificateshistory.AttorneyLicenseNumber;
 
         }
 
@@ -64,11 +65,13 @@ namespace EsignBackend.Models
         public string Securityanswer { get; set; }
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
+        public string AttorneyLicenseNumber { get; set; }
         public DateTime Issuedate { get; set; }
         public DateTime Expiredate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public string UpdatedUserName { get; set; }
         public Customer Customer { get; set; }
+
 
     }
 }

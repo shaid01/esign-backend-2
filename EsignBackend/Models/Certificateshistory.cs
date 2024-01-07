@@ -54,5 +54,6 @@ namespace EsignBackend.Models
         public virtual Buuser RelatedUser { get; set; }
         public DateTime? Updateddate { get; set; }
         public string Remarks { get; set; }
+        public string AttorneyLicenseNumber { get; set; }
     }
 }

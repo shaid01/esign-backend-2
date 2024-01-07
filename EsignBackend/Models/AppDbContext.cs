@@ -618,6 +618,10 @@ namespace EsignBackend.Models
                     .HasColumnName("remarks")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
+                entity.Property(e => e.AttorneyLicenseNumber)
+                    .HasMaxLength(50)
+                    .HasColumnName("attorneylicensenumber");
+
                 entity.Property(e => e.Remarksdesc).HasColumnName("remarksdesc");
 
                 entity.Property(e => e.Securityansware)
