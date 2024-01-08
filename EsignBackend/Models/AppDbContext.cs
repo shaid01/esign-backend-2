@@ -823,6 +823,9 @@ namespace EsignBackend.Models
                     .HasColumnName("company")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
+                entity.Property(e => e.ImpersonateAttempt)
+                 .HasColumnName("impersonateattempt");
+
                 entity.Property(e => e.Email)
                     .HasMaxLength(70)
                     .HasColumnName("email")

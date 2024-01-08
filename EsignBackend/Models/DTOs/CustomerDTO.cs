@@ -27,6 +27,7 @@ namespace EsignBackend.Models.DTOs
             Address = customer.Address;
             Email = customer.Email;
             Company = customer.Company;
+            ImpersonateAttempt = customer.ImpersonateAttempt;
         }
         public int Id { get; set; }
         public string Idnumber { get; set; }
@@ -43,5 +44,6 @@ namespace EsignBackend.Models.DTOs
         public string Address { get; set; }
         public string Email { get; set; }
         public string Company { get; set; }
+        public bool ImpersonateAttempt { get; set; }
     }
 }

@@ -79,13 +79,13 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<UserDTO>> GetUserByUsername(string username)
         {
-            _logger.Debug("GetUsersByUsername");
+            _logger.Debug("GetUserByUsername");
             var serviceRespone = new ServiceResponse<UserDTO>();
             var user = await _context.Buusers.FirstOrDefaultAsync(u => u.Username.Equals(username));
             if (user == null)
             {
                 serviceRespone.Amount = 0;
-                _logger.Error($"Can not find user by GetUsersByUsername, user username - {username}");
+                _logger.Error($"Not found user by Username = {username}");
                 return serviceRespone;
             }
             var department = await _context.Departmants.FirstOrDefaultAsync(d => d.Id.ToString() == user.Departmantid);

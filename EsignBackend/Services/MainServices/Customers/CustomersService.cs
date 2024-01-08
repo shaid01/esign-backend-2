@@ -63,6 +63,22 @@ namespace EsignBackend.Services.CharacterService
             return serviceRespone;
         }
 
+        public async Task<ServiceResponse<CustomerDTO>> GetCustomerById(int id)
+        {
+            _logger.Debug("GetCustomerById");
+            var serviceRespone = new ServiceResponse<CustomerDTO>();
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            if (customer == null)
+            {
+                serviceRespone.Amount = 0;
+                _logger.Error($"Not found customer by Id = {id}");
+                return serviceRespone;
+            }
+            serviceRespone.Amount = 1;
+            serviceRespone.Data = new CustomerDTO(customer);
+            return serviceRespone;
+        }
+
         public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions()
         {
             _logger.Debug("GetSecurityQuestions");
