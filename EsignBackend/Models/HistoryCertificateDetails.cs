@@ -39,7 +39,7 @@ namespace EsignBackend.Models
             this.UpdatedUserName = this.UpdatedUserName;
             this.Customer = certificateshistory.RelatedCustomer;
             this.AttorneyLicenseNumber = certificateshistory.AttorneyLicenseNumber;
-
+            this.NotarioLicenseNumber = certificateshistory.NotarioLicenseNumber;
         }
 
         public int Id { get; set; }
@@ -66,6 +66,7 @@ namespace EsignBackend.Models
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
         public string AttorneyLicenseNumber { get; set; }
+        public string NotarioLicenseNumber { get; set; }
         public DateTime Issuedate { get; set; }
         public DateTime Expiredate { get; set; }
         public DateTime UpdatedDate { get; set; }

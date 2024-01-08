@@ -29,6 +29,7 @@ namespace EsignBackend.Models.DTOs
             Remarks = certificate.Remarks;
             Remarkdesc = certificate.Remarkdesc;
             AttorneyLicenseNumber = certificate.AttorneyLicenseNumber;
+            NotarioLicenseNumber = certificate.NotarioLicenseNumber;
             Job = certificate.Job;
             Issuedate = certificate.Issuedate;
             Expiredate = certificate.Expiredate;
@@ -70,6 +71,7 @@ namespace EsignBackend.Models.DTOs
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
         public string AttorneyLicenseNumber { get; set; }
+        public string NotarioLicenseNumber { get; set; }
         public string Job { get; set; }
         public DateTime? Issuedate { get; set; }
         public DateTime? Expiredate { get; set; }

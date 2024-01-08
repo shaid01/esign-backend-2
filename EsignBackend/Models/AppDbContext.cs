@@ -622,6 +622,10 @@ namespace EsignBackend.Models
                     .HasMaxLength(50)
                     .HasColumnName("attorneylicensenumber");
 
+                entity.Property(e => e.NotarioLicenseNumber)
+                    .HasMaxLength(50)
+                    .HasColumnName("notariolicensenumber");
+
                 entity.Property(e => e.Remarksdesc).HasColumnName("remarksdesc");
 
                 entity.Property(e => e.Securityansware)

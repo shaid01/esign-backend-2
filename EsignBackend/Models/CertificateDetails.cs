@@ -44,6 +44,7 @@ namespace EsignBackend.Models
             this.RelatedCustomerIdentifier = certificate.RelatedCustomerIdentifier;
             this.RelatedSecurityQuestion = certificate.RelatedSecurityquestion;
             this.AttorneyLicenseNumber = certificate.AttorneyLicenseNumber;
+            this.NotarioLicenseNumber = certificate.NotarioLicenseNumber;
         }
 
         public int Id { get; set; }
@@ -74,6 +75,7 @@ namespace EsignBackend.Models
         public string Remarks { get; set; }
         public string Remarkdesc { get; set; }
         public string AttorneyLicenseNumber { get; set; }
+        public string NotarioLicenseNumber { get; set; }
         public string Job { get; set; }
         public DateTime? Issuedate { get; set; }
         public DateTime? Expiredate { get; set; }

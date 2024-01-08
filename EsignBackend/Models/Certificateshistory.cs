@@ -55,5 +55,6 @@ namespace EsignBackend.Models
         public DateTime? Updateddate { get; set; }
         public string Remarks { get; set; }
         public string AttorneyLicenseNumber { get; set; }
+        public string NotarioLicenseNumber { get; set; }
     }
 }

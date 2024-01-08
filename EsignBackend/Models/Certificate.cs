@@ -55,6 +55,7 @@ namespace EsignBackend.Models
         public virtual Issplace? RelatedIssuerPlace { get; set; }
         public string Remarks { get; set; }
         public string AttorneyLicenseNumber { get; set; }
+        public string NotarioLicenseNumber { get; set; }
         public virtual ICollection<Certificateshistory> HistoryCertificates { get; set; }
     }
 }
