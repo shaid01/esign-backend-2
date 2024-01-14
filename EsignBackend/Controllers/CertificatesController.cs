@@ -42,7 +42,7 @@ namespace EsignBackend.Controllers
             _logger.Debug("GetCertificatesDetails");
             return Ok(await _certificatesService.GetCertificatesDetails(skip, take));
         }
-        //[Authorize(Roles = "אדמין,מחדש,מנהל")]
+        [Authorize(Roles = "אדמין,מחדש,מנהל")]
         [HttpPut("UpdateCertificate")]
         public async Task<IActionResult> UpdateCertificate(Certificate updatedCertificate)
         {
