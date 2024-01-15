@@ -94,7 +94,8 @@ namespace EsignBackend.Services.MainServices.Certificates
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
             serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
             var certificateDetailsList = new List<CertificateDetailsDTO>();
-            var certificates = _context.Certificates
+
+            var query = _context.Certificates
                 .Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCertificatesstatus)
                 .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
@@ -105,8 +106,14 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedProject)
                 //  .Include(cer => cer.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedSmartObject)
-                .Include(cer => cer.RelatedSubProject)
-                .Skip(skip).Take(take).ToList();
+                .Include(cer => cer.RelatedSubProject).AsNoTracking();
+
+            query = query.Skip(skip);
+            if (take != UNLIMITED)
+            {
+                query = query.Take(take);
+            }
+            var certificates = await query.ToListAsync();
 
             foreach (var cer in certificates)
             {

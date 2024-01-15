@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EsignBackend.Models
 {
-    public partial class AppDbContext : DbContext ,IAppDbContext 
+    public partial class AppDbContext : DbContext, IAppDbContext
     {
         public AppDbContext()
         {
@@ -22,36 +22,36 @@ namespace EsignBackend.Models
         {
         }
 
-        public  DbSet<Attachment> Attachments { get; set; }
-        public  DbSet<Budesign> Budesigns { get; set; }
-        public  DbSet<Bulanguage> Bulanguages { get; set; }
-        public  DbSet<Bumodule> Bumodules { get; set; }
-        public  DbSet<Bumodulecoderep> Bumodulecodereps { get; set; }
-        public  DbSet<Bumodulefield> Bumodulefields { get; set; }
-        public  DbSet<Busetting> Busettings { get; set; }
-        public  DbSet<Buuser> Buusers { get; set; }
-        public  DbSet<Callpriority> Callpriorities { get; set; }
-        public  DbSet<Callstatus> Callstatuses { get; set; }
-        public  DbSet<Certificate> Certificates { get; set; }
-        public  DbSet<Certificatermeark> Certificatermearks { get; set; }
-        public  DbSet<Certificateshistory> Certificateshistories { get; set; }
-        public  DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
-       // publial DbSet<Character> Characters { get; set; }
-        public  DbSet<Custident> Custidents { get; set; }
-        public  DbSet<Customer> Customers { get; set; }
-        public  DbSet<Departmant> Departmants { get; set; }
-        public  DbSet<Docstype> Docstypes { get; set; }
-        public  DbSet<Expirationtype> Expirationtypes { get; set; }
-        public  DbSet<Isscert> Isscerts { get; set; }
-        public  DbSet<Issplace> Issplaces { get; set; }
-        public  DbSet<Progressreport> Progressreports { get; set; }
-        public  DbSet<Project> Projects { get; set; }
-        public  DbSet<Securityquestion> Securityquestions { get; set; }
-        public  DbSet<Smartobject> Smartobjects { get; set; }
-        public  DbSet<Subproject> Subprojects { get; set; }
-        public  DbSet<Ticket> Tickets { get; set; }
-        public  DbSet<Userview> Userviews { get; set; }
-       
+        public DbSet<Attachment> Attachments { get; set; }
+        public DbSet<Budesign> Budesigns { get; set; }
+        public DbSet<Bulanguage> Bulanguages { get; set; }
+        public DbSet<Bumodule> Bumodules { get; set; }
+        public DbSet<Bumodulecoderep> Bumodulecodereps { get; set; }
+        public DbSet<Bumodulefield> Bumodulefields { get; set; }
+        public DbSet<Busetting> Busettings { get; set; }
+        public DbSet<Buuser> Buusers { get; set; }
+        public DbSet<Callpriority> Callpriorities { get; set; }
+        public DbSet<Callstatus> Callstatuses { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
+        public DbSet<Certificatermeark> Certificatermearks { get; set; }
+        public DbSet<Certificateshistory> Certificateshistories { get; set; }
+        public DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
+        // publial DbSet<Character> Characters { get; set; }
+        public DbSet<Custident> Custidents { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Docstype> Docstypes { get; set; }
+        public DbSet<Expirationtype> Expirationtypes { get; set; }
+        public DbSet<Isscert> Isscerts { get; set; }
+        public DbSet<Issplace> Issplaces { get; set; }
+        public DbSet<Progressreport> Progressreports { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Securityquestion> Securityquestions { get; set; }
+        public DbSet<Smartobject> Smartobjects { get; set; }
+        public DbSet<Subproject> Subprojects { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Userview> Userviews { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -438,9 +438,7 @@ namespace EsignBackend.Models
                     .HasColumnName("allowedips")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Departmantid)
-                    .HasColumnName("departmantid")
-                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+                entity.Property(e => e.Departmentid).HasColumnName("departmentid");
 
                 entity.Property(e => e.Elang).HasColumnName("elang");
 
@@ -774,11 +772,11 @@ namespace EsignBackend.Models
                     .HasColumnName("title")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
-/*
-            modelBuilder.Entity<Character>(entity =>
-            {
-                entity.ToTable("characters");
-            });*/
+            /*
+                        modelBuilder.Entity<Character>(entity =>
+                        {
+                            entity.ToTable("characters");
+                        });*/
 
             modelBuilder.Entity<Custident>(entity =>
             {
@@ -870,12 +868,12 @@ namespace EsignBackend.Models
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
-            modelBuilder.Entity<Departmant>(entity =>
+            modelBuilder.Entity<Department>(entity =>
             {
                 // entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
 
-                entity.ToTable("departmants");
+                entity.ToTable("departments");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -1125,7 +1123,7 @@ namespace EsignBackend.Models
                     .HasColumnName("comefrom")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                entity.Property(e => e.Departmantid).HasColumnName("departmantid");
+                entity.Property(e => e.Departmentid).HasColumnName("departmentid");
 
                 entity.Property(e => e.Donedate)
                     .HasColumnType("datetime")
@@ -1197,7 +1195,7 @@ namespace EsignBackend.Models
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
-        
+
     }
 
 }

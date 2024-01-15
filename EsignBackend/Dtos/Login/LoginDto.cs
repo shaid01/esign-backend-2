@@ -8,9 +8,7 @@ namespace EsignBackend.Dtos.Login
 {
     public class LoginDto
     {
-        [DefaultValue("michaelv")]
         public string UserName { get; set; }
-        [DefaultValue("michaelv")]
         public string Password { get; set; }
     }
 }

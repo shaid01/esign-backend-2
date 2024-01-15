@@ -8,7 +8,7 @@ namespace EsignBackend.Models
     public partial class Ticket
     {
         public int Id { get; set; }
-        public double? Departmantid { get; set; }
+        public double? Departmentid { get; set; }
         public double? Status { get; set; }
         public double? Priorityd { get; set; }
         public double? Updateduserid { get; set; }

@@ -7,13 +7,13 @@ namespace EsignBackend.Models.DTOs.Settings
 {
     public class DepartmentDTO
     {
-        public DepartmentDTO(Departmant departmant)
+        public DepartmentDTO(Department department)
         {
-            if (departmant == null)
+            if (department == null)
                 return;
 
-            Id = departmant.Id;
-            Title = departmant.Title;
+            Id = department.Id;
+            Title = department.Title;
         }
         public int Id { get; set; }
         public string Title { get; set; }

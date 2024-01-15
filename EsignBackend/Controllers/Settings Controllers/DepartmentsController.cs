@@ -27,13 +27,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateDepartment")]
-        public async Task<IActionResult> UpdateDepartment(Departmant updatedDepartment)
+        public async Task<IActionResult> UpdateDepartment(Department updatedDepartment)
         {
             return Ok(await _departmentService.UpdateDepartment(updatedDepartment));
         }
         [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewDepartment")]
-        public async Task<IActionResult> AddNewDepartment(Departmant department)
+        public async Task<IActionResult> AddNewDepartment(Department department)
         {
             return Ok(await _departmentService.AddNewDepartment(department));
         }

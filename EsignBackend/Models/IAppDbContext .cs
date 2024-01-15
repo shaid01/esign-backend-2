@@ -23,7 +23,7 @@ namespace EsignBackend.Models
         DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
         DbSet<Custident> Custidents { get; set; }
         DbSet<Customer> Customers { get; set; }
-        DbSet<Departmant> Departmants { get; set; }
+        DbSet<Department> Departments { get; set; }
         DbSet<Docstype> Docstypes { get; set; }
         DbSet<Expirationtype> Expirationtypes { get; set; }
         DbSet<Isscert> Isscerts { get; set; }

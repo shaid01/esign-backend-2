@@ -50,31 +50,39 @@ namespace EsignBackend.Services.CharacterService
         }
         public async Task<ServiceResponse<List<UserDTO>>> GetAllUsers(int skip, int take)
         {
-            _logger.Debug("GetAllUsers");
-            var serviceRespone = new ServiceResponse<List<UserDTO>>();
+            try
+            {
+                _logger.Debug("GetAllUsers");
+                var serviceRespone = new ServiceResponse<List<UserDTO>>();
 
-            var query = _context.Buusers.AsNoTracking();
-            serviceRespone.Amount = await query.CountAsync();
-            query = query.Skip(skip);
-            if (take != UNLIMITED)
-            {
-                query = query.Take(take);
-            }
-            var userList = await query.ToListAsync();
-            var userDetails = new List<UserDTO>();
-            foreach (var user in userList)
-            {
-                try
+                var query = _context.Buusers.AsNoTracking();
+                serviceRespone.Amount = await query.CountAsync();
+                query = query.Skip(skip);
+                if (take != UNLIMITED)
                 {
-                    userDetails.Add(new UserDTO(user));
+                    query = query.Take(take);
                 }
-                catch (Exception ex)
+                var userList = await query.ToListAsync();
+                var userDetails = new List<UserDTO>();
+                foreach (var user in userList)
                 {
-                    _logger.Error($"Error in add user to userDetailsList, user id - {user.Id}");
+                    try
+                    {
+                        userDetails.Add(new UserDTO(user));
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error($"Error in add user to userDetailsList, user id - {user.Id}");
+                    }
                 }
+                serviceRespone.Data = userDetails;
+                return serviceRespone;
             }
-            serviceRespone.Data = userDetails;
-            return serviceRespone;
+            catch (Exception ex)
+            {
+                _logger.Error($"Error in read users");
+                throw ex;
+            }
         }
 
         public async Task<ServiceResponse<UserDTO>> GetUserByUsername(string username)
@@ -88,11 +96,11 @@ namespace EsignBackend.Services.CharacterService
                 _logger.Error($"Not found user by Username = {username}");
                 return serviceRespone;
             }
-            var department = await _context.Departmants.FirstOrDefaultAsync(d => d.Id.ToString() == user.Departmantid);
+            Department department = await _context.Departments.FirstOrDefaultAsync(d => d.Id == user.Departmentid);
             if (department == null)
             {
                 serviceRespone.Success = false;
-                serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmantid}";
+                serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmentid}";
                 serviceRespone.Data =new UserDTO(user, "???");
                 return serviceRespone;
             }
