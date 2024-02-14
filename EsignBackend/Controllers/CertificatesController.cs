@@ -101,7 +101,7 @@ namespace EsignBackend.Controllers
             _logger.Debug("CheckSecurityAnswer");
             return Ok(await _certificatesService.CheckSecurityAnswer(cerId, secAns,question));
         }
-        [Authorize(Roles = "אדמין,מחדש,מנהל")]
+        [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק")]
         [HttpPost("AddCertificate")]
         public async Task<IActionResult> AddCertificate(Certificate certificate)
         {

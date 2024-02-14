@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
 {
-    [Authorize(Roles = "אדמין,מנהל")]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
@@ -25,6 +24,7 @@ namespace EsignBackend.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "אדמין,מנהל")]
         [HttpGet("GetAllUsersByRange")]
         public async Task<IActionResult> GetAllUsersInRange(int skip, int take)
         {
@@ -39,6 +39,7 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.GetUserByUsername(username));
         }
 
+        [Authorize(Roles = "אדמין,מנהל")]
         [HttpGet("GetAmountOfUsers")]
         public async Task<IActionResult> GetAmountOfUsers()
         {
@@ -46,6 +47,7 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.GetAmountOfUsers());
         }
 
+        [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("AddNewUser")]
         public async Task<IActionResult> AddNewUser(Buuser newUser)
         {
@@ -53,6 +55,7 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.AddNewUser(newUser));
         }
 
+        [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("UpdateUser")]
         public async Task<IActionResult> UpdateUser(Buuser updatedUser)
         {
@@ -60,6 +63,7 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.UpdateUser(updatedUser));
         }
 
+        [Authorize(Roles = "אדמין,מנהל")]
         [HttpPost("SearchUsers")]  // TODO: change to Get
         public async Task<IActionResult> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
@@ -67,6 +71,7 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.SearchUsers(userAdvancedSearch, skip, take));
         }
 
+        [Authorize(Roles = "אדמין,מנהל")]
         [HttpPut("ChangeUserPassword")]
         public async Task<IActionResult> ChangeUserPassword(Buuser User)
         {
