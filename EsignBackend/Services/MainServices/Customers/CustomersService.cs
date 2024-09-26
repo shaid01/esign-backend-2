@@ -155,7 +155,8 @@ namespace EsignBackend.Services.CharacterService
             if (customerIdAlreadyInDb)
             {
                 serviceRespone.Success = false;
-                serviceRespone.Message = "Customer is already exists";
+                serviceRespone.Message = $"Customer {customer.Idnumber} is already exists";
+                _logger.Error($"Customer {customer.Idnumber} is already exists");
                 serviceRespone.Data = -1;
                 return serviceRespone;
             }
@@ -176,7 +177,7 @@ namespace EsignBackend.Services.CharacterService
                 }
                 catch (Exception exception)
                 {
-                    _logger.Debug("exception detected while trying to AddNewCustomer: " + exception);
+                    _logger.Error("Exception detected while trying to AddNewCustomer: " + exception);
                     serviceRespone.Success = false;
                     serviceRespone.Message = $"Registration failed. {exception}";
                     serviceRespone.Data = -1;

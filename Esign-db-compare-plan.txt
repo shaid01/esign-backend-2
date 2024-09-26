@@ -1,0 +1,180 @@
+﻿1) Original db schema files is on "C:\Users\igorz\source\Readme\ESign":
+	- Esign-cur.bak - snapshot of current schema we are using in development environment
+	- Esign-prev.bak - snapshot was found on "dev.comda.co.il" virtual PC. Origin and content unknown (02/09/2024)
+	- esign_schema_OriginalScript.sql - original snapshot generated on Comsign site 01/09/2024 - has no data, stucture only
+
+2) Possible pairs to compare (from most important):
+
+	1) Esign-cur.bak -> esign_schema_OriginalScript.sql (schema to be updated: "Esign_org"). Result script: "Esign_org_Update1.publish.sql" (SQLCMD mode).
+
+	-- no more relevant 2) Esign-cur.bak -> Esign-prev.bak. Result script: "Esign_prev_Update1.publish.sql". Assuming Esign-prev.bak has the same structure as esign_schema_OriginalScript.sql the generated script have to be identical to 1) case.
+	-- no more relevant 3) Esign-prev.bak -> esign_schema_OriginalScript.sql. Assuming the both schemes' structures are identical there will be no content to update.
+
+3) Schema "Esign_org" now have the same structure as "Esign_cur" but without a data (see backup file "Esign-org-from-cur-nodata.bak").
+
+4) Once again we should to restore database from "esign_schema_OriginalScript.sql" script. Let's call it "Esign_org_org".
+
+5) We need to prepare a script that will fill all the tables in "Esign_org_org" db using the data from "Esign_cur" db (INSERT INTO). For that purpose we'll use script "esign_schema_OriginalScript.sql" as reference for tables in the same order like they appear in this file.
+
+	- this step is necessary to simulate real original DB with data before we are going to migrate to new structure (and in order to exclude all possible unclear situations in the future).
+
+6) Having original DB with mocked data we can try to apply migration script "Esign_org_Update1.publish.sql" on it and check the results.
+
+-----> Different ways of applying new schema to existing in production schema
+
+	1. The only tool we can use is "Microsoft SQL Management Studio".
+	2. IMPOSSIBLE - We can try to apply "Esign_org_Update1.publish.sql" to schema "Esign_org_org" - original schema structure having mocked data.
+	3. ON THE CONTRARY - a) we are creating a schema "Esign_org_org" based on script "esign_schema_OriginalScript.sql"
+		b) we are applying SQLCMD script "Esign_org_Update1.publish.sql" to schema "Esign_org_org"
+		c) we are populate schema "Esign_org_org" with data from "Esign_cur" (mocked data), see script "insert-data-to-new-from-new.sql"
+		d) test app against schema "Esign_org_org"
+
+		*********************************************************************************************************************************
+		How to prepare and test a script to populate the new built schema with a data from the old schema on production machine:
+		*********************************************************************************************************************************
+		!On every step in case there are some words underscored by red lines, just click "CTRL-SHIFT-R" (cache clean)!
+
+		a) restore database from "esign_schema_OriginalScript.sql" script - "Esign_old" schema. (on DEV only) - Collation: "Hebrew_CI_AS"!
+		b) populate schema "Esign_old" with data from "Esign_cur" (mocked data), see script "insert-data-to-old-from-new.sql". (on DEV only)
+			Now we have old schema with data that is emulation of situation on production machine.
+		c) restore database from "esign_schema_OriginalScript.sql" script - "Esign_new" schema. (on DEV and PROD)
+
+		++++ Before applying on PROD check these lines: 
+				:setvar DefaultDataPath "C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\"
+				:setvar DefaultLogPath "C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\"
+		d) apply SQLCMD script "Esign_org_Update1.publish.sql" to schema "Esign_new". Now schema "Esign_new" is new and empty. (on DEV and PROD) - before running script: menu -> "Query" -> "SQLCMD mode"
+		e) MAIN TEST STEP: populate schema "Esign_new" with data from "Esign_old" (on DEV) or with data from "Esign" (on PROD), see script "insert-data-to-new-from-old-dev.sql" (on DEV) and "insert-data-to-new-from-old-prod.sql" (on PROD)
+
+		f) in case on any failure delete schema "Esign_old" (on DEV) and "Esign_new" (on DEV and PROD) and re-run all processes from the very beginning
+
+		*********************************************************************************************************************************
+		How to update new schema with a data from the old schema (still working) on production machine:
+		*********************************************************************************************************************************
+		
+        - on DEV see "delupsert-data-to-new-from-old-dev.sql" script file
+        - on PROD see "delupsert-data-to-new-from-old-prod.sql" script file
+
+		Before test change some data in "Esign_old" schema should be changed (simulate data update in the old working schema):
+
+			1) Table [isscert] - record was added "איגור" "on", records count = 226 
+			2) Table [certificates] - record with id = 14070, field [remarks] was changed to "בדיקה שלי 2", button "שכפל תעודה" - new record added with id = 295218, records count = 163478
+
+                insert into [certificates]
+                      ([project]
+                      ,[company]
+                      ,[hpnumber]
+                      ,[email]
+                      ,[issuedate]
+                      ,[expiredate]
+                      ,[expire]
+                      ,[smartobject]
+                      ,[certificatestatus]
+                      ,[customerid]
+                      ,[subproject]
+                      ,[docstype]
+                      ,[passportid]
+                      ,[licenceid]
+                      ,[hotem]
+                      ,[securityquestion]
+                      ,[securityansware]
+                      ,[remarksdesc]
+                      ,[job]
+                      ,[identify]
+                      ,[certificateissuer]
+                      ,[issuerplace]
+                      ,[remarks]
+                      ,[ducrypt])
+                select
+	                  [project]
+                      ,[company]
+                      ,[hpnumber]
+                      ,[email]
+                      ,[issuedate]
+                      ,[expiredate]
+                      ,[expire]
+                      ,[smartobject]
+                      ,[certificatestatus]
+                      ,[customerid]
+                      ,[subproject]
+                      ,[docstype]
+                      ,[passportid]
+                      ,[licenceid]
+                      ,[hotem]
+                      ,[securityquestion]
+                      ,[securityansware]
+                      ,[remarksdesc]
+                      ,[job]
+                      ,[identify]
+                      ,[certificateissuer]
+                      ,[issuerplace]
+                      ,[remarks]
+                      ,[ducrypt]
+                from [certificates]
+                where id = 14070
+
+            3) Table [buusers] - record was added with id = 330, records count = 277
+
+                insert into  [buusers]
+                      ([username]
+                      ,[userlevel]
+                      ,[usergroup]
+                      ,[firstname]
+                      ,[lastname]
+                      ,[email]
+                      ,[phone]
+                      ,[pass]
+                      ,[picture]
+                      ,[updateduserid]
+                      ,[updateddate]
+                      ,[parentid]
+                      ,[permissions]
+                      ,[allowedips]
+                      ,[expires]
+                      ,[remarks]
+                      ,[sessionvalues]
+                      ,[provider]
+                      ,[elang]
+                      ,[departmantid])
+                  select 
+                      [username]
+                      ,[userlevel]
+                      ,[usergroup]
+                      ,[firstname]
+                      ,[lastname]
+                      ,[email]
+                      ,[phone]
+                      ,[pass]
+                      ,[picture]
+                      ,[updateduserid]
+                      ,[updateddate]
+                      ,[parentid]
+                      ,[permissions]
+                      ,[allowedips]
+                      ,[expires]
+                      ,[remarks]
+                      ,[sessionvalues]
+                      ,[provider]
+                      ,[elang]
+                      ,[departmantid]
+                  FROM [Esign_old].[dbo].[buusers]
+                  where id = 329
+
+			4) Table [customers] - record with id = 31169, [firstname] and [address] fields was changed from "בדיקה" to "בדיקההה", records count = 148533
+
+                update [customers] set firstname = 'בדיקההה', address = 'בדיקההה' where id = 31169
+
+			5) Another tables records count:
+				- [certificateshistory]: 450418
+				- [busettings]: 18
+				- [certificatesUntill301215]: 128498
+				- [projects]: 21
+				- [subproject]: 73
+				- [tickets]: 124
+
+        Next we have to build insert/update script "delupsert-data-to-new-from-old-dev.sql" for DEV ("delupsert-data-to-new-from-old-prod.sql" for PROD)
+
+        The script consist of 3 parts:
+
+            - 1 part: DELETE all records in "Esign_new" that does not exist in "Esign_old".
+            - 2 part: INSERT all records from "Esign_old" that does not exist in "Esign_new".
+            - 3 part: UPDATE all records in "Esign_old" according to values from "Esign_new".

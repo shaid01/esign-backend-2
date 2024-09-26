@@ -120,12 +120,13 @@ namespace EsignBackend
                 .AllowAnyHeader()                
                 );
             });
-            services.AddHsts(options =>
-            {
-                options.Preload = true;
-                options.IncludeSubDomains = true;
-                options.MaxAge = TimeSpan.FromDays(365);
-            });
+
+            //services.AddHsts(options =>
+            //{
+            //    options.Preload = true;
+            //    options.IncludeSubDomains = true;
+            //    options.MaxAge = TimeSpan.FromDays(365);
+            //});
 
             services.AddValidation();
             services.AddConfiguration(Configuration);

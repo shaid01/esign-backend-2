@@ -25,9 +25,12 @@ namespace EsignBackend.Controllers
             _logger = logger;
         }
 
+        //igorz, 12345
         [HttpPost("Login")]
+        //[HttpPost]
+        //[Route("Login")]
 
-        public async Task<IActionResult> Login(LoginDto request)
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             _logger.Debug("Login");
 
