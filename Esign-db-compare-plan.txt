@@ -177,4 +177,4 @@
 
             - 1 part: DELETE all records in "Esign_new" that does not exist in "Esign_old".
             - 2 part: INSERT all records from "Esign_old" that does not exist in "Esign_new".
-            - 3 part: UPDATE all records in "Esign_old" according to values from "Esign_new".
+            - 3 part: UPDATE all records in "Esign_new" according to values from "Esign_old".
