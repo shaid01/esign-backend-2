@@ -44,6 +44,7 @@ using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Text.Json;
 using EsignBackend.Extensions.CashHandlers;
+using System.Threading;
 
 namespace EsignBackend
 {
@@ -71,8 +72,13 @@ namespace EsignBackend
             services.AddHangfireServer();
             //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            services.AddDbContext<AppDbContext>(config =>
+                config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
+                    //providerOptions =>
+                    //{
+                    //    providerOptions.CommandTimeout(60);
+                    //}
+                )
             );
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>

@@ -38,16 +38,19 @@ namespace EsignBackend.Services.CharacterService
                 return maxId + 1;
             }
         }
+
         private bool IsUserNameAlreadyInUse(string username)
         {
             _logger.Debug("IsUserNameAlreadyInUse");
             return _context.Buusers.Where(user => user.Username.Equals(username)).Count() != 0;
         }
+
         private string encryptPass(String pass)
         {
             _logger.Debug("encryptPass");
             return EncryptDecryptHandler.encryptUserPass(pass);
         }
+
         public async Task<ServiceResponse<List<UserDTO>>> GetAllUsers(int skip, int take)
         {
             try
@@ -83,6 +86,50 @@ namespace EsignBackend.Services.CharacterService
                 _logger.Error($"Error in read users");
                 throw ex;
             }
+        }
+
+        public async Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
+        {
+            _logger.Debug("SearchUsers");
+            var serviceResponse = new ServiceResponse<List<UserDTO>>();
+
+            var query = _context.Buusers.AsNoTracking().Where(user =>
+                ((userAdvancedSearch.UserName == null) || EF.Functions.Like(user.Username, $"%{userAdvancedSearch.UserName}%"))
+                && ((userAdvancedSearch.FirstName == null) || EF.Functions.Like(user.Firstname, $"%{userAdvancedSearch.FirstName}%"))
+                && ((userAdvancedSearch.LastName == null) || EF.Functions.Like(user.Lastname, $"%{userAdvancedSearch.LastName}%"))
+                && ((userAdvancedSearch.Email == null) || EF.Functions.Like(user.Email, $"%{userAdvancedSearch.Email}%"))
+                && ((userAdvancedSearch.UserGroup == null) || EF.Functions.Like(user.Usergroup, userAdvancedSearch.UserGroup))
+                );
+
+            serviceResponse.Amount = await query.CountAsync();
+
+            query = query.Skip(skip);
+
+            if (take != UNLIMITED)
+            {
+                query = query.Take(take);
+            }
+
+            var userList = await query.ToListAsync();
+
+            var userDtoList = new List<UserDTO>();
+            foreach (var user in userList)
+            {
+                try
+                {
+                    userDtoList.Add(new UserDTO(user));
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Error in add user to userDtoList, user id - {user.Id}");
+                }
+            }
+            serviceResponse.Data = userDtoList;
+            return serviceResponse;
+
+            //serviceRespone.Amount = dbUsers.Count();
+            //serviceRespone.Data = take == UNLIMITED ? dbUsers.Skip(skip).ToList() : dbUsers.Skip(skip).Take(take).ToList();
+            //return serviceRespone;
         }
 
         public async Task<ServiceResponse<UserDTO>> GetUserByUsername(string username)
@@ -162,6 +209,7 @@ namespace EsignBackend.Services.CharacterService
                 }
             }
         }
+
         public async Task<ServiceResponse<int>> UpdateUser(Buuser updatedUser)
         {
             _logger.Debug("UpdateUser");
@@ -190,45 +238,7 @@ namespace EsignBackend.Services.CharacterService
                 return serviceResponse;
             }
         }
-        public async Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
-        {
-            _logger.Debug("SearchUsers");
-            var serviceResponse = new ServiceResponse<List<UserDTO>>();
 
-            var query = _context.Buusers.AsNoTracking().Where(user =>
-                ((userAdvancedSearch.UserName == null) || EF.Functions.Like(user.Username, $"%{userAdvancedSearch.UserName}%"))
-                && ((userAdvancedSearch.FirstName == null) || EF.Functions.Like(user.Firstname, $"%{userAdvancedSearch.FirstName}%"))
-                && ((userAdvancedSearch.LastName == null) || EF.Functions.Like(user.Lastname, $"%{userAdvancedSearch.LastName}%"))
-                && ((userAdvancedSearch.Email == null) || EF.Functions.Like(user.Email, $"%{userAdvancedSearch.Email}%"))
-                && ((userAdvancedSearch.UserGroup == null) || EF.Functions.Like(user.Usergroup, userAdvancedSearch.UserGroup))
-                );
-            serviceResponse.Amount = await query.CountAsync();
-            query = query.Skip(skip);
-            if (take != UNLIMITED)
-            {
-                query = query.Take(take);
-            }
-            var userList = await query.ToListAsync();
-
-            var userDtoList = new List<UserDTO>();
-            foreach (var user in userList)
-            {
-                try
-                {
-                    userDtoList.Add(new UserDTO(user));
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Error in add user to userDtoList, user id - {user.Id}");
-                }
-            }
-            serviceResponse.Data = userDtoList;
-            return serviceResponse;
-
-            //serviceRespone.Amount = dbUsers.Count();
-            //serviceRespone.Data = take == UNLIMITED ? dbUsers.Skip(skip).ToList() : dbUsers.Skip(skip).Take(take).ToList();
-            //return serviceRespone;
-        }
         public async Task<ServiceResponse<int>> ChangeUserPassword(Buuser user)
         {
             _logger.Debug("ChangeUserPassword");

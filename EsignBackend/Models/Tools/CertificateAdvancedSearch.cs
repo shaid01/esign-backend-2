@@ -8,6 +8,7 @@ namespace EsignBackend.Models.Tools
         public string? Company { get; set; }
         public string CustomerName { get; set; }
         public string CustomerLastName { get; set; }
+        public string IssuerPlace { get; set; }
         public string? CustomerId { get; set; }
         public int? Project { get; set; }
         public int? SubProject { get; set; }

@@ -3,6 +3,7 @@
  * Script-Migration -Output C:\Users\saarm\Desktop\CreateWeSignTables.sql
  */
 using System;
+using System.Data.Entity.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -14,7 +15,6 @@ namespace EsignBackend.Models
     {
         public AppDbContext()
         {
-
         }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)

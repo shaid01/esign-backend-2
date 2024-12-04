@@ -44,15 +44,21 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<List<CustomerDTO>>> GetCustomers(int skip, int take)
         {
             _logger.Debug("GetCustomers");
+
             var serviceRespone = new ServiceResponse<List<CustomerDTO>>();
+
             var customers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).AsNoTracking().Skip(skip).Take(take).ToListAsync();
+
             var customersList = new List<CustomerDTO>();
+
             foreach (var customer in customers)
             {
                 customersList.Add(new CustomerDTO(customer));
             }
+
             serviceRespone.Data = customersList;
             serviceRespone.Amount = _cash.GetCounterByType(CashType.Customers);
+
             return serviceRespone;
         }
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()

@@ -89,13 +89,31 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take)
         {
-            _logger.Debug("GetCertificatesDetailsUpdate");
+            _logger.Debug("GetCertificatesDetails");
 
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
-            serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
-            var certificateDetailsList = new List<CertificateDetailsDTO>();
 
-            var query = _context.Certificates
+            //var query = _context.Certificates
+            //    .Include(cer => cer.RelatedCertificateissuer)
+            //    .Include(cer => cer.RelatedCertificatesstatus)
+            //    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
+            //    .Include(cer => cer.RelatedCustomerIdentifier)
+            //    .Include(cer => cer.RelatedDocsType)
+            //    .Include(cer => cer.RelatedExpiration)
+            //    .Include(cer => cer.RelatedIssuerPlace)
+            //    .Include(cer => cer.RelatedProject)
+            //    //  .Include(cer => cer.RelatedSecurityquestion)
+            //    .Include(cer => cer.RelatedSmartObject)
+            //    .Include(cer => cer.RelatedSubProject).AsNoTracking();
+
+            //query = query.Skip(skip);
+            //if (take != UNLIMITED)
+            //{
+            //    query = query.Take(take);
+            //}
+            //var certificates = await query.ToListAsync();
+
+            var certificates = await _context.Certificates
                 .Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCertificatesstatus)
                 .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
@@ -106,23 +124,99 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedProject)
                 //  .Include(cer => cer.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedSmartObject)
-                .Include(cer => cer.RelatedSubProject).AsNoTracking();
+                .Include(cer => cer.RelatedSubProject)
+                .AsNoTracking().Skip(skip).Take(take).ToListAsync();
 
-            query = query.Skip(skip);
-            if (take != UNLIMITED)
-            {
-                query = query.Take(take);
-            }
-            var certificates = await query.ToListAsync();
+            var certificateDetailsList = new List<CertificateDetailsDTO>();
 
             foreach (var cer in certificates)
             {
                 var newCertificateDetail = new CertificateDetailsDTO(new CertificateDetails(cer));
                 certificateDetailsList.Add(newCertificateDetail);
             }
+
             serviceResponse.Data = certificateDetailsList;
+            serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
+
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<IEnumerable<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
+        {
+            _logger.Debug("SearchCertificates");
+            var serviceRespone = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
+
+            var query = _context.Certificates.AsNoTracking().Include(cer => cer.RelatedCertificateissuer)
+                    .Include(cer => cer.RelatedCertificateissuer)
+                    .Include(cer => cer.RelatedCertificatesstatus)
+                    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
+                    .Include(cer => cer.RelatedCustomerIdentifier)
+                    .Include(cer => cer.RelatedDocsType)
+                    .Include(cer => cer.RelatedExpiration)
+                    .Include(cer => cer.RelatedIssuerPlace)
+                    .Include(cer => cer.RelatedProject)
+                    //  .Include(cer => cer.RelatedSecurityquestion)
+                    .Include(cer => cer.RelatedSmartObject)
+                    .Include(cer => cer.RelatedSubProject)
+                    .AsNoTracking().Skip(skip).Take(take)
+                    .Where(cer =>
+                ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
+                && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
+                && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
+                && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
+                && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
+                && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
+                && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
+                && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
+                && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
+                && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
+                && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.IssuerPlace) || EF.Functions.Like(cer.RelatedIssuerPlace != null ? cer.RelatedIssuerPlace.Title : string.Empty, $"%{certificateAdvancedSearch.IssuerPlace}%"))
+                );
+
+            serviceRespone.Amount = await query.CountAsync();
+
+            query = query.Skip(skip);
+
+            if (take != UNLIMITED)
+            {
+                query = query.Take(take);
+            }
+
+            var certificatesList = await query.ToListAsync();
+            var certificateDetailsDtoList = new List<CertificateDetailsDTO>();
+
+            foreach (var certificate in certificatesList)
+            {
+                try
+                {
+                    certificateDetailsDtoList.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Error in add certificate to certificateDetailsDtoList, cert id - {certificate.Id}");
+                }
+            }
+
+            //Parallel.For(0, query.Count(),
+            //        index =>
+            //        {
+            //            try
+            //            {
+            //                certificateDetails.Add(new CertificateDetailsDTO(new CertificateDetails(certificatesList[index])));
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesList[index]}");
+            //            }
+            //        });
+            serviceRespone.Data = certificateDetailsDtoList;
+            return serviceRespone;
+        }
+
         public async Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId)
         {
             _logger.Debug("GetHistoryCertificates");
@@ -188,74 +282,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             serviceResponse.Data = customerCertificateList;
             return serviceResponse;
-        }
-        public async Task<ServiceResponse<IEnumerable<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
-        {
-            _logger.Debug("SearchCertificates");
-            var serviceRespone = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
-
-            var query = _context.Certificates.AsNoTracking().Include(cer => cer.RelatedCertificateissuer)
-                    .Include(cer => cer.RelatedCertificateissuer)
-                    .Include(cer => cer.RelatedCertificatesstatus)
-                    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
-                    .Include(cer => cer.RelatedCustomerIdentifier)
-                    .Include(cer => cer.RelatedDocsType)
-                    .Include(cer => cer.RelatedExpiration)
-                    .Include(cer => cer.RelatedIssuerPlace)
-                    .Include(cer => cer.RelatedProject)
-                    //  .Include(cer => cer.RelatedSecurityquestion)
-                    .Include(cer => cer.RelatedSmartObject)
-                    .Include(cer => cer.RelatedSubProject)
-                    .Where(cer =>
-                ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
-                && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
-                && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
-                && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
-                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
-                && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
-                && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
-                && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
-                && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
-                && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
-                && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
-                && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
-                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
-                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
-                );
-            serviceRespone.Amount = await query.CountAsync();
-            query = query.Skip(skip);
-            if (take != UNLIMITED)
-            {
-                query = query.Take(take);
-            }
-            var certificatesList = await query.ToListAsync();
-            var certificateDetailsDtoList = new List<CertificateDetailsDTO>();
-            foreach (var certificate in certificatesList)
-            {
-                try
-                {
-                    certificateDetailsDtoList.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Error in add certificate to certificateDetailsDtoList, cert id - {certificate.Id}");
-                }
-            }
-
-            //Parallel.For(0, query.Count(),
-            //        index =>
-            //        {
-            //            try
-            //            {
-            //                certificateDetails.Add(new CertificateDetailsDTO(new CertificateDetails(certificatesList[index])));
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesList[index]}");
-            //            }
-            //        });
-            serviceRespone.Data = certificateDetailsDtoList;
-            return serviceRespone;
         }
 
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
@@ -357,9 +383,78 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
         }
 
+        public byte[] GenerateXlsxFile(IEnumerable<CertificateDetailsDTO> certificateDetails)
+        {
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Certificates");
+                var currentRow = 1;
+                worksheet.Cell(currentRow, 1).Value = "מספר מזהה";
+                worksheet.Cell(currentRow, 2).Value = "סוג תעודה";
+                worksheet.Cell(currentRow, 3).Value = "פרויקט";
+                worksheet.Cell(currentRow, 4).Value = "תת פרויקט";
+                worksheet.Cell(currentRow, 5).Value = "רכיב חכם";
+                worksheet.Cell(currentRow, 6).Value = "סטאטוס תעודה";
+                worksheet.Cell(currentRow, 7).Value = "מזהה לקוח";
+                worksheet.Cell(currentRow, 8).Value = "שם לקוח";
+                worksheet.Cell(currentRow, 9).Value = "מנפיק תעודה";
+                worksheet.Cell(currentRow, 10).Value = "מיקום הנפקה";
+                worksheet.Cell(currentRow, 11).Value = "מזהה לקוח ייחודי";
+                worksheet.Cell(currentRow, 12).Value = "חברה";
+                worksheet.Cell(currentRow, 13).Value = "מספר ח.פ";
+                worksheet.Cell(currentRow, 14).Value = "אימייל";
+                worksheet.Cell(currentRow, 15).Value = "מספר דרכון";
+                worksheet.Cell(currentRow, 16).Value = "מספר רישיון";
+                worksheet.Cell(currentRow, 17).Value = "שאלת אבטחה";
+                worksheet.Cell(currentRow, 18).Value = "תשובת אבטחה";
+                worksheet.Cell(currentRow, 19).Value = "הערות";
+                worksheet.Cell(currentRow, 20).Value = "עבודה";
+                worksheet.Cell(currentRow, 21).Value = "תאריך הנפקה";
+                worksheet.Cell(currentRow, 22).Value = "תאריך תפוגה";
+                foreach (var certificate in certificateDetails)
+                {
+                    if (!isCertificateValid(certificate))
+                    {
+                        throw new Exception("Suspected CSV injection");
+                        break;
+                    }
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = certificate.Id;
+                    worksheet.Cell(currentRow, 2).Value = certificate.Docstype?.Title;
+                    worksheet.Cell(currentRow, 3).Value = certificate.Project?.Title;
+                    worksheet.Cell(currentRow, 4).Value = certificate.SubProject?.Title;
+                    worksheet.Cell(currentRow, 5).Value = certificate.Smartobject?.Title;
+                    worksheet.Cell(currentRow, 6).Value = certificate.Certificatesstatus?.Title;
+                    worksheet.Cell(currentRow, 7).Value = certificate.RelatedCustomerIdentifier?.Title;
+                    worksheet.Cell(currentRow, 8).Value = certificate.CustomerName;
+                    worksheet.Cell(currentRow, 9).Value = certificate.CertificateIssuer?.Title;
+                    worksheet.Cell(currentRow, 10).Value = certificate.CertificateLocation?.Title;
+                    worksheet.Cell(currentRow, 11).Value = certificate.RelatedCustomerIdentifier?.Id;
+                    worksheet.Cell(currentRow, 12).Value = certificate.Company;
+                    worksheet.Cell(currentRow, 13).Value = certificate.Hpnumber;
+                    worksheet.Cell(currentRow, 14).Value = certificate.Email;
+                    worksheet.Cell(currentRow, 15).Value = certificate.Passportid;
+                    worksheet.Cell(currentRow, 16).Value = certificate.Licenseid;
+                    worksheet.Cell(currentRow, 17).Value = certificate.RelatedSecurityQuestion.Title;
+                    worksheet.Cell(currentRow, 18).Value = certificate.Securityanswer;
+                    worksheet.Cell(currentRow, 19).Value = certificate.Remarks;
+                    worksheet.Cell(currentRow, 20).Value = certificate.Job;
+                    worksheet.Cell(currentRow, 21).Value = certificate.Issuedate;
+                    worksheet.Cell(currentRow, 22).Value = certificate.Expiredate;
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+                    return content;
+                }
+            }
+        }
+
         #region Private Functions
 
-        private List<Certificate> GetCertificateDbList(int offset, int limit)
+        private List<Certificate> getCertificateDbList(int offset, int limit)
         {
             using var scope = _scopeFactory.CreateScope();
             {
@@ -381,7 +476,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
         }
 
-        private CertificateDetails GenerateCertificateDetailsFromId(double cerId)
+        private CertificateDetails generateCertificateDetailsFromId(double cerId)
         {
             _logger.Debug("GenerateCertificateDetailsFromId");
 
@@ -422,7 +517,8 @@ namespace EsignBackend.Services.MainServices.Certificates
                 return certificate;
             }
         }
-        private int GenerateCertificateId()
+
+        private int generateCertificateId()
         {
             _logger.Debug("GenerateCertificateId");
             lock (_locker)
@@ -432,102 +528,33 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
         }
 
-        public byte[] GenerateXlsxFile(IEnumerable<CertificateDetailsDTO> certificateDetails)
+        private bool isCertificateValid(CertificateDetailsDTO certificate)
         {
-            using (var workbook = new XLWorkbook())
-            {
-                var worksheet = workbook.Worksheets.Add("Certificates");
-                var currentRow = 1;
-                worksheet.Cell(currentRow, 1).Value = "מספר מזהה";
-                worksheet.Cell(currentRow, 2).Value = "סוג תעודה";
-                worksheet.Cell(currentRow, 3).Value = "פרויקט";
-                worksheet.Cell(currentRow, 4).Value = "תת פרויקט";
-                worksheet.Cell(currentRow, 5).Value = "רכיב חכם";
-                worksheet.Cell(currentRow, 6).Value = "סטאטוס תעודה";
-                worksheet.Cell(currentRow, 7).Value = "מזהה לקוח";
-                worksheet.Cell(currentRow, 8).Value = "שם לקוח";
-                worksheet.Cell(currentRow, 9).Value = "מנפיק תעודה";
-                worksheet.Cell(currentRow, 10).Value = "מיקום הנפקה";
-                worksheet.Cell(currentRow, 11).Value = "מזהה לקוח ייחודי";
-                worksheet.Cell(currentRow, 12).Value = "חברה";
-                worksheet.Cell(currentRow, 13).Value = "מספר ח.פ";
-                worksheet.Cell(currentRow, 14).Value = "אימייל";
-                worksheet.Cell(currentRow, 15).Value = "מספר דרכון";
-                worksheet.Cell(currentRow, 16).Value = "מספר רישיון";
-                worksheet.Cell(currentRow, 17).Value = "שאלת אבטחה";
-                worksheet.Cell(currentRow, 18).Value = "תשובת אבטחה";
-                worksheet.Cell(currentRow, 19).Value = "הערות";
-                worksheet.Cell(currentRow, 20).Value = "עבודה";
-                worksheet.Cell(currentRow, 21).Value = "תאריך הנפקה";
-                worksheet.Cell(currentRow, 22).Value = "תאריך תפוגה";
-                foreach (var certificate in certificateDetails)
-                {
-                    if (!IsCertificateValid(certificate))
-                    {
-                        throw new Exception("Suspected CSV injection");
-                        break;
-                    }
-                    currentRow++;
-                    worksheet.Cell(currentRow, 1).Value = certificate.Id;
-                    worksheet.Cell(currentRow, 2).Value = certificate.Docstype?.Title;
-                    worksheet.Cell(currentRow, 3).Value = certificate.Project?.Title;
-                    worksheet.Cell(currentRow, 4).Value = certificate.SubProject?.Title;
-                    worksheet.Cell(currentRow, 5).Value = certificate.Smartobject?.Title;
-                    worksheet.Cell(currentRow, 6).Value = certificate.Certificatesstatus?.Title;
-                    worksheet.Cell(currentRow, 7).Value = certificate.RelatedCustomerIdentifier?.Title;
-                    worksheet.Cell(currentRow, 8).Value = certificate.CustomerName;
-                    worksheet.Cell(currentRow, 9).Value = certificate.CertificateIssuer?.Title;
-                    worksheet.Cell(currentRow, 10).Value = certificate.CertificateLocation?.Title;
-                    worksheet.Cell(currentRow, 11).Value = certificate.RelatedCustomerIdentifier?.Id;
-                    worksheet.Cell(currentRow, 12).Value = certificate.Company;
-                    worksheet.Cell(currentRow, 13).Value = certificate.Hpnumber;
-                    worksheet.Cell(currentRow, 14).Value = certificate.Email;
-                    worksheet.Cell(currentRow, 15).Value = certificate.Passportid;
-                    worksheet.Cell(currentRow, 16).Value = certificate.Licenseid;
-                    worksheet.Cell(currentRow, 17).Value = certificate.RelatedSecurityQuestion.Title;
-                    worksheet.Cell(currentRow, 18).Value = certificate.Securityanswer;
-                    worksheet.Cell(currentRow, 19).Value = certificate.Remarks;
-                    worksheet.Cell(currentRow, 20).Value = certificate.Job;
-                    worksheet.Cell(currentRow, 21).Value = certificate.Issuedate;
-                    worksheet.Cell(currentRow, 22).Value = certificate.Expiredate;
-                }
-
-                using (var stream = new MemoryStream())
-                {
-                    workbook.SaveAs(stream);
-                    var content = stream.ToArray();
-                    return content;
-                }
-            }
-        }
-
-        private bool IsCertificateValid(CertificateDetailsDTO certificate)
-        {
-            if (IsFieldValueHasInjectionPotencial(certificate.Docstype?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.Project?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.SubProject?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.Smartobject?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.Certificatesstatus?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.RelatedCustomerIdentifier?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.CustomerName) ||
-                IsFieldValueHasInjectionPotencial(certificate.CertificateIssuer?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.CertificateLocation?.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.Company) ||
-                IsFieldValueHasInjectionPotencial(certificate.Hpnumber) ||
-                IsFieldValueHasInjectionPotencial(certificate.Email) ||
-                IsFieldValueHasInjectionPotencial(certificate.Passportid) ||
-                IsFieldValueHasInjectionPotencial(certificate.Licenseid) ||
-                IsFieldValueHasInjectionPotencial(certificate.RelatedSecurityQuestion.Title) ||
-                IsFieldValueHasInjectionPotencial(certificate.Securityanswer) ||
-                IsFieldValueHasInjectionPotencial(certificate.Remarks) ||
-                IsFieldValueHasInjectionPotencial(certificate.Job))
+            if (isFieldValueHasInjectionPotencial(certificate.Docstype?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.Project?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.SubProject?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.Smartobject?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.Certificatesstatus?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.RelatedCustomerIdentifier?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.CustomerName) ||
+                isFieldValueHasInjectionPotencial(certificate.CertificateIssuer?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.CertificateLocation?.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.Company) ||
+                isFieldValueHasInjectionPotencial(certificate.Hpnumber) ||
+                isFieldValueHasInjectionPotencial(certificate.Email) ||
+                isFieldValueHasInjectionPotencial(certificate.Passportid) ||
+                isFieldValueHasInjectionPotencial(certificate.Licenseid) ||
+                isFieldValueHasInjectionPotencial(certificate.RelatedSecurityQuestion.Title) ||
+                isFieldValueHasInjectionPotencial(certificate.Securityanswer) ||
+                isFieldValueHasInjectionPotencial(certificate.Remarks) ||
+                isFieldValueHasInjectionPotencial(certificate.Job))
 
                 return false;
 
             return true;
         }
 
-        private bool IsFieldValueHasInjectionPotencial(string input)
+        private bool isFieldValueHasInjectionPotencial(string input)
         {
             char doubleQuate = '"';
             char singleQuate = '\'';
