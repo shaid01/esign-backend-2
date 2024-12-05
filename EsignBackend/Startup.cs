@@ -73,11 +73,11 @@ namespace EsignBackend
             //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddDbContext<AppDbContext>(config =>
-                config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
-                    //providerOptions =>
-                    //{
-                    //    providerOptions.CommandTimeout(60);
-                    //}
+                config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                    providerOptions =>
+                    {
+                        providerOptions.CommandTimeout(120);
+                    }
                 )
             );
             services.AddControllersWithViews()

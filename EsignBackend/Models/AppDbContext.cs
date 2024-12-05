@@ -4,6 +4,8 @@
  */
 using System;
 using System.Data.Entity.Infrastructure;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -52,14 +54,32 @@ namespace EsignBackend.Models
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Userview> Userviews { get; set; }
 
+       //private readonly StreamWriter _logStream = new StreamWriter("sql-query-log.txt", append: true);
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //optionsBuilder.LogTo(_logStream.WriteLine);
+            optionsBuilder
+                .LogTo(Console.WriteLine)
+                .EnableDetailedErrors();
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Data Source=CMD-SAARM-LPT\\SQLEXPRESS;Initial Catalog=dbcomsign;Integrated Security=True;");
             }
         }
+
+        //public override void Dispose()
+        //{
+        //    base.Dispose();
+        //    _logStream.Dispose();
+        //}
+
+        //public override async ValueTask DisposeAsync()
+        //{
+        //    await base.DisposeAsync();
+        //    await _logStream.DisposeAsync();
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

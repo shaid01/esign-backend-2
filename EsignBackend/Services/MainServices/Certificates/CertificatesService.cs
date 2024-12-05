@@ -63,7 +63,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<CertificateDetailsExtendedDTO> GetCertificateExtendedDetails(int id)
         {
-            _logger.Debug("GetCertificatesDetailsUpdate");
+            _logger.Debug("GetCertificatesDetails");
 
             var serviceResponse = new ServiceResponse<CertificateDetailsDTO>();
             serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
@@ -125,7 +125,9 @@ namespace EsignBackend.Services.MainServices.Certificates
                 //  .Include(cer => cer.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
-                .AsNoTracking().Skip(skip).Take(take).ToListAsync();
+                .AsNoTracking()
+                .OrderByDescending(x => x.Issuedate)
+                .Skip(skip).Take(take).ToListAsync();
 
             var certificateDetailsList = new List<CertificateDetailsDTO>();
 

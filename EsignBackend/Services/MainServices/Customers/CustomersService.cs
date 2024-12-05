@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
 using EsignBackend.Extensions.CashHandlers;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
@@ -27,6 +28,7 @@ namespace EsignBackend.Services.CharacterService
             _logger = logger;
             _cash = cash;
         }
+
         private int GenerateUserId()
         {
             _logger.Debug("GenerateUserId");
@@ -36,18 +38,25 @@ namespace EsignBackend.Services.CharacterService
                 return maxId + 1;
             }
         }
+
         private bool IsUserIdAlreadyInUse(string username)
         {
             _logger.Debug("IsUserIdAlreadyInUse");
             return _context.Customers.Where(customer => customer.Idnumber.Equals(username)).Count() != 0;
         }
+
         public async Task<ServiceResponse<List<CustomerDTO>>> GetCustomers(int skip, int take)
         {
             _logger.Debug("GetCustomers");
 
             var serviceRespone = new ServiceResponse<List<CustomerDTO>>();
 
-            var customers = await _context.Customers.Include(cu => cu.RelatedSecurityquestion).AsNoTracking().Skip(skip).Take(take).ToListAsync();
+            var customers = await _context.Customers
+                .Include(c => c.RelatedSecurityquestion)
+                //.Where(c => c.Lastname != "")
+                .AsNoTracking()
+                .OrderBy(c => c.Lastname)
+                .Skip(skip).Take(take).ToListAsync();
 
             var customersList = new List<CustomerDTO>();
 
@@ -61,65 +70,12 @@ namespace EsignBackend.Services.CharacterService
 
             return serviceRespone;
         }
-        public async Task<ServiceResponse<int>> GetAmountOfCustomers()
-        {
-            _logger.Debug("GetAmountOfCustomers");
-            var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _cash.GetCounterByType(CashType.Customers);
-            return serviceRespone;
-        }
 
-        public async Task<ServiceResponse<CustomerDTO>> GetCustomerById(int id)
-        {
-            _logger.Debug("GetCustomerById");
-            var serviceRespone = new ServiceResponse<CustomerDTO>();
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
-            if (customer == null)
-            {
-                serviceRespone.Amount = 0;
-                _logger.Error($"Not found customer by Id = {id}");
-                return serviceRespone;
-            }
-            serviceRespone.Amount = 1;
-            serviceRespone.Data = new CustomerDTO(customer);
-            return serviceRespone;
-        }
-
-        public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions()
-        {
-            _logger.Debug("GetSecurityQuestions");
-            var serviceResponse = new ServiceResponse<List<Securityquestion>>();
-            var dbSecurityQuestions = await _context.Securityquestions.ToListAsync();
-            serviceResponse.Data = dbSecurityQuestions;
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<int>> UpdateCustomer(Customer updatedCustomer)
-        {
-            _logger.Debug("UpdateCustomer");
-            var serviceResponse = new ServiceResponse<int>();
-            var updatedCustomerInDb = _context.Customers.Update(updatedCustomer);
-            try
-            {
-                _context.SaveChanges();
-                serviceResponse.Success = true;
-                serviceResponse.Data = updatedCustomerInDb.Entity.Id;
-                serviceResponse.Message = "Customer updated successfully.";
-                return serviceResponse;
-            }
-            catch (Exception exception)
-            {
-                _logger.Error("exception detected while trying to UpdateCustomer: " + exception);
-                serviceResponse.Success = false;
-                serviceResponse.Message = $"Updated failed. {exception}";
-                serviceResponse.Data = -1;
-                return serviceResponse;
-            }
-        }
         public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCustomers");
             var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
-            var query =  _context.Customers.AsNoTracking().Include(cu => cu.RelatedSecurityquestion).Where(customer =>
+            var query = _context.Customers.AsNoTracking().Include(cu => cu.RelatedSecurityquestion).Where(customer =>
                 (customer.Id > 0) &&
                 ((customerAdvancedSearch.CustomerId == null) || EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
                 && ((customerAdvancedSearch.FirstName == null) || EF.Functions.Like(customer.Firstname, $"%{customerAdvancedSearch.FirstName}%"))
@@ -152,6 +108,63 @@ namespace EsignBackend.Services.CharacterService
             serviceResponse.Data = customersDtoList;
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<int>> GetAmountOfCustomers()
+        {
+            _logger.Debug("GetAmountOfCustomers");
+            var serviceRespone = new ServiceResponse<int>();
+            serviceRespone.Data = _cash.GetCounterByType(CashType.Customers);
+            return serviceRespone;
+        }
+
+        public async Task<ServiceResponse<CustomerDTO>> GetCustomerById(int id)
+        {
+            _logger.Debug("GetCustomerById");
+            var serviceRespone = new ServiceResponse<CustomerDTO>();
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            if (customer == null)
+            {
+                serviceRespone.Amount = 0;
+                _logger.Error($"Not found customer by Id = {id}");
+                return serviceRespone;
+            }
+            serviceRespone.Amount = 1;
+            serviceRespone.Data = new CustomerDTO(customer);
+            return serviceRespone;
+        }
+
+        public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions()
+        {
+            _logger.Debug("GetSecurityQuestions");
+            var serviceResponse = new ServiceResponse<List<Securityquestion>>();
+            var dbSecurityQuestions = await _context.Securityquestions.ToListAsync();
+            serviceResponse.Data = dbSecurityQuestions;
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<int>> UpdateCustomer(Customer updatedCustomer)
+        {
+            _logger.Debug("UpdateCustomer");
+            var serviceResponse = new ServiceResponse<int>();
+            var updatedCustomerInDb = _context.Customers.Update(updatedCustomer);
+            try
+            {
+                _context.SaveChanges();
+                serviceResponse.Success = true;
+                serviceResponse.Data = updatedCustomerInDb.Entity.Id;
+                serviceResponse.Message = "Customer updated successfully.";
+                return serviceResponse;
+            }
+            catch (Exception exception)
+            {
+                _logger.Error("exception detected while trying to UpdateCustomer: " + exception);
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Updated failed. {exception}";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+        }
+
         public async Task<ServiceResponse<int>> AddNewCustomer(Customer customer)
         {
             _logger.Debug("AddNewCustomer");
