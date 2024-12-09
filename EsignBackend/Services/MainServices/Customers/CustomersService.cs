@@ -53,9 +53,9 @@ namespace EsignBackend.Services.CharacterService
 
             var customers = await _context.Customers
                 .Include(c => c.RelatedSecurityquestion)
-                //.Where(c => c.Lastname != "")
+                //.Where(c => c.Idnumber != "")
                 .AsNoTracking()
-                .OrderBy(c => c.Lastname)
+                .OrderBy(c => c.Idnumber)
                 .Skip(skip).Take(take).ToListAsync();
 
             var customersList = new List<CustomerDTO>();

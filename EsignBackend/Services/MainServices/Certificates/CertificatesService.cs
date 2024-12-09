@@ -260,7 +260,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId)
         {
-            _logger.Debug("GetCustomerCertificatesDetailsById");
+            _logger.Debug("GetCustomerCertificates");
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
             var customerCertificateList = new List<CertificateDetailsDTO>();
             var certificates = _context.Certificates
@@ -324,6 +324,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             ServiceResponse.Data = foundMatch;
             return ServiceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateExpiredCertificates()
         {
             _logger.Debug("Hangfire Job - *************** UpdateExpiredCertificates ***************");
@@ -354,6 +355,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             return serviceRespone;
         }
+
         public async Task<ServiceResponse<int>> AddCertificate(Certificate certificate)
         {
             _logger.Debug("AddCertificate");
@@ -418,7 +420,6 @@ namespace EsignBackend.Services.MainServices.Certificates
                     if (!isCertificateValid(certificate))
                     {
                         throw new Exception("Suspected CSV injection");
-                        break;
                     }
                     currentRow++;
                     worksheet.Cell(currentRow, 1).Value = certificate.Id;

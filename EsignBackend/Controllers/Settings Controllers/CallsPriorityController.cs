@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CallsPriorityController : ControllerBase
@@ -24,13 +24,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _callsPriorityService.GetCallsPriority(skip, take));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateCallPriority")]
         public async Task<IActionResult> UpdateCallPriority(Callpriority UpdatedCallPriority)
         {
             return Ok(await _callsPriorityService.UpdateCallPriority(UpdatedCallPriority));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewCallpriority")]
         public async Task<IActionResult> AddNewCallpriority(Callpriority callPriority)
         {

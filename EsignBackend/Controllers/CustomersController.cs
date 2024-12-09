@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CustomersController : ControllerBase
@@ -52,20 +52,23 @@ namespace EsignBackend.Controllers
             _logger.Debug("GetSecurityQuestions");
             return Ok(await _customersService.GetSecurityQuestions());
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateCustomer")]
         public async Task<IActionResult> UpdateUser(Customer updatedCustomer)
         {
             _logger.Debug("UpdateUser");
             return Ok(await _customersService.UpdateCustomer(updatedCustomer));
         }
+
         [HttpPost("SearchCustomers")]
         public async Task<IActionResult> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCustomers");
             return Ok(await _customersService.SearchCustomers(customerAdvancedSearch, skip, take));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewCustomer")]
         public async Task<IActionResult> AddNewCustomer(Customer customer)
         {

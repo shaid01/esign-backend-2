@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class ProjectsController : ControllerBase
@@ -32,7 +32,7 @@ namespace EsignBackend.Controllers
         {
             return Ok(await _projectsService.GetProjects());
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateProject")]
         public async Task<IActionResult> UpdateProject(Project updatedProject)
         {
@@ -45,19 +45,19 @@ namespace EsignBackend.Controllers
             return Ok(await _projectsService.GetSubprojectsInRange(skip, take));
         }
 
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateSubproject")]
         public async Task<IActionResult> UpdateSubproject(Subproject updatedSubproject)
         {
             return Ok(await _projectsService.UpdateSubproject(updatedSubproject));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewProject")]
         public async Task<IActionResult> AddNewProject(Project newProject)
         {
             return Ok(await _projectsService.AddNewProject(newProject));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewSubproject")]
         public async Task<IActionResult> AddNewSubproject(Subproject newSubproject)
         {

@@ -10,5 +10,7 @@ namespace EsignBackend.Models
         public string Token { get; set; }
         public string FrontURL { get; set; }
         public int SessionExpireMinuteTime { get; set; }
+
+        public int SqlServerWaitTimeToExecuteCommand {  get; set; }
     }
 }

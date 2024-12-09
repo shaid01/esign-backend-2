@@ -32,6 +32,13 @@ namespace EsignBackend.Models.DTOs
             CertificateLocation = new IssplaceDTO(certificate.CertificateLocation);
             RelatedCustomer = new CustomerDTO(certificate.RelatedCustomer);
             RelatedCustomerIdentifier = new CustidentDTO(certificate.RelatedCustomerIdentifier);
+            //06-DEC-2024
+            Smartobject = new SmartobjectDTO(certificate.Smartobject);
+            Docstype = new DocstypeDTO(certificate.Docstype);
+            RelatedSecurityQuestion = new SecurityquestionDTO(certificate.RelatedSecurityQuestion);
+            Securityanswer = certificate.Securityanswer;
+            Email = certificate.Email;
+            Licenseid = certificate.Licenseid;
         }
         public int Id { get; set; }
         public ProjectDTO Project { get; set; }

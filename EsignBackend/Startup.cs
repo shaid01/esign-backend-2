@@ -45,19 +45,20 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Text.Json;
 using EsignBackend.Extensions.CashHandlers;
 using System.Threading;
+using Microsoft.Extensions.Options;
 
 namespace EsignBackend
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment _env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
-            env = _env;
+            _config = configuration;
+            _env = env;
         }
 
-        public IConfiguration Configuration { get; }
-        public IWebHostEnvironment env { get; }
+        public IConfiguration _config { get; }
+        public IWebHostEnvironment _env { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -73,10 +74,10 @@ namespace EsignBackend
             //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddDbContext<AppDbContext>(config =>
-                config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                config.UseSqlServer(_config.GetConnectionString("DefaultConnection"),
                     providerOptions =>
                     {
-                        providerOptions.CommandTimeout(120);
+                        providerOptions.CommandTimeout(Convert.ToInt32(_config.GetSection("AppSettings:SqlServerWaitTimeToExecuteCommand").Value));
                     }
                 )
             );
@@ -93,7 +94,7 @@ namespace EsignBackend
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("AppSettings:Token").Value)),
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = true,
@@ -102,7 +103,7 @@ namespace EsignBackend
                 });
             services.AddHttpContextAccessor();
 
-            services.AddHandlers(env);
+            services.AddHandlers(_env);
             // services.AddScoped<ICharacterService, CharacterService>();
 
             var configuration = new ConfigurationBuilder()
@@ -114,7 +115,7 @@ namespace EsignBackend
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger());
 
-            services.AddRateLimiting(Configuration);
+            services.AddRateLimiting(_config);
 
             var address = configuration.GetSection("AppSettings").GetSection("FrontURL").Value;
             services.AddCors(options =>
@@ -135,7 +136,7 @@ namespace EsignBackend
             //});
 
             services.AddValidation();
-            services.AddConfiguration(Configuration);
+            services.AddConfiguration(_config);
             services.AddSwagger();
 
         }

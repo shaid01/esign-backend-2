@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class IssueLocationController : ControllerBase
@@ -25,13 +25,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _issueLocationService.GetIssueLocations(skip, take));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateIssueLocation")]
         public async Task<IActionResult> UpdateIssueLocation(Issplace updatedIssueLocation)
         {
             return Ok(await _issueLocationService.UpdateIssueLocation(updatedIssueLocation));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewIssueLocation")]
         public async Task<IActionResult> AddNewIssueLocation(Issplace issueLocation)
         {

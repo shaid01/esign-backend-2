@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class IdentificationDocumentController : ControllerBase
@@ -25,13 +25,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _identificationDocumentService.GetIdentificationDocuments(skip, take));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateIdentificationDocument")]
         public async Task<IActionResult> UpdateIdentificationDocument(Docstype UpdatedIdentificationDocument)
         {
             return Ok(await _identificationDocumentService.UpdateIdentificationDocument(UpdatedIdentificationDocument));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewIdentificationDocument")]
         public async Task<IActionResult> AddNewIdentificationDocument(Docstype identificationDocument)
         {

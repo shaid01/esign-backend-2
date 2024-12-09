@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[Controller]")]
     public class ExpirationtypeController : ControllerBase
@@ -26,13 +26,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _expirationTypeService.GetExpirationTypes(skip, take));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateExpirationType")]
         public async Task<IActionResult> UpdateCertificatesStatus(Expirationtype updatedExpirationType)
         {
             return Ok(await _expirationTypeService.UpdateExpirationType(updatedExpirationType));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewExpirationType")]
         public async Task<IActionResult> AddNewExpirationType(Expirationtype expirationType)
         {

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CertificatesController : ControllerBase
@@ -42,7 +42,7 @@ namespace EsignBackend.Controllers
             _logger.Debug("GetCertificatesDetails");
             return Ok(await _certificatesService.GetCertificatesDetails(skip, take));
         }
-        [Authorize(Roles = "אדמין,מחדש,מנהל")]
+        [Authorize(Roles = "מנפיק,מנהל")]
         [HttpPut("UpdateCertificate")]
         public async Task<IActionResult> UpdateCertificate(Certificate updatedCertificate)
         {
@@ -101,7 +101,7 @@ namespace EsignBackend.Controllers
             _logger.Debug("CheckSecurityAnswer");
             return Ok(await _certificatesService.CheckSecurityAnswer(cerId, secAns,question));
         }
-        [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק")]
+        [Authorize(Roles = "מנהל,מנפיק")]
         [HttpPost("AddCertificate")]
         public async Task<IActionResult> AddCertificate(Certificate certificate)
         {

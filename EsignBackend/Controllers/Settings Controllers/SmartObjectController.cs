@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class SmartObjectController : ControllerBase
@@ -24,13 +24,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _smartObjectService.GetSmartObjects(skip, take));
         }
 
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateSmartObject")]
         public async Task<IActionResult> UpdateCertificatesStatus(Smartobject updatedSmartobject)
         {
             return Ok(await _smartObjectService.UpdateSmartObject(updatedSmartobject));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewSmartObject")]
         public async Task<IActionResult> AddNewCertificatesStatus(Smartobject smartobject)
         {

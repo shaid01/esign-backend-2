@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "אדמין,מחדש,מנהל,מנפיק,תומך")]
+    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class DepartmentsController : ControllerBase
@@ -25,13 +25,13 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _departmentService.GetDepartments(skip, take));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateDepartment")]
         public async Task<IActionResult> UpdateDepartment(Department updatedDepartment)
         {
             return Ok(await _departmentService.UpdateDepartment(updatedDepartment));
         }
-        [Authorize(Roles = "אדמין,מנהל")]
+        [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewDepartment")]
         public async Task<IActionResult> AddNewDepartment(Department department)
         {
