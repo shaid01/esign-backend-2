@@ -657,10 +657,10 @@ namespace EsignBackend.Models
 
                 entity.Property(e => e.Subproject).HasColumnName("subproject");
 
-                //09/12/2024 - cannot use, because EF 6 does not support DESC order
-                //entity.HasIndex(x => new { x.Issuedate } )
-                //    .IsDescending(true)
-                //    .HasDatabaseName("IssueDate_OrderBy_Desc");
+                // 12/12/2024
+                entity.HasIndex(x => new { x.Issuedate })
+                    .IsDescending(true)
+                    .HasDatabaseName("IssueDate_OrderBy_Desc");
 
             });
 
@@ -894,9 +894,9 @@ namespace EsignBackend.Models
                     .HasColumnName("temp")
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
-                //see entity.HasIndex(x => new { x.Issuedate } )
-                //entity.HasIndex(x => new { x.Idnumber })
-                //    .HasDatabaseName("IdNumber_OrderBy");
+                // 12/12/2024
+                entity.HasIndex(x => new { x.Idnumber })
+                    .HasDatabaseName("IdNumber_OrderBy");
             });
 
             modelBuilder.Entity<Department>(entity =>
