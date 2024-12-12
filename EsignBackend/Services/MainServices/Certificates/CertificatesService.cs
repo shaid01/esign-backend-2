@@ -160,7 +160,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                     //  .Include(cer => cer.RelatedSecurityquestion)
                     .Include(cer => cer.RelatedSmartObject)
                     .Include(cer => cer.RelatedSubProject)
-                    .AsNoTracking().Skip(skip).Take(take)
+                    //.AsNoTracking().Skip(skip).Take(take) //wrong place
                     .Where(cer =>
                 ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
                 && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
@@ -178,6 +178,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
                 && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.IssuerPlace) || EF.Functions.Like(cer.RelatedIssuerPlace != null ? cer.RelatedIssuerPlace.Title : string.Empty, $"%{certificateAdvancedSearch.IssuerPlace}%"))
                 );
+                    //.AsNoTracking().Skip(skip).Take(take); //good place
 
             serviceRespone.Amount = await query.CountAsync();
 
