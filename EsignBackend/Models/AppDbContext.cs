@@ -3,7 +3,7 @@
  * Script-Migration -Output C:\Users\saarm\Desktop\CreateWeSignTables.sql
  */
 using System;
-using System.Data.Entity.Infrastructure;
+//using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
