@@ -4,14 +4,14 @@ namespace EsignBackend.Models.Tools
 {
     public class CertificateAdvancedSearch
     {
-        public string? HpNumber { get; set; }
-        public string? Company { get; set; }
+        public string HpNumber { get; set; }
+        public string Company { get; set; }
         public string CustomerName { get; set; }
         public string CustomerLastName { get; set; }
-        public string IssuerPlace { get; set; }
-        public string? CustomerId { get; set; }
-        public int? Project { get; set; }
-        public int? SubProject { get; set; }
+        public int IssuerPlace { get; set; }
+        public string CustomerId { get; set; }
+        public int Project { get; set; }
+        public int SubProject { get; set; }
         public string CustomerIdNumber { get; set; }
         public int CertificateStatus { get; set; }
         public double CertificateIssuer { get; set; }

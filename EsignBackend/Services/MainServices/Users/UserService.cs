@@ -1,5 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
-using EsignBackend.Extensions.CashHandlers;
+using EsignBackend.Extensions.CacheHandlers;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
@@ -18,11 +18,11 @@ namespace EsignBackend.Services.CharacterService
 
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
-        private readonly ICash _cash;
+        private readonly ICache _cash;
         private static object _locker = new object();
         private const int UNLIMITED = -1;
 
-        public UserService(AppDbContext context, ILogger logger, ICash cash)
+        public UserService(AppDbContext context, ILogger logger, ICache cash)
         {
             _context = context;
             _logger = logger;
@@ -161,7 +161,7 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetAmountOfUsers");
             var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _cash.GetCounterByType(CashType.Users);
+            serviceRespone.Data = _cash.GetCounterByType(CacheType.Users);
             return serviceRespone;
         }
 
@@ -196,7 +196,7 @@ namespace EsignBackend.Services.CharacterService
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newUserInDb.Entity.Id;
-                    _cash.Increment(CashType.Users);
+                    _cash.Increment(CacheType.Users);
                     return serviceRespone;
                 }
                 catch (Exception exception)

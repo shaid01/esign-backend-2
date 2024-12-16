@@ -1,4 +1,4 @@
-﻿using EsignBackend.Extensions.CashHandlers;
+﻿using EsignBackend.Extensions.CacheHandlers;
 using EsignBackend.Services.CharacterService;
 using EsignBackend.Services.MainServices.Certificates;
 using EsignBackend.Services.SettingsService.CallsPriority;
@@ -41,7 +41,7 @@ namespace EsignBackend.Extensions
             services.AddScoped<IIssueLocationService, IssueLocationService>();
             services.AddScoped<ICertificatesService, CertificatesService>();
 
-            services.AddSingleton<ICash, CashHandler>();
+            services.AddSingleton<ICache, CacheHandler>();
 
         }
     }

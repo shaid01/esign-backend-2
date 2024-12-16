@@ -7,88 +7,97 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EsignBackend.Extensions.CashHandlers
+namespace EsignBackend.Extensions.CacheHandlers
 {
-    public enum CashType
+    public enum CacheType
     {
         Certificate,
         Customers,
         Users
     }
-    public class CashHandler : ICash
+    public class CacheHandler : ICache
     {
         private static object _locker = new object();
         private IServiceScopeFactory _scopeFactory;
         private ILogger _logger;
-        private Dictionary<CashType, int> _dbTableToCounterDictionary;
+        private Dictionary<CacheType, int> _dbTableToCounterDictionary;
 
-        public CashHandler(ILogger logger, IServiceScopeFactory scopeFactory)
+        public CacheHandler(ILogger logger, IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
             _logger = logger;
-            _dbTableToCounterDictionary = new Dictionary<CashType, int>();
+            _dbTableToCounterDictionary = new Dictionary<CacheType, int>();
         }
-        private void IncrementTableCounter(CashType cashType)
+
+        private void incrementTableCounter(CacheType cashType)
         {
-            _logger.Debug("CashHandler ~ IncrementTableCounter: " + cashType);
+            _logger.Debug("CacheHandler ~ IncrementTableCounter: " + cashType);
             using (var scope = _scopeFactory.CreateScope())
             {
                 var dependencyService = scope.ServiceProvider.GetService<AppDbContext>();
                 _dbTableToCounterDictionary.Remove(cashType);
 
-                if (cashType == CashType.Certificate)
+                if (cashType == CacheType.Certificate)
                 {
                     _dbTableToCounterDictionary.Add(cashType, dependencyService.Certificates.Count());
                 }
-                else if (cashType == CashType.Customers)
+                else if (cashType == CacheType.Customers)
                 {
                     _dbTableToCounterDictionary.Add(cashType, dependencyService.Customers.Count());
                 }
-                else if (cashType == CashType.Users)
+                else if (cashType == CacheType.Users)
                 {
                     _dbTableToCounterDictionary.Add(cashType, dependencyService.Buusers.Count());
                 }
             }
         }
-        private void ReadDataFromDB(CashType cashType)
+
+        private void readDataFromDB(CacheType cashType)
         {
-            _logger.Debug("CashHandler ~ ReadDataFromDB: " + cashType);
+            _logger.Debug("CacheHandler ~ ReadDataFromDB: " + cashType);
             using (var scope = _scopeFactory.CreateScope())
             {
                 var dependencyService = scope.ServiceProvider.GetService<AppDbContext>();
 
-                if (cashType == CashType.Certificate)
+                if (cashType == CacheType.Certificate)
                 {
                     _dbTableToCounterDictionary.Add(cashType, dependencyService.Certificates.Count());
                 }
-                else if (cashType == CashType.Customers)
+                else if (cashType == CacheType.Customers)
                 {
                     _dbTableToCounterDictionary.Add(cashType, dependencyService.Customers.Count());
                 }
-                else if (cashType == CashType.Users)
+                else if (cashType == CacheType.Users)
                 {
                     _dbTableToCounterDictionary.Add(cashType, dependencyService.Buusers.Count());
                 }
             }
         }
-        public int GetCounterByType(CashType cashType)
+
+        // responsibility of every client
+        //private void readSearchDataCount(CacheType cashType)
+        //{
+        //}
+
+        public int GetCounterByType(CacheType cashType)
         {
-            _logger.Debug("CashHandler ~ GetCounterByType: " + cashType);
+            _logger.Debug("CacheHandler ~ GetCounterByType: " + cashType);
             lock (_locker)
             {
                 if (!_dbTableToCounterDictionary.ContainsKey(cashType))
                 {
-                    ReadDataFromDB(cashType);
+                    readDataFromDB(cashType);
                 }
             }
             return _dbTableToCounterDictionary[cashType];
         }
-        public void Increment(CashType cashType)
+
+        public void Increment(CacheType cashType)
         {
-            _logger.Debug("CashHandler ~ Increment: " + cashType);
+            _logger.Debug("CacheHandler ~ Increment: " + cashType);
             lock (_locker)
             {
-                IncrementTableCounter(cashType);
+                incrementTableCounter(cashType);
             }
         }
     }

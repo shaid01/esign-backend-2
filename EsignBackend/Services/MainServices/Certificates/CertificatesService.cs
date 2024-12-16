@@ -1,4 +1,4 @@
-﻿using EsignBackend.Extensions.CashHandlers;
+﻿using EsignBackend.Extensions.CacheHandlers;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
@@ -16,19 +16,40 @@ using ClosedXML.Excel;
 using System.IO;
 using System.Collections;
 using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.InkML;
+using System.Runtime.ConstrainedExecution;
 
 namespace EsignBackend.Services.MainServices.Certificates
 {
+    public static class Extensions
+    {
+        public static IQueryable<Certificate> SearchCertificates(this IAppDbContext context)
+        {
+            return context.Certificates.AsNoTracking().Include(cer => cer.RelatedCertificateissuer)
+                    .Include(cer => cer.RelatedCertificateissuer)
+                    .Include(cer => cer.RelatedCertificatesstatus)
+                    .Include(cer => cer.RelatedCustomer)
+                    .Include(cer => cer.RelatedCustomerIdentifier)
+                    .Include(cer => cer.RelatedDocsType)
+                    .Include(cer => cer.RelatedExpiration)
+                    .Include(cer => cer.RelatedIssuerPlace)
+                    .Include(cer => cer.RelatedProject)
+                    .Include(cer => cer.RelatedSmartObject)
+                    .Include(cer => cer.RelatedSubProject);
+        }
+    }
+
     public class CertificatesService : ICertificatesService
     {
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
-        private readonly ICash _cash;
+        private readonly ICache _cash;
         private static object _locker = new object();
         private const int UNLIMITED = -1;
         private IServiceScopeFactory _scopeFactory;
 
-        public CertificatesService(AppDbContext context, ILogger logger, ICash cash, IServiceScopeFactory scopeFactory)
+        public CertificatesService(AppDbContext context, ILogger logger, ICache cash, IServiceScopeFactory scopeFactory)
         {
             _context = context;
             _logger = logger;
@@ -66,7 +87,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("GetCertificatesDetails");
 
             var serviceResponse = new ServiceResponse<CertificateDetailsDTO>();
-            serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
+            serviceResponse.Amount = _cash.GetCounterByType(CacheType.Certificate);
             var certificate = _context.Certificates
                 .Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCertificatesstatus)
@@ -138,7 +159,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
 
             serviceResponse.Data = certificateDetailsList;
-            serviceResponse.Amount = _cash.GetCounterByType(CashType.Certificate);
+            serviceResponse.Amount = _cash.GetCounterByType(CacheType.Certificate);
 
             return serviceResponse;
         }
@@ -148,48 +169,72 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("SearchCertificates");
             var serviceRespone = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
 
-            var query = _context.Certificates.AsNoTracking().Include(cer => cer.RelatedCertificateissuer)
-                    .Include(cer => cer.RelatedCertificateissuer)
-                    .Include(cer => cer.RelatedCertificatesstatus)
-                    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
-                    .Include(cer => cer.RelatedCustomerIdentifier)
-                    .Include(cer => cer.RelatedDocsType)
-                    .Include(cer => cer.RelatedExpiration)
-                    .Include(cer => cer.RelatedIssuerPlace)
-                    .Include(cer => cer.RelatedProject)
-                    //  .Include(cer => cer.RelatedSecurityquestion)
-                    .Include(cer => cer.RelatedSmartObject)
-                    .Include(cer => cer.RelatedSubProject)
-                    //.AsNoTracking().Skip(skip).Take(take) //wrong place
-                    .Where(cer =>
-                ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
+            var searchQry = _context.SearchCertificates();
+
+            var query = searchQry.Where(cer =>
+
+                   ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
+
                 && ((certificateAdvancedSearch.HpNumber == null) || EF.Functions.Like(cer.Hpnumber, $"%{certificateAdvancedSearch.HpNumber}%"))
-                && ((certificateAdvancedSearch.Project == null) || cer.Project == certificateAdvancedSearch.Project)
-                && ((certificateAdvancedSearch.SubProject == null) || cer.Subproject == certificateAdvancedSearch.SubProject)
+
+                && ((certificateAdvancedSearch.Project.CompareTo(-1) == 0) || (cer.RelatedProject != null && cer.RelatedProject.Id == certificateAdvancedSearch.Project))
+
+                && ((certificateAdvancedSearch.SubProject.CompareTo(-1) == 0) || (cer.RelatedSubProject != null && cer.RelatedSubProject.Id == certificateAdvancedSearch.SubProject))
+
                 && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerIdNumber) || (cer.RelatedCustomer != null && cer.RelatedCustomer.Idnumber.Trim() == certificateAdvancedSearch.CustomerIdNumber.ToString().Trim()))
-                && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || cer.Certificatestatus == certificateAdvancedSearch.CertificateStatus)
+
+                && ((certificateAdvancedSearch.CertificateStatus.CompareTo(-1) == 0) || (cer.RelatedCertificatesstatus != null && cer.RelatedCertificatesstatus.Id == certificateAdvancedSearch.CertificateStatus))
+
+                ////no RelatedCertIssuer model was found?
                 && ((certificateAdvancedSearch.CertificateIssuer.CompareTo(-1) == 0) || cer.Certificateissuer == certificateAdvancedSearch.CertificateIssuer)
+
                 && ((certificateAdvancedSearch.CustomerIdentifier.CompareTo(-1) == 0) || (cer.RelatedCustomerIdentifier != null && cer.RelatedCustomerIdentifier.Id == certificateAdvancedSearch.CustomerIdentifier))
+
                 && (certificateAdvancedSearch.StartExpDate == null || cer.Expiredate.Value >= certificateAdvancedSearch.StartExpDate.Value)
+
                 && (certificateAdvancedSearch.EndExpDate == null || cer.Expiredate.Value <= certificateAdvancedSearch.EndExpDate.Value)
+
                 && (certificateAdvancedSearch.StartIssueDate == null || cer.Issuedate.Value >= certificateAdvancedSearch.StartIssueDate.Value)
+
                 && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
+
                 && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
+
                 && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
-                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.IssuerPlace) || EF.Functions.Like(cer.RelatedIssuerPlace != null ? cer.RelatedIssuerPlace.Title : string.Empty, $"%{certificateAdvancedSearch.IssuerPlace}%"))
-                );
-                    //.AsNoTracking().Skip(skip).Take(take); //good place
 
-            serviceRespone.Amount = await query.CountAsync();
+                && (certificateAdvancedSearch.IssuerPlace.CompareTo(-1) == 0 || (cer.RelatedIssuerPlace != null && cer.RelatedIssuerPlace.Id == certificateAdvancedSearch.IssuerPlace)));
 
-            query = query.Skip(skip);
+            //.AsNoTracking().Skip(skip).Take(take); //right place
 
-            if (take != UNLIMITED)
+            query = query.OrderByDescending(cer => cer.Issuedate);
+
+            List<Certificate> certificatesList;
+
+            //if (skip == 0)
             {
-                query = query.Take(take);
-            }
+                serviceRespone.Amount = await query.AsNoTracking().CountAsync();
 
-            var certificatesList = await query.ToListAsync();
+                query = query.Skip(skip);
+
+                if (take != UNLIMITED)
+                {
+                    query = query.Take(take);
+                }
+
+                certificatesList = await query.ToListAsync();
+            }
+            //else
+            //{
+            //    query.AsNoTracking().Skip(skip).Take(take);
+
+            //    // clients will be responsible for keeping count value
+            //    //serviceRespone.Amount = -1;
+
+            //    certificatesList = await query.ToListAsync();
+            //    serviceRespone.Amount = certificatesList.Count;
+            //}
+
+            //certificatesList = await query.ToListAsync();
             var certificateDetailsDtoList = new List<CertificateDetailsDTO>();
 
             foreach (var certificate in certificatesList)
@@ -200,7 +245,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error in add certificate to certificateDetailsDtoList, cert id - {certificate.Id}");
+                    _logger.Error($"Error in SearchCertificates. Cert id - {certificate.Id} - {ex.Message}");
                 }
             }
 
@@ -374,7 +419,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newCertificateInDb.Entity.Id;
-                    _cash.Increment(CashType.Certificate);
+                    _cash.Increment(CacheType.Certificate);
                     return serviceRespone;
                 }
                 catch (Exception exception)

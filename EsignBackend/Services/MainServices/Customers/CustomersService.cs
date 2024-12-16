@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Spreadsheet;
-using EsignBackend.Extensions.CashHandlers;
+using EsignBackend.Extensions.CacheHandlers;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
@@ -17,26 +17,16 @@ namespace EsignBackend.Services.CharacterService
     public class CustomersService : ICustomersService
     {
         private readonly AppDbContext _context;
-        private readonly ICash _cash;
+        private readonly ICache _cache;
         private readonly ILogger _logger;
         private static object _locker = new object();
         private const int UNLIMITED = -1;
 
-        public CustomersService(AppDbContext context, ILogger logger, ICash cash)
+        public CustomersService(AppDbContext context, ILogger logger, ICache cash)
         {
             _context = context;
             _logger = logger;
-            _cash = cash;
-        }
-
-        private int GenerateUserId()
-        {
-            _logger.Debug("GenerateUserId");
-            lock (_locker)
-            {
-                int maxId = _context.Customers.OrderByDescending(customer => customer.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
+            _cache = cash;
         }
 
         private bool IsUserIdAlreadyInUse(string username)
@@ -66,7 +56,7 @@ namespace EsignBackend.Services.CharacterService
             }
 
             serviceRespone.Data = customersList;
-            serviceRespone.Amount = _cash.GetCounterByType(CashType.Customers);
+            serviceRespone.Amount = _cache.GetCounterByType(CacheType.Customers);
 
             return serviceRespone;
         }
@@ -113,7 +103,7 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetAmountOfCustomers");
             var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _cash.GetCounterByType(CashType.Customers);
+            serviceRespone.Data = _cache.GetCounterByType(CacheType.Customers);
             return serviceRespone;
         }
 
@@ -191,7 +181,7 @@ namespace EsignBackend.Services.CharacterService
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newCustomerInDb.Entity.Id;
-                    _cash.Increment(CashType.Customers);
+                    _cache.Increment(CacheType.Customers);
                     return serviceRespone;
                 }
                 catch (Exception exception)
