@@ -45,7 +45,10 @@ namespace EsignBackend.Services.CharacterService
                 .Include(c => c.RelatedSecurityquestion)
                 //.Where(c => c.Idnumber != "")
                 .AsNoTracking()
-                .OrderBy(c => c.Idnumber)
+
+                //.OrderBy(c => c.Idnumber)
+                .OrderByDescending(c => c.Id)
+
                 .Skip(skip).Take(take).ToListAsync();
 
             var customersList = new List<CustomerDTO>();
@@ -64,23 +67,39 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCustomers");
+
             var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
+
             var query = _context.Customers.AsNoTracking().Include(cu => cu.RelatedSecurityquestion).Where(customer =>
-                (customer.Id > 0) &&
-                ((customerAdvancedSearch.CustomerId == null) || EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
+                (customer.Id > 0)
+
+                && ((customerAdvancedSearch.CustomerId == null) || EF.Functions.Like(customer.Idnumber, $"%{customerAdvancedSearch.CustomerId}%"))
+
                 && ((customerAdvancedSearch.FirstName == null) || EF.Functions.Like(customer.Firstname, $"%{customerAdvancedSearch.FirstName}%"))
+
                 && ((customerAdvancedSearch.LastName == null) || EF.Functions.Like(customer.Lastname, $"%{customerAdvancedSearch.LastName}%"))
+
                 && ((customerAdvancedSearch.Email == null) || EF.Functions.Like(customer.Email, $"%{customerAdvancedSearch.Email}%"))
+
                 && ((customerAdvancedSearch.Company == null) || EF.Functions.Like(customer.Company, $"%{customerAdvancedSearch.Company}%"))
+
                 && (((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Phone1, $"%{customerAdvancedSearch.Phone}%"))
-                || ((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Mobile1, $"%{customerAdvancedSearch.Phone}%")))
+
+                    || ((customerAdvancedSearch.Phone == null) || EF.Functions.Like(customer.Mobile1, $"%{customerAdvancedSearch.Phone}%")))
+
                 );
+
+            query = query.OrderByDescending(cust => cust.Id);
+
             serviceResponse.Amount = await query.CountAsync();
+
             query = query.Skip(skip);
+
             if (take != UNLIMITED)
             {
                 query = query.Take(take);
             }
+
             var customerList = await query.ToListAsync();
 
             var customersDtoList = new List<CustomerDTO>();
@@ -92,7 +111,7 @@ namespace EsignBackend.Services.CharacterService
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error in add user to customersDtoList, user id - {customer.Id}");
+                    _logger.Error($"Error in SearchCustomers, customer id - {customer.Id}");
                 }
             }
             serviceResponse.Data = customersDtoList;

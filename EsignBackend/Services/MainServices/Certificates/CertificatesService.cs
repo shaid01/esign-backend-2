@@ -147,7 +147,9 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
                 .AsNoTracking()
+
                 .OrderByDescending(x => x.Issuedate)
+
                 .Skip(skip).Take(take).ToListAsync();
 
             var certificateDetailsList = new List<CertificateDetailsDTO>();
