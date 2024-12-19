@@ -18,15 +18,15 @@ namespace EsignBackend.Services.CharacterService
 
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
-        private readonly ICache _cash;
+        private readonly ICache _cache;
         private static object _locker = new object();
         private const int UNLIMITED = -1;
 
-        public UserService(AppDbContext context, ILogger logger, ICache cash)
+        public UserService(AppDbContext context, ILogger logger, ICache cache)
         {
             _context = context;
             _logger = logger;
-            _cash = cash;
+            _cache = cache;
         }
 
         private int GenerateUserId()
@@ -53,39 +53,28 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<List<UserDTO>>> GetAllUsers(int skip, int take)
         {
-            try
-            {
-                _logger.Debug("GetAllUsers");
-                var serviceRespone = new ServiceResponse<List<UserDTO>>();
+            _logger.Debug("GetAllUsers");
 
-                var query = _context.Buusers.AsNoTracking();
-                serviceRespone.Amount = await query.CountAsync();
-                query = query.Skip(skip);
-                if (take != UNLIMITED)
-                {
-                    query = query.Take(take);
-                }
-                var userList = await query.ToListAsync();
-                var userDetails = new List<UserDTO>();
-                foreach (var user in userList)
-                {
-                    try
-                    {
-                        userDetails.Add(new UserDTO(user));
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error($"Error in add user to userDetailsList, user id - {user.Id}");
-                    }
-                }
-                serviceRespone.Data = userDetails;
-                return serviceRespone;
-            }
-            catch (Exception ex)
+            var serviceRespone = new ServiceResponse<List<UserDTO>>();
+
+            var users = await _context.Buusers
+                .AsNoTracking()
+
+                .OrderByDescending(c => c.Id)
+
+                .Skip(skip).Take(take).ToListAsync();
+
+            var usersList = new List<UserDTO>();
+
+            foreach (var user in users)
             {
-                _logger.Error($"Error in read users");
-                throw ex;
+                usersList.Add(new UserDTO(user));
             }
+
+            serviceRespone.Data = usersList;
+            serviceRespone.Amount = _cache.GetCounterByType(CacheType.Users);
+
+            return serviceRespone;
         }
 
         public async Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
@@ -100,6 +89,8 @@ namespace EsignBackend.Services.CharacterService
                 && ((userAdvancedSearch.Email == null) || EF.Functions.Like(user.Email, $"%{userAdvancedSearch.Email}%"))
                 && ((userAdvancedSearch.UserGroup == null) || EF.Functions.Like(user.Usergroup, userAdvancedSearch.UserGroup))
                 );
+
+            query = query.OrderByDescending(user => user.Id);
 
             serviceResponse.Amount = await query.CountAsync();
 
@@ -161,7 +152,7 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetAmountOfUsers");
             var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _cash.GetCounterByType(CacheType.Users);
+            serviceRespone.Data = _cache.GetCounterByType(CacheType.Users);
             return serviceRespone;
         }
 
@@ -196,7 +187,7 @@ namespace EsignBackend.Services.CharacterService
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newUserInDb.Entity.Id;
-                    _cash.Increment(CacheType.Users);
+                    _cache.Increment(CacheType.Users);
                     return serviceRespone;
                 }
                 catch (Exception exception)
