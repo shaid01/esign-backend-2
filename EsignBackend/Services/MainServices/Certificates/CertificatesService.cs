@@ -236,6 +236,11 @@ namespace EsignBackend.Services.MainServices.Certificates
                 in a foreign key column, you can get different results for database-side (here 291) and client-side (here 287) count operations
                 */
 
+                /*
+                 * The reason of fewer records was this row "INNER JOIN [projects] AS [p] ON [t].[project] = [p].[id]" instead of "LEFT JOIN"
+                 * Fixed in Certificate class -> public int? Project { get; set; } (? sign of nullable value was added)
+                 */
+
                 //server side count - 291, e.g.
                 /*
                     SELECT COUNT(*)
