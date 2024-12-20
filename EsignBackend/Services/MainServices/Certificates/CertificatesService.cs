@@ -19,6 +19,7 @@ using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.InkML;
 using System.Runtime.ConstrainedExecution;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace EsignBackend.Services.MainServices.Certificates
 {
@@ -134,23 +135,38 @@ namespace EsignBackend.Services.MainServices.Certificates
             //}
             //var certificates = await query.ToListAsync();
 
-            var certificates = await _context.Certificates
-                .Include(cer => cer.RelatedCertificateissuer)
-                .Include(cer => cer.RelatedCertificatesstatus)
-                .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
-                .Include(cer => cer.RelatedCustomerIdentifier)
-                .Include(cer => cer.RelatedDocsType)
-                .Include(cer => cer.RelatedExpiration)
-                .Include(cer => cer.RelatedIssuerPlace)
-                .Include(cer => cer.RelatedProject)
-                //  .Include(cer => cer.RelatedSecurityquestion)
-                .Include(cer => cer.RelatedSmartObject)
-                .Include(cer => cer.RelatedSubProject)
-                .AsNoTracking()
+            List<Certificate> certificates = null;
 
-                .OrderByDescending(x => x.Issuedate)
+            try
+            {
+                certificates = await _context.Certificates
+                    .Include(cer => cer.RelatedCertificateissuer)
+                    .Include(cer => cer.RelatedCertificatesstatus)
+                    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
+                    .Include(cer => cer.RelatedCustomerIdentifier)
+                    .Include(cer => cer.RelatedDocsType)
+                    .Include(cer => cer.RelatedExpiration)
+                    .Include(cer => cer.RelatedIssuerPlace)
+                    .Include(cer => cer.RelatedProject)
+                    //  .Include(cer => cer.RelatedSecurityquestion)
+                    .Include(cer => cer.RelatedSmartObject)
+                    .Include(cer => cer.RelatedSubProject)
+                    .AsNoTracking()
 
-                .Skip(skip).Take(take).ToListAsync();
+                    .OrderByDescending(x => x.Issuedate)
+
+                    .Skip(skip).Take(take).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetCertificatesDetails. {ex.Message}");
+                var errorData = new ServiceResponse<List<CertificateDetailsDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
+            }
 
             var certificateDetailsList = new List<CertificateDetailsDTO>();
 
@@ -173,7 +189,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             var searchQry = _context.SearchCertificates();
 
-            var query = searchQry.Where(cer =>
+            var query = searchQry.AsNoTracking().Where(cer =>
 
                    ((certificateAdvancedSearch.Company == null) || cer.Company.Contains(certificateAdvancedSearch.Company))
 
@@ -208,22 +224,68 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             //.AsNoTracking().Skip(skip).Take(take); //right place
 
-            query = query.OrderByDescending(cer => cer.Issuedate);
-
-            List<Certificate> certificatesList;
+            List<Certificate> certificatesList = null;
 
             //if (skip == 0)
             {
-                serviceRespone.Amount = await query.AsNoTracking().CountAsync();
+                //https://stackoverflow.com/questions/63071963/ef-core-queryablet-count-returns-different-number-than-queryablet-tolist
 
-                query = query.Skip(skip);
+                /*
+                If you create your database on your own however (using a custom crafted SQL script) and leave out the foreign key constraint,
+                but still let EF Core believe that there is one in place, and then violate the referential integrity by using a non existing ID
+                in a foreign key column, you can get different results for database-side (here 291) and client-side (here 287) count operations
+                */
 
-                if (take != UNLIMITED)
+                //server side count - 291, e.g.
+                /*
+                    SELECT COUNT(*)
+                          FROM [certificates] AS [c]
+                          LEFT JOIN [customers] AS [c0] ON [c].[customerid] = [c0].[id]
+                          WHERE CASE
+                              WHEN [c0].[id] IS NOT NULL THEN [c0].[firstname]
+                              ELSE N''
+                          END LIKE '%נועה%'
+
+                Why not?:
+
+                     SELECT COUNT(*)
+                      FROM [certificates] AS [c]
+                      INNER JOIN [customers] AS [c0] ON [c].[customerid] = [c0].[id]
+                      WHERE [c0].[firstname] LIKE '%נועה%'
+                */
+
+                try
                 {
-                    query = query.Take(take);
-                }
+                    serviceRespone.Amount = await query.CountAsync(); //291
+                    //serviceRespone.Amount = (await query.ToListAsync()).Count(); //287
 
-                certificatesList = await query.ToListAsync();
+                    //client side count - 287 - some records with not existed values in referenced tables were eliminated
+                    /*
+                     * full select query
+                     */
+                    //serviceRespone.Amount = (await query.AsNoTracking().ToListAsync()).Count();
+
+                    query = query.Skip(skip);
+
+                    if (take != UNLIMITED)
+                    {
+                        query = query.Take(take);
+                    }
+
+                    query = query.OrderByDescending(cer => cer.Issuedate);
+
+                    certificatesList = await query.ToListAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Error while processing DB query in SearchCertificates. {ex.Message}");
+                    var errorData = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
+                    errorData.Data = null;
+                    errorData.Success = false;
+                    errorData.Message = ex.Message;
+
+                    return errorData;
+                }
             }
             //else
             //{
@@ -237,6 +299,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             //}
 
             //certificatesList = await query.ToListAsync();
+
             var certificateDetailsDtoList = new List<CertificateDetailsDTO>();
 
             foreach (var certificate in certificatesList)
@@ -251,19 +314,8 @@ namespace EsignBackend.Services.MainServices.Certificates
                 }
             }
 
-            //Parallel.For(0, query.Count(),
-            //        index =>
-            //        {
-            //            try
-            //            {
-            //                certificateDetails.Add(new CertificateDetailsDTO(new CertificateDetails(certificatesList[index])));
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                _logger.Error($"Error in add certificate to certificateDetailsList, cert id - {certificatesList[index]}");
-            //            }
-            //        });
             serviceRespone.Data = certificateDetailsDtoList;
+
             return serviceRespone;
         }
 
@@ -397,6 +449,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 catch (Exception ex)
                 {
                     _logger.Error("UpdateExpiredCertificates error, " + ex.Message);
+                    serviceRespone.Success = false;
                     serviceRespone.Data = -1;
                     serviceRespone.Message = "Updating expired certificates failed. " + ex;
                 }
@@ -424,11 +477,11 @@ namespace EsignBackend.Services.MainServices.Certificates
                     _cash.Increment(CacheType.Certificate);
                     return serviceRespone;
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
-                    _logger.Debug("exception detected while trying to AddCertificate - " + exception);
+                    _logger.Debug("exception detected while trying to AddCertificate - " + ex);
                     serviceRespone.Success = false;
-                    serviceRespone.Message = $"Registration failed. {exception}";
+                    serviceRespone.Message = $"Adding certificate failed. {ex}";
                     serviceRespone.Data = -1;
                     return serviceRespone;
                 }

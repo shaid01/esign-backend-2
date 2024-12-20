@@ -10,7 +10,7 @@ namespace EsignBackend.Models
     {
         public int Id { get; set; }
         [Column(TypeName = "float")]
-        public int Project { get; set; }
+        public int? Project { get; set; }
         public virtual Project RelatedProject { get; set; }
         public string Company { get; set; }
         public string Hpnumber { get; set; }

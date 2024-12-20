@@ -57,12 +57,27 @@ namespace EsignBackend.Services.CharacterService
 
             var serviceRespone = new ServiceResponse<List<UserDTO>>();
 
-            var users = await _context.Buusers
-                .AsNoTracking()
+            List<Buuser> users = null;
 
-                .OrderByDescending(c => c.Id)
+            try
+            {
+                users = await _context.Buusers
+                    .AsNoTracking()
 
-                .Skip(skip).Take(take).ToListAsync();
+                    .OrderByDescending(c => c.Id)
+
+                    .Skip(skip).Take(take).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetAllUsers. {ex.Message}");
+                var errorData = new ServiceResponse<List<UserDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
+            }
 
             var usersList = new List<UserDTO>();
 
@@ -71,6 +86,7 @@ namespace EsignBackend.Services.CharacterService
                 usersList.Add(new UserDTO(user));
             }
 
+            serviceRespone.Success = true;
             serviceRespone.Data = usersList;
             serviceRespone.Amount = _cache.GetCounterByType(CacheType.Users);
 
@@ -80,6 +96,7 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchUsers");
+
             var serviceResponse = new ServiceResponse<List<UserDTO>>();
 
             var query = _context.Buusers.AsNoTracking().Where(user =>
@@ -92,30 +109,49 @@ namespace EsignBackend.Services.CharacterService
 
             query = query.OrderByDescending(user => user.Id);
 
-            serviceResponse.Amount = await query.CountAsync();
+            List<Buuser> users = null;
 
-            query = query.Skip(skip);
-
-            if (take != UNLIMITED)
+            try
             {
-                query = query.Take(take);
+                serviceResponse.Amount = await query.CountAsync();
+
+                query = query.Skip(skip);
+
+                if (take != UNLIMITED)
+                {
+                    query = query.Take(take);
+                }
+
+                users = await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in SearchUsers. {ex.Message}");
+                var errorData = new ServiceResponse<List<UserDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
             }
 
-            var userList = await query.ToListAsync();
+            var userList = new List<UserDTO>();
 
-            var userDtoList = new List<UserDTO>();
-            foreach (var user in userList)
+            foreach (var user in users)
             {
                 try
                 {
-                    userDtoList.Add(new UserDTO(user));
+                    userList.Add(new UserDTO(user));
                 }
                 catch (Exception ex)
                 {
                     _logger.Error($"Error in add user to userDtoList, user id - {user.Id}");
                 }
             }
-            serviceResponse.Data = userDtoList;
+
+            serviceResponse.Data = userList;
+            serviceResponse.Success = true;
+
             return serviceResponse;
 
             //serviceRespone.Amount = dbUsers.Count();
@@ -190,11 +226,11 @@ namespace EsignBackend.Services.CharacterService
                     _cache.Increment(CacheType.Users);
                     return serviceRespone;
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
-                    _logger.Debug("exception detected while trying to AddNewUser: " + exception);
+                    _logger.Debug("AddNewUser exception: " + ex);
                     serviceRespone.Success = false;
-                    serviceRespone.Message = $"Registration failed. {exception}";
+                    serviceRespone.Message = $"Registration failed. {ex}";
                     serviceRespone.Data = -1;
                     return serviceRespone;
                 }
@@ -224,7 +260,7 @@ namespace EsignBackend.Services.CharacterService
             {
                 _logger.Debug("exception detected while trying to UpdateUser: " + exception);
                 serviceResponse.Success = false;
-                serviceResponse.Message = $"Updated failed. {exception}";
+                serviceResponse.Message = $"Updated user failed. {exception}";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -243,14 +279,14 @@ namespace EsignBackend.Services.CharacterService
                 _context.SaveChangesAsync();
                 serviceResponse.Success = true;
                 serviceResponse.Data = updatedUserInDb.Entity.Id;
-                serviceResponse.Message = "User updated successfully.";
+                serviceResponse.Message = "Password updated successfully.";
                 return serviceResponse;
             }
             catch (Exception exception)
             {
                 _logger.Error("exception detected while trying to ChangeUserPassword: " + exception);
                 serviceResponse.Success = false;
-                serviceResponse.Message = $"Updated failed. {exception}";
+                serviceResponse.Message = $"Change password failed. {exception}";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }

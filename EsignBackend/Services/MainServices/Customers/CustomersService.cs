@@ -41,15 +41,30 @@ namespace EsignBackend.Services.CharacterService
 
             var serviceRespone = new ServiceResponse<List<CustomerDTO>>();
 
-            var customers = await _context.Customers
-                .Include(c => c.RelatedSecurityquestion)
-                //.Where(c => c.Idnumber != "")
-                .AsNoTracking()
+            List<Customer> customers = null;
 
-                //.OrderBy(c => c.Idnumber)
-                .OrderByDescending(c => c.Id)
+            try
+            {
+                customers = await _context.Customers
+                    .Include(c => c.RelatedSecurityquestion)
+                    //.Where(c => c.Idnumber != "")
+                    .AsNoTracking()
 
-                .Skip(skip).Take(take).ToListAsync();
+                    //.OrderBy(c => c.Idnumber)
+                    .OrderByDescending(c => c.Id)
+
+                    .Skip(skip).Take(take).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetCustomers. {ex.Message}");
+                var errorData = new ServiceResponse<List<CustomerDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
+            }
 
             var customersList = new List<CustomerDTO>();
 
@@ -64,11 +79,11 @@ namespace EsignBackend.Services.CharacterService
             return serviceRespone;
         }
 
-        public async Task<ServiceResponse<List<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
+        public async Task<ServiceResponse<IEnumerable<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCustomers");
 
-            var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
+            var serviceResponse = new ServiceResponse<IEnumerable<CustomerDTO>>();
 
             var query = _context.Customers.AsNoTracking().Include(cu => cu.RelatedSecurityquestion).Where(customer =>
                 (customer.Id > 0)
@@ -91,18 +106,34 @@ namespace EsignBackend.Services.CharacterService
 
             query = query.OrderByDescending(cust => cust.Id);
 
-            serviceResponse.Amount = await query.CountAsync();
+            List<Customer> customerList = null;
 
-            query = query.Skip(skip);
-
-            if (take != UNLIMITED)
+            try
             {
-                query = query.Take(take);
+                serviceResponse.Amount = await query.CountAsync();
+
+                query = query.Skip(skip);
+
+                if (take != UNLIMITED)
+                {
+                    query = query.Take(take);
+                }
+
+                customerList = await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in SearchCustomers. {ex.Message}");
+                var errorData = new ServiceResponse<IEnumerable<CustomerDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
             }
 
-            var customerList = await query.ToListAsync();
-
             var customersDtoList = new List<CustomerDTO>();
+
             foreach (var customer in customerList)
             {
                 try
@@ -111,10 +142,12 @@ namespace EsignBackend.Services.CharacterService
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error in SearchCustomers, customer id - {customer.Id}");
+                    _logger.Error($"Error in SearchCustomers, customer id - {customer.Id} - {ex.Message}");
                 }
             }
+
             serviceResponse.Data = customersDtoList;
+
             return serviceResponse;
         }
 
