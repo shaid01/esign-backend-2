@@ -22,11 +22,11 @@ namespace EsignBackend.Services.CharacterService
         private static object _locker = new object();
         private const int UNLIMITED = -1;
 
-        public CustomersService(AppDbContext context, ILogger logger, ICache cash)
+        public CustomersService(AppDbContext context, ILogger logger, ICache cache)
         {
             _context = context;
             _logger = logger;
-            _cache = cash;
+            _cache = cache;
         }
 
         private bool IsUserIdAlreadyInUse(string username)
@@ -159,20 +159,33 @@ namespace EsignBackend.Services.CharacterService
             return serviceRespone;
         }
 
-        public async Task<ServiceResponse<CustomerDTO>> GetCustomerById(int id)
+        public CustomerDTO GetCustomerById(int id)
         {
             _logger.Debug("GetCustomerById");
-            var serviceRespone = new ServiceResponse<CustomerDTO>();
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
-            if (customer == null)
-            {
-                serviceRespone.Amount = 0;
-                _logger.Error($"Not found customer by Id = {id}");
-                return serviceRespone;
-            }
-            serviceRespone.Amount = 1;
-            serviceRespone.Data = new CustomerDTO(customer);
-            return serviceRespone;
+
+            //var serviceResponse = new ServiceResponse<CustomerDTO>();
+            //serviceResponse.Amount = _cache.GetCounterByType(CacheType.Customers);
+
+            //await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            var customer = _context.Customers
+                .Where(x => x.Id == id)
+                //First will throw an exception when there are no results. 
+                .First();
+
+            //if (customer == null)
+            //{
+            //    serviceResponse.Amount = 0;
+            //    _logger.Error($"Not found customer by Id = {id}");
+            //    return serviceResponse;
+            //}
+
+            //serviceResponse.Amount = 1;
+            //serviceResponse.Data = new CustomerDTO(customer);
+
+            var customerDto = new CustomerDTO(customer);
+
+            //return serviceRespone;
+            return customerDto;
         }
 
         public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions()

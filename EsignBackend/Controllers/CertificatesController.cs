@@ -28,11 +28,11 @@ namespace EsignBackend.Controllers
 
         [Authorize]
         [HttpGet("GetCertificateExtendedDetails")]
-        public async Task<IActionResult> GetCertificateExtendedDetails(int id)
+        public IActionResult GetCertificateExtendedDetails(int id)
         {
             _logger.Debug("GetCertificateExtendedDetails");
             Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            return Ok(await _certificatesService.GetCertificateExtendedDetails(id));
+            return Ok(_certificatesService.GetCertificateExtendedDetails(id));
         }
 
         [Authorize]

@@ -12,7 +12,7 @@ namespace EsignBackend.Services.CharacterService
     {
         Task<ServiceResponse<List<CustomerDTO>>> GetCustomers(int skip, int take);
         Task<ServiceResponse<int>> GetAmountOfCustomers();
-        Task<ServiceResponse<CustomerDTO>> GetCustomerById(int id);
+        CustomerDTO GetCustomerById(int id);
         Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions();
         Task<ServiceResponse<int>> UpdateCustomer(Customer updatedCustomer);
         Task<ServiceResponse<IEnumerable<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take);

@@ -33,10 +33,10 @@ namespace EsignBackend.Controllers
         }
 
         [HttpGet("GetUserByUsername")]
-        public async Task<IActionResult> GetUserByUsername(string username)
+        public IActionResult GetUserByUsername(string username)
         {
             _logger.Debug("GetUsersByUsername");
-            return Ok(await _usersService.GetUserByUsername(username));
+            return Ok(_usersService.GetUserByUsername(username));
         }
 
         [Authorize(Roles = "מנהל")]

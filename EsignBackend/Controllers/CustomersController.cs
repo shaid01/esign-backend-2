@@ -40,10 +40,10 @@ namespace EsignBackend.Controllers
         }
         
         [HttpGet("GetCustomerById")]
-        public async Task<IActionResult> GetCustomerById(int id)
+        public IActionResult GetCustomerById(int id)
         {
             _logger.Debug("GetCustomerById");
-            return Ok(await _customersService.GetCustomerById(id));
+            return Ok(_customersService.GetCustomerById(id));
         }
 
         [HttpGet("GetSecurityQuestions")]

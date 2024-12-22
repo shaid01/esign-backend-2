@@ -159,29 +159,57 @@ namespace EsignBackend.Services.CharacterService
             //return serviceRespone;
         }
 
-        public async Task<ServiceResponse<UserDTO>> GetUserByUsername(string username)
+        public UserDTO GetUserByUsername(string username)
         {
             _logger.Debug("GetUserByUsername");
-            var serviceRespone = new ServiceResponse<UserDTO>();
-            var user = await _context.Buusers.FirstOrDefaultAsync(u => u.Username.Equals(username));
-            if (user == null)
-            {
-                serviceRespone.Amount = 0;
-                _logger.Error($"Not found user by Username = {username}");
-                return serviceRespone;
-            }
-            Department department = await _context.Departments.FirstOrDefaultAsync(d => d.Id == user.Departmentid);
+
+            //var serviceRespone = new ServiceResponse<UserDTO>();
+
+            var user = _context.Buusers
+                .Where(x => x.Username == username)
+                //First will throw an exception when there are no results. 
+                .First();
+
+                //await _context.Buusers.FirstOrDefaultAsync(u => u.Username.Equals(username));
+
+            //if (user == null)
+            //{
+            //    serviceRespone.Amount = 0;
+            //    _logger.Error($"Not found user by Username = {username}");
+            //    return serviceRespone;
+            //}
+
+            Department department = _context.Departments
+                .Where(x => x.Id == user.Departmentid)
+                .FirstOrDefault();
+
+            UserDTO userDto = null;
+
             if (department == null)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmentid}";
-                serviceRespone.Data =new UserDTO(user, "???");
-                return serviceRespone;
+                userDto = new UserDTO(user, "???");
+            }
+            else
+            {
+                userDto = new UserDTO(user, department.Title);
             }
 
-            serviceRespone.Amount = 1;
-            serviceRespone.Data = new UserDTO(user, department.Title);
-            return serviceRespone;
+            //await _context.Departments.FirstOrDefaultAsync(d => d.Id == user.Departmentid);
+
+
+            //if (department == null)
+            //{
+            //    serviceRespone.Success = false;
+            //    serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmentid}";
+            //    serviceRespone.Data = new UserDTO(user, "???");
+            //    return serviceRespone;
+            //}
+
+            //serviceRespone.Amount = 1;
+            //serviceRespone.Data = new UserDTO(user, department.Title);
+            //return serviceRespone;
+
+            return userDto;
         }
 
         public async Task<ServiceResponse<int>> GetAmountOfUsers()

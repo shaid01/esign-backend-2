@@ -45,16 +45,16 @@ namespace EsignBackend.Services.MainServices.Certificates
     {
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
-        private readonly ICache _cash;
+        private readonly ICache _cache;
         private static object _locker = new object();
         private const int UNLIMITED = -1;
         private IServiceScopeFactory _scopeFactory;
 
-        public CertificatesService(AppDbContext context, ILogger logger, ICache cash, IServiceScopeFactory scopeFactory)
+        public CertificatesService(AppDbContext context, ILogger logger, ICache cache, IServiceScopeFactory scopeFactory)
         {
             _context = context;
             _logger = logger;
-            _cash = cash;
+            _cache = cache;
             _scopeFactory = scopeFactory;
         }
 
@@ -83,12 +83,14 @@ namespace EsignBackend.Services.MainServices.Certificates
             return serviceResponse;
         }
 
-        public async Task<CertificateDetailsExtendedDTO> GetCertificateExtendedDetails(int id)
+        public CertificateDetailsExtendedDTO GetCertificateExtendedDetails(int id)
         {
             _logger.Debug("GetCertificatesDetails");
 
-            var serviceResponse = new ServiceResponse<CertificateDetailsDTO>();
-            serviceResponse.Amount = _cash.GetCounterByType(CacheType.Certificate);
+            //22/12/2024 - of unknown use
+            //var serviceResponse = new ServiceResponse<CertificateDetailsDTO>();
+            //serviceResponse.Amount = _cache.GetCounterByType(CacheType.Certificate);
+
             var certificate = _context.Certificates
                 .Include(cer => cer.RelatedCertificateissuer)
                 .Include(cer => cer.RelatedCertificatesstatus)
@@ -102,10 +104,13 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
                 .Where(x => x.Id == id)
+
+                //First will throw an exception when there are no results. 
                 .First();
 
 
             var newCertificateDetail = new CertificateDetailsExtendedDTO(new CertificateDetails(certificate));
+
             return newCertificateDetail;
         }
 
@@ -177,7 +182,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
 
             serviceResponse.Data = certificateDetailsList;
-            serviceResponse.Amount = _cash.GetCounterByType(CacheType.Certificate);
+            serviceResponse.Amount = _cache.GetCounterByType(CacheType.Certificate);
 
             return serviceResponse;
         }
@@ -387,6 +392,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 var newCertificateDetail = new CertificateDetailsDTO(new CertificateDetails(cer));
                 customerCertificateList.Add(newCertificateDetail);
             }
+
             serviceResponse.Data = customerCertificateList;
             return serviceResponse;
         }
@@ -479,7 +485,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 {
                     _context.SaveChanges();
                     serviceRespone.Data = newCertificateInDb.Entity.Id;
-                    _cash.Increment(CacheType.Certificate);
+                    _cache.Increment(CacheType.Certificate);
                     return serviceRespone;
                 }
                 catch (Exception ex)
