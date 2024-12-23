@@ -19,9 +19,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetSmartObjects")]
-        public async Task<IActionResult> GetSmartObjects(int skip, int take)
+        public IActionResult GetSmartObjects(int skip, int take)
         {
-            return Ok(await _smartObjectService.GetSmartObjects(skip, take));
+            return Ok(_smartObjectService.GetSmartObjects(skip, take));
         }
 
         [Authorize(Roles = "מנהל")]
@@ -38,9 +38,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetAllSmartObjects")]
-        public async Task<IActionResult> GetAllSmartObjects()
+        public IActionResult GetAllSmartObjects()
         {
-            return Ok(await _smartObjectService.GetAllSmartObjects());
+            return Ok(_smartObjectService.GetAllSmartObjects());
         }
     }
 }

@@ -9,9 +9,9 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 {
     public interface ISmartObjectService
     {
-        Task<ServiceResponse<List<SmartobjectDTO>>> GetSmartObjects(int skip, int take);
+        ServiceResponse<List<SmartobjectDTO>> GetSmartObjects(int skip, int take);
+        ServiceResponse<List<SmartobjectDTO>> GetAllSmartObjects();
         Task<ServiceResponse<int>> UpdateSmartObject(Smartobject updatedSmartObject);
         Task<ServiceResponse<int>> AddNewSmartObject(Smartobject smartobject);
-        Task<ServiceResponse<List<SmartobjectDTO>>> GetAllSmartObjects();
     }
 }

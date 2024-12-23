@@ -314,14 +314,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             foreach (var certificate in certificatesList)
             {
-                try
-                {
-                    certificateDetailsDtoList.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Error in SearchCertificates. Cert id - {certificate.Id} - {ex.Message}");
-                }
+                certificateDetailsDtoList.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
             }
 
             serviceRespone.Data = certificateDetailsDtoList;

@@ -20,6 +20,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             _context = context;
             _logger = logger;
         }
+
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
@@ -30,25 +31,104 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             }
 
         }
+
         private bool IsNameAlreadyInUse(string title)
         {
             _logger.Debug("IsNameAlreadyInUse");
             return _context.Smartobjects.Where(item => item.Title.Equals(title)).Count() != 0;
         }
-        public async Task<ServiceResponse<List<SmartobjectDTO>>> GetSmartObjects(int skip, int take)
+
+        public ServiceResponse<List<SmartobjectDTO>> GetSmartObjects(int skip, int take)
         {
             _logger.Debug("GetSmartObjects");
+
+            var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
+
+            List<Smartobject> smartObjects = null;
+
+            try
+            {
+                smartObjects = _context.Smartobjects
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetSmartObjects. {ex.Message}");
+                var errorData = new ServiceResponse<List<SmartobjectDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
+            }
+
+            var outputList = new List<SmartobjectDTO>();
+
+            foreach (var so in smartObjects)
+            {
+                outputList.Add(new SmartobjectDTO(so));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Amount = _context.Smartobjects.Count();
+            serviceResponse.Data = outputList;
+
+            return serviceResponse;
+        }
+
+        //public ServiceResponse<List<SmartobjectDTO>> GetAllSmartObjects()
+        //{
+        //    _logger.Debug("GetAllSmartObjects");
+
+        //    var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
+
+        //    List<Smartobject> smartObjects = null;
+
+        //    try
+        //    {
+        //        smartObjects = _context.Smartobjects.ToList();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error($"Error while processing DB query in GetAllSmartObjects. {ex.Message}");
+        //        var errorData = new ServiceResponse<List<SmartobjectDTO>>();
+        //        errorData.Data = null;
+        //        errorData.Success = false;
+        //        errorData.Message = ex.Message;
+
+        //        return errorData;
+        //    }
+
+        //    var outputList = new List<SmartobjectDTO>();
+
+        //    foreach (var so in smartObjects)
+        //    {
+        //        outputList.Add(new SmartobjectDTO(so));
+        //    }
+
+        //    serviceResponse.Data = outputList;
+        //    serviceResponse.Amount = serviceResponse.Data.Count();
+
+        //    return serviceResponse;
+        //}
+
+        public ServiceResponse<List<SmartobjectDTO>> GetAllSmartObjects()
+        {
+            _logger.Debug("GetAllSmartObjects");
             var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
             var outputList = new List<SmartobjectDTO>();
-            var data = _context.Smartobjects.Skip(skip).Take(take).ToList();
+            var data = _context.Smartobjects.ToList();
             foreach (var so in data)
             {
                 outputList.Add(new SmartobjectDTO(so));
             }
-            serviceResponse.Amount = _context.Smartobjects.Count();
             serviceResponse.Data = outputList;
+            serviceResponse.Amount = serviceResponse.Data.Count();
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateSmartObject(Smartobject updatedSmartObject)
         {
             _logger.Debug("UpdateSmartObject");
@@ -70,6 +150,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             }
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> AddNewSmartObject(Smartobject smartobject)
         {
             _logger.Debug("AddNewSmartObject");
@@ -104,19 +185,6 @@ namespace EsignBackend.Services.SettingsService.SmartObject
                 }
             }
         }
-        public async Task<ServiceResponse<List<SmartobjectDTO>>> GetAllSmartObjects()
-        {
-            _logger.Debug("GetAllSmartObjects");
-            var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
-            var outputList = new List<SmartobjectDTO>();
-            var data = _context.Smartobjects.ToList();
-            foreach (var so in data)
-            {
-                outputList.Add(new SmartobjectDTO(so));
-            }
-            serviceResponse.Data = outputList;
-            serviceResponse.Amount = serviceResponse.Data.Count();
-            return serviceResponse;
-        }
+
     }
 }

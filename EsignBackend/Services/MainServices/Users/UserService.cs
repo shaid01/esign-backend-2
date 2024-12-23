@@ -139,14 +139,7 @@ namespace EsignBackend.Services.CharacterService
 
             foreach (var user in users)
             {
-                try
-                {
-                    userList.Add(new UserDTO(user));
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Error in add user to userDtoList, user id - {user.Id}");
-                }
+                userList.Add(new UserDTO(user));
             }
 
             serviceResponse.Data = userList;

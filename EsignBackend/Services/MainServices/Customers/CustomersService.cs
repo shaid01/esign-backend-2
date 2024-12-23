@@ -136,14 +136,7 @@ namespace EsignBackend.Services.CharacterService
 
             foreach (var customer in customerList)
             {
-                try
-                {
-                    customersDtoList.Add(new CustomerDTO(customer));
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Error in SearchCustomers, customer id - {customer.Id} - {ex.Message}");
-                }
+                customersDtoList.Add(new CustomerDTO(customer));
             }
 
             serviceResponse.Data = customersDtoList;
