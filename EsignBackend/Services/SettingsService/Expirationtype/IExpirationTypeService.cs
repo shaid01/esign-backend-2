@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EsignBackend.Services.SettingsService.Expirationtype
+namespace EsignBackend.Services.SettingsService.ExpirationType
 {
     public interface IExpirationTypeService
     {        
-        Task<ServiceResponse<List<ExpirationtypeDTO>>> GetExpirationTypes(int skip, int take);
+        ServiceResponse<List<ExpirationtypeDTO>> GetExpirationTypes(int skip, int take);
         Task<ServiceResponse<int>> UpdateExpirationType(Models.Expirationtype updatedExpirationType);
         Task<ServiceResponse<int>> AddNewExpirationType(Models.Expirationtype expirationType);
-        Task<ServiceResponse<List<ExpirationtypeDTO>>> GetAllExpirationTypes();
+        ServiceResponse<List<ExpirationtypeDTO>> GetAllExpirationTypes();
     }
 }

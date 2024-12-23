@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EsignBackend.Services.SettingsService.Expirationtype
+namespace EsignBackend.Services.SettingsService.ExpirationType
 {
     public class ExpirationTypeService : IExpirationTypeService
     {
@@ -30,6 +30,7 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
             }
 
         }
+
         private bool isTheNameAlreadyInUse(string title)
         {
             _logger.Debug("isTheNameAlreadyInUse");
@@ -42,20 +43,58 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
                     serviceResponse.Data = _context.Expirationtypes.Count();
                     return serviceResponse;
                 }*/
-        public async Task<ServiceResponse<List<ExpirationtypeDTO>>> GetExpirationTypes(int skip, int take)
+
+        public ServiceResponse<List<ExpirationtypeDTO>> GetExpirationTypes(int skip, int take)
         {
             _logger.Debug("GetExpirationTypes");
+
+            //var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
+            //var outputList = new List<ExpirationtypeDTO>();
+            //var data = _context.Expirationtypes.Skip(skip).Take(take).ToList();
+            //foreach (var et in data)
+            //{
+            //    outputList.Add(new ExpirationtypeDTO(et));
+            //}
+            //serviceResponse.Data = outputList;
+            //serviceResponse.Amount = _context.Expirationtypes.Count();
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
-            var outputList = new List<ExpirationtypeDTO>();
-            var data = _context.Expirationtypes.Skip(skip).Take(take).ToList();
-            foreach (var et in data)
+
+            List<Expirationtype> expTypes = null;
+
+            try
             {
-                outputList.Add(new ExpirationtypeDTO(et));
+                expTypes = _context.Expirationtypes
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
             }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetExpirationTypes. {ex.Message}");
+                var errorData = new ServiceResponse<List<ExpirationtypeDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
+            }
+
+            var outputList = new List<ExpirationtypeDTO>();
+
+            foreach (var expType in expTypes)
+            {
+                outputList.Add(new ExpirationtypeDTO(expType));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Amount = _context.Smartobjects.Count();
             serviceResponse.Data = outputList;
-            serviceResponse.Amount = _context.Expirationtypes.Count();
+
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateExpirationType(Models.Expirationtype updatedExpirationType)
         {
             _logger.Debug("UpdateExpirationType");
@@ -77,6 +116,7 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
             }
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> AddNewExpirationType(Models.Expirationtype expirationType)
         {
             _logger.Debug("AddNewExpirationType");
@@ -111,7 +151,8 @@ namespace EsignBackend.Services.SettingsService.Expirationtype
                 }
             }
         }
-        public async Task<ServiceResponse<List<ExpirationtypeDTO>>> GetAllExpirationTypes()
+
+        public ServiceResponse<List<ExpirationtypeDTO>> GetAllExpirationTypes()
         {
             _logger.Debug("GetAllExpirationTypes");
             var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();

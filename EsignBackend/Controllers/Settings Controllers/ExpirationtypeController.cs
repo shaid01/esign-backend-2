@@ -1,5 +1,5 @@
 ﻿using EsignBackend.Models;
-using EsignBackend.Services.SettingsService.Expirationtype;
+using EsignBackend.Services.SettingsService.ExpirationType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,26 +22,29 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetExpirationTypes")]
-        public async Task<IActionResult> GetExpirationTypes(int skip, int take)
+        public IActionResult GetExpirationTypes(int skip, int take)
         {
-            return Ok(await _expirationTypeService.GetExpirationTypes(skip, take));
+            return Ok(_expirationTypeService.GetExpirationTypes(skip, take));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateExpirationType")]
         public async Task<IActionResult> UpdateCertificatesStatus(Expirationtype updatedExpirationType)
         {
             return Ok(await _expirationTypeService.UpdateExpirationType(updatedExpirationType));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewExpirationType")]
         public async Task<IActionResult> AddNewExpirationType(Expirationtype expirationType)
         {
             return Ok(await _expirationTypeService.AddNewExpirationType(expirationType));
         }
+
         [HttpGet("GetAllExpirationTypes")]
-        public async Task<IActionResult> GetAllExpirationTypes()
+        public IActionResult GetAllExpirationTypes()
         {
-            return Ok(await _expirationTypeService.GetAllExpirationTypes());
+            return Ok(_expirationTypeService.GetAllExpirationTypes());
         }
     }
 }

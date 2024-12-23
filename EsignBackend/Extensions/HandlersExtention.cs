@@ -8,7 +8,7 @@ using EsignBackend.Services.SettingsService.CertificateRemarks;
 using EsignBackend.Services.SettingsService.CertificatesStatus;
 using EsignBackend.Services.SettingsService.CustomerIdentifier;
 using EsignBackend.Services.SettingsService.Departments;
-using EsignBackend.Services.SettingsService.Expirationtype;
+using EsignBackend.Services.SettingsService.ExpirationType;
 using EsignBackend.Services.SettingsService.IdentificationDocument;
 using EsignBackend.Services.SettingsService.IssueLocation;
 using EsignBackend.Services.SettingsService.SecurityQuestions;
