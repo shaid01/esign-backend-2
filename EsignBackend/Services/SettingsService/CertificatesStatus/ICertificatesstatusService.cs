@@ -9,9 +9,9 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 {
     public interface ICertificatesstatusService
     {
-        Task<ServiceResponse<List<CertificatesstatusDTO>>> GetCertificatesStatus(int skip, int take);
+        ServiceResponse<List<CertificatesstatusDTO>> GetCertificatesStatus(int skip, int take);
         Task<ServiceResponse<int>> UpdateCertificatesStatus(Certificatesstatus updatedCertificatestatus);
         Task<ServiceResponse<int>> AddNewCertificatesStatus(Certificatesstatus certificatestatus);
-        Task<ServiceResponse<List<CertificatesstatusDTO>>> GetAllCertificatesStatus();
+        ServiceResponse<List<CertificatesstatusDTO>> GetAllCertificatesStatus();
     }
 }

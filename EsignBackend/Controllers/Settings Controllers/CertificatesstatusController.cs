@@ -22,9 +22,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetCertificatesStatus")]
-        public async Task<IActionResult> GetCertificatesStatus(int skip, int take)
+        public IActionResult GetCertificatesStatus(int skip, int take)
         {
-            return Ok(await _certificatesstatusService.GetCertificatesStatus(skip, take));
+            return Ok(_certificatesstatusService.GetCertificatesStatus(skip, take));
         }
 
         [Authorize(Roles = "מנהל")]
@@ -33,16 +33,18 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _certificatesstatusService.UpdateCertificatesStatus(updatedCertificatestatus));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewCertificatesStatus")]
         public async Task<IActionResult> AddNewCertificatesStatus(Certificatesstatus certificatestatus)
         {
             return Ok(await _certificatesstatusService.AddNewCertificatesStatus(certificatestatus));
         }
+
         [HttpGet("GetAllCertificatesStatus")]
-        public async Task<IActionResult> GetAllCertificatesStatus()
+        public IActionResult GetAllCertificatesStatus()
         {         
-            return Ok(await _certificatesstatusService.GetAllCertificatesStatus());
+            return Ok(_certificatesstatusService.GetAllCertificatesStatus());
         }
     }
 }

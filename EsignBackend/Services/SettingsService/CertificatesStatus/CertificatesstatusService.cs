@@ -29,17 +29,73 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                 return maxId + 1;
             }
         }
+
         private bool IsTheNameAlreadyInUse(string title)
         {
             _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
         }
-        public async Task<ServiceResponse<List<CertificatesstatusDTO>>> GetCertificatesStatus(int skip, int take)
+
+        public ServiceResponse<List<CertificatesstatusDTO>> GetCertificatesStatus(int skip, int take)
         {
             _logger.Debug("GetCertificatesStatus");
+
+            //var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
+            //var outputList = new List<CertificatesstatusDTO>();
+
+            //var data = _context.Certificatesstatuses.Skip(skip).Take(take).ToList();
+
+            //foreach (var cs in data)
+            //{
+            //    outputList.Add(new CertificatesstatusDTO(cs));
+            //}
+
+            //serviceResponse.Amount = _context.Certificatesstatuses.Count();
+            //serviceResponse.Data = outputList;
+            //return serviceResponse;
+
+            var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
+
+            List<Certificatesstatus> statuses = null;
+
+            try
+            {
+                statuses = _context.Certificatesstatuses
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetCertificatesStatus. {ex.Message}");
+                var errorData = new ServiceResponse<List<CertificatesstatusDTO>>();
+                errorData.Data = null;
+                errorData.Success = false;
+                errorData.Message = ex.Message;
+
+                return errorData;
+            }
+
+            var outputList = new List<CertificatesstatusDTO>();
+
+            foreach (var status in statuses)
+            {
+                outputList.Add(new CertificatesstatusDTO(status));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Amount = _context.Smartobjects.Count();
+            serviceResponse.Data = outputList;
+
+            return serviceResponse;
+        }
+
+        public ServiceResponse<List<CertificatesstatusDTO>> GetAllCertificatesStatus()
+        {
+            _logger.Debug("GetAllCertificatesStatus");
             var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
             var outputList = new List<CertificatesstatusDTO>();
-            var data = _context.Certificatesstatuses.Skip(skip).Take(take).ToList();
+            var data = _context.Certificatesstatuses.ToList();
             foreach (var cs in data)
             {
                 outputList.Add(new CertificatesstatusDTO(cs));
@@ -48,6 +104,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateCertificatesStatus(Certificatesstatus updatedCertificatestatus)
         {
             _logger.Debug("UpdateCertificatesStatus");
@@ -70,6 +127,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             }
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> AddNewCertificatesStatus(Certificatesstatus certificatestatus)
         {
             _logger.Debug("AddNewCertificatesStatus");
@@ -103,20 +161,6 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                     return serviceRespone;
                 }
             }
-        }
-        public async Task<ServiceResponse<List<CertificatesstatusDTO>>> GetAllCertificatesStatus()
-        {
-            _logger.Debug("GetAllCertificatesStatus");
-            var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
-            var outputList = new List<CertificatesstatusDTO>();
-            var data = _context.Certificatesstatuses.ToList();
-            foreach (var cs in data)
-            {
-                outputList.Add(new CertificatesstatusDTO(cs));
-            }
-            serviceResponse.Amount = _context.Certificatesstatuses.Count();
-            serviceResponse.Data = outputList;
-            return serviceResponse;
         }
     }
 
