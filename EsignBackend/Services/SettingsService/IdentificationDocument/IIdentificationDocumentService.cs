@@ -9,9 +9,9 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 {
     public interface IIdentificationDocumentService
     {
-        Task<ServiceResponse<List<DocstypeDTO>>> GetIdentificationDocuments(int skip, int take);
+        ServiceResponse<List<DocstypeDTO>> GetIdentificationDocuments(int skip, int take);
         Task<ServiceResponse<int>> UpdateIdentificationDocument(Docstype updatedIdentificationDocument);
         Task<ServiceResponse<int>> AddNewIdentificationDocument(Docstype identificationDocument);
-        Task<ServiceResponse<List<DocstypeDTO>>> GetAllIdentificationDocuments();
+        ServiceResponse<List<DocstypeDTO>> GetAllIdentificationDocuments();
     }
 }

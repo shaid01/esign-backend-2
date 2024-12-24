@@ -21,26 +21,29 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetIdentificationDocuments")]
-        public async Task<IActionResult> GetIdentificationDocuments(int skip, int take)
+        public IActionResult GetIdentificationDocuments(int skip, int take)
         {
-            return Ok(await _identificationDocumentService.GetIdentificationDocuments(skip, take));
+            return Ok(_identificationDocumentService.GetIdentificationDocuments(skip, take));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateIdentificationDocument")]
         public async Task<IActionResult> UpdateIdentificationDocument(Docstype UpdatedIdentificationDocument)
         {
             return Ok(await _identificationDocumentService.UpdateIdentificationDocument(UpdatedIdentificationDocument));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewIdentificationDocument")]
         public async Task<IActionResult> AddNewIdentificationDocument(Docstype identificationDocument)
         {
             return Ok(await _identificationDocumentService.AddNewIdentificationDocument(identificationDocument));
         }
+
         [HttpGet("GetAllIdentificationDocuments")]
-        public async Task<IActionResult> GetAllIdentificationDocuments()
+        public IActionResult GetAllIdentificationDocuments()
         {
-            return Ok(await _identificationDocumentService.GetAllIdentificationDocuments());
+            return Ok(_identificationDocumentService.GetAllIdentificationDocuments());
         }
     }
 }
