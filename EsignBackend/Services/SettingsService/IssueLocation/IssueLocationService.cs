@@ -20,6 +20,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             _context = context;
             _logger = logger;
         }
+
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
@@ -29,11 +30,13 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
                 return maxId + 1;
             }
         }
+
         private bool isTheNameAlreadyInUse(string title)
         {
             _logger.Debug("isTheNameAlreadyInUse");
             return _context.Issplaces.Where(item => item.Title.Equals(title)).Count() != 0;
         }
+
         public async Task<ServiceResponse<int>> AddNewIssueLocation(Issplace issueLocation)
         {
             _logger.Debug("AddNewIssueLocation");
@@ -69,21 +72,59 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
                 }
             }
         }
-        public async Task<ServiceResponse<List<IssplaceDTO>>> GetIssueLocations(int skip, int take)
+
+        public ServiceResponse<List<IssplaceDTO>> GetIssueLocations(int skip, int take)
         {
             _logger.Debug("GetIssueLocations");
+
+            //var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
+            //var outputList = new List<IssplaceDTO>();
+            //var data = _context.Issplaces.Skip(skip).Take(take).ToList();
+            //foreach (var il in data)
+            //{
+            //    outputList.Add(new IssplaceDTO(il));
+            //}
+
+            //serviceResponse.Amount = _context.Issplaces.Count();
+            //serviceResponse.Data = outputList;
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
-            var outputList = new List<IssplaceDTO>();
-            var data = _context.Issplaces.Skip(skip).Take(take).ToList();
-            foreach (var il in data)
+            serviceResponse.Amount = _context.Issplaces.Count();
+
+            List<Issplace> issPlaces = null;
+
+            try
             {
-                outputList.Add(new IssplaceDTO(il));
+                issPlaces = _context.Issplaces
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetIssueLocations. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
-            serviceResponse.Amount = _context.Issplaces.Count();
+            var outputList = new List<IssplaceDTO>();
+
+            foreach (var issPlace in issPlaces)
+            {
+                outputList.Add(new IssplaceDTO(issPlace));
+            }
+
+            serviceResponse.Success = true;
             serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateIssueLocation(Issplace updatedIssueLocation)
         {
             _logger.Debug("UpdateIssueLocation");
@@ -105,9 +146,11 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<IssplaceDTO>>> GetAllIssueLocations()
+
+        public ServiceResponse<List<IssplaceDTO>> GetAllIssueLocations()
         {
             _logger.Debug("GetAllIssueLocations");
+
             var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
             var outputList = new List<IssplaceDTO>();
             var data = _context.Issplaces.ToList();

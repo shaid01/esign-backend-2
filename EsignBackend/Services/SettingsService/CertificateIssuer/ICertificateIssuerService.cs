@@ -9,9 +9,9 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 {
     public interface ICertificateIssuerService
     {
-        Task<ServiceResponse<List<IsscertDTO>>> GetCertificateIssuers(int skip, int take);
+        ServiceResponse<List<IsscertDTO>> GetCertificateIssuers(int skip, int take);
         Task<ServiceResponse<int>> UpdateCertificateIssuer(Isscert updatedCertificateIssuer);
         Task<ServiceResponse<int>> AddNewCertificateIssuer(Isscert certificateIssuer);
-        Task<ServiceResponse<List<IsscertDTO>>> GetAllCertificateIssuers();
+        ServiceResponse<List<IsscertDTO>> GetAllCertificateIssuers();
     }
 }

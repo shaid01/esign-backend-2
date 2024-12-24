@@ -9,9 +9,9 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 {
     public interface IIssueLocationService
     {
-        Task<ServiceResponse<List<IssplaceDTO>>> GetIssueLocations(int skip, int take);
+        ServiceResponse<List<IssplaceDTO>> GetIssueLocations(int skip, int take);
         Task<ServiceResponse<int>> UpdateIssueLocation(Issplace updatedIssueLocation);
         Task<ServiceResponse<int>> AddNewIssueLocation(Issplace issueLocation);
-        Task<ServiceResponse<List<IssplaceDTO>>> GetAllIssueLocations();
+        ServiceResponse<List<IssplaceDTO>> GetAllIssueLocations();
     }
 }

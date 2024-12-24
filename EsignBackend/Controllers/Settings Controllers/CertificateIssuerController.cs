@@ -21,9 +21,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetCertificateIssuers")]
-        public async Task<IActionResult> GetCertificateIssuers(int skip, int take)
+        public IActionResult GetCertificateIssuers(int skip, int take)
         {
-            return Ok(await _certificateIssuerService.GetCertificateIssuers(skip, take));
+            return Ok(_certificateIssuerService.GetCertificateIssuers(skip, take));
         }
 
         [Authorize(Roles = "מנהל")]
@@ -40,9 +40,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetAllCertificateIssuers")]
-        public async Task<IActionResult> GetAllCertificateIssuers()
+        public IActionResult GetAllCertificateIssuers()
         {
-            return Ok(await _certificateIssuerService.GetAllCertificateIssuers());
+            return Ok(_certificateIssuerService.GetAllCertificateIssuers());
         }
     }
 }

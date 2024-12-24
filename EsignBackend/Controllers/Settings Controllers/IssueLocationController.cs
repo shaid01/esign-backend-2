@@ -21,26 +21,29 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetIssueLocations")]
-        public async Task<IActionResult> GetIssueLocations(int skip, int take)
+        public IActionResult GetIssueLocations(int skip, int take)
         {
-            return Ok(await _issueLocationService.GetIssueLocations(skip, take));
+            return Ok(_issueLocationService.GetIssueLocations(skip, take));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateIssueLocation")]
         public async Task<IActionResult> UpdateIssueLocation(Issplace updatedIssueLocation)
         {
             return Ok(await _issueLocationService.UpdateIssueLocation(updatedIssueLocation));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewIssueLocation")]
         public async Task<IActionResult> AddNewIssueLocation(Issplace issueLocation)
         {
             return Ok(await _issueLocationService.AddNewIssueLocation(issueLocation));
         }
+
         [HttpGet("GetAllIssueLocations")]
-        public async Task<IActionResult> GetAllIssueLocations()
+        public IActionResult GetAllIssueLocations()
         {
-            return Ok(await _issueLocationService.GetAllIssueLocations());
+            return Ok(_issueLocationService.GetAllIssueLocations());
         }
     }
 }

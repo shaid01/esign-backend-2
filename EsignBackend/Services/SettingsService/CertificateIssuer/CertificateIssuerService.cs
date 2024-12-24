@@ -19,6 +19,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             _context = context;
             _logger = logger;
         }
+
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
@@ -28,11 +29,13 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                 return maxId + 1;
             }
         }
+
         private bool IsTheNameAlreadyInUse(string title)
         {
             _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Isscerts.Where(item => item.Title.Equals(title)).Count() != 0;
         }
+
         public async Task<ServiceResponse<int>> AddNewCertificateIssuer(Isscert certificateIssuer)
         {
             _logger.Debug("AddNewCertificatesStatus");
@@ -69,20 +72,58 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                 }
             }
         }
-        public async Task<ServiceResponse<List<IsscertDTO>>> GetCertificateIssuers(int skip, int take)
+
+        public ServiceResponse<List<IsscertDTO>> GetCertificateIssuers(int skip, int take)
         {
             _logger.Debug("GetCertificateIssuers");
+
+            //var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
+            //var issuers = new List<IsscertDTO>();
+            //var data = _context.Isscerts.Skip(skip).Take(take).ToList();
+            //foreach (var issuer in data)
+            //{
+            //    issuers.Add(new IsscertDTO(issuer));
+            //}
+            //serviceResponse.Amount = _context.Isscerts.Count();
+            //serviceResponse.Data = issuers;
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
-            var issuers = new List<IsscertDTO>();
-            var data = _context.Isscerts.Skip(skip).Take(take).ToList();
-            foreach (var issuer in data)
-            {
-                issuers.Add(new IsscertDTO(issuer));
-            }
             serviceResponse.Amount = _context.Isscerts.Count();
-            serviceResponse.Data = issuers;
+
+            List<Isscert> issCerts = null;
+
+            try
+            {
+                issCerts = _context.Isscerts
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetCertificateIssuers. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
+            var outputList = new List<IsscertDTO>();
+
+            foreach (var iss in issCerts)
+            {
+                outputList.Add(new IsscertDTO(iss));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateCertificateIssuer(Isscert updatedCertificateIssuer)
         {
             _logger.Debug("UpdateCustomerIdentifer");
@@ -104,7 +145,8 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<IsscertDTO>>> GetAllCertificateIssuers()
+
+        public ServiceResponse<List<IsscertDTO>> GetAllCertificateIssuers()
         {
             _logger.Debug("GetAllCertificateIssuers");
             var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
