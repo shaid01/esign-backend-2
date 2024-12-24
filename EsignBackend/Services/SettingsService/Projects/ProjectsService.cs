@@ -38,6 +38,7 @@ namespace EsignBackend.Services.SettingsService
                 return _context.Projects.Where(project => project.Title.Equals(title)).Count() != 0;
             }
         }
+
         private int GenerateId(projectType projectType)
         {
             _logger.Debug("GenerateId");
@@ -55,9 +56,11 @@ namespace EsignBackend.Services.SettingsService
                 return maxId + 1;
             }
         }
-        public async Task<ServiceResponse<List<ProjectDTO>>> GetProjects()
+
+        public ServiceResponse<List<ProjectDTO>> GetProjects()
         {
             _logger.Debug("GetProjects");
+
             var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
             var outputList = new List<ProjectDTO>();
             var data = _context.Projects.ToList();
@@ -69,6 +72,7 @@ namespace EsignBackend.Services.SettingsService
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateProject(Project updatedProject)
         {
             _logger.Debug("UpdateProject");
@@ -90,20 +94,124 @@ namespace EsignBackend.Services.SettingsService
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<SubprojectDTO>>> GetSubprojectsInRange(int skip, int take)
+
+        public ServiceResponse<List<SubprojectDTO>> GetSubprojectsInRange(int skip, int take)
         {
             _logger.Debug("GetSubprojectsInRange");
+
+            //var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
+            //var outputList = new List<SubprojectDTO>();
+            //var data = _context.Subprojects.Skip(skip).Take(take).ToList();
+            //foreach (var sp in data)
+            //{
+            //    outputList.Add(new SubprojectDTO(sp));
+            //}
+            //serviceResponse.Data = outputList;
+            //serviceResponse.Amount = _context.Subprojects.Count();
+            //return serviceResponse;
+
+            var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
+            serviceResponse.Amount = _context.Subprojects.Count();
+
+            List<Subproject> subProjects = null;
+
+            try
+            {
+                subProjects = _context.Subprojects
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetSubprojectsInRange. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
+            var outputList = new List<SubprojectDTO>();
+
+            foreach (var subProject in subProjects)
+            {
+                outputList.Add(new SubprojectDTO(subProject));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = outputList;
+
+            return serviceResponse;
+        }
+
+        public ServiceResponse<List<SubprojectDTO>> GetAllSubprojects(int projectId = -1)
+        {
+            _logger.Debug("GetAllSubprojects");
             var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
             var outputList = new List<SubprojectDTO>();
-            var data = _context.Subprojects.Skip(skip).Take(take).ToList();
+            var data = projectId == -1 ? _context.Subprojects.ToList() : _context.Subprojects.Where(x => x.Project == projectId).ToList();
             foreach (var sp in data)
             {
                 outputList.Add(new SubprojectDTO(sp));
             }
+            serviceResponse.Amount = outputList.Count();
             serviceResponse.Data = outputList;
-            serviceResponse.Amount = _context.Subprojects.Count();
             return serviceResponse;
         }
+
+        public ServiceResponse<List<ProjectDTO>> GetProjectsInRange(int skip, int take)
+        {
+            _logger.Debug("GetProjectsInRange");
+
+            //var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
+            //var outputList = new List<ProjectDTO>();
+            //var data = _context.Projects.Skip(skip).Take(take).ToList();
+            //foreach (var pro in data)
+            //{
+            //    outputList.Add(new ProjectDTO(pro));
+            //}
+            //serviceResponse.Amount = _context.Projects.Count();
+            //serviceResponse.Data = outputList;
+            //return serviceResponse;
+
+            var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
+            serviceResponse.Amount = _context.Projects.Count();
+
+            List<Project> projects = null;
+
+            try
+            {
+                projects = _context.Projects
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetProjectsInRange. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
+            var outputList = new List<ProjectDTO>();
+
+            foreach (var project in projects)
+            {
+                outputList.Add(new ProjectDTO(project));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = outputList;
+
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<int>> UpdateSubproject(Subproject updatedSubproject)
         {
             _logger.Debug("UpdateSubproject");
@@ -125,6 +233,7 @@ namespace EsignBackend.Services.SettingsService
             }
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> AddNewProject(Project newProject)
         {
             _logger.Debug("AddNewProject");
@@ -159,6 +268,7 @@ namespace EsignBackend.Services.SettingsService
                 }
             }
         }
+
         public async Task<ServiceResponse<int>> AddNewSubroject(Subproject newSubproject)
         {
             _logger.Debug("AddNewSubroject");
@@ -192,35 +302,6 @@ namespace EsignBackend.Services.SettingsService
                     return serviceRespone;
                 }
             }
-        }
-        public async Task<ServiceResponse<List<SubprojectDTO>>> GetAllSubprojects(int projectId = -1)
-        {
-            _logger.Debug("GetAllSubprojects");
-            var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
-            var outputList = new List<SubprojectDTO>();
-            var data = projectId == -1 ? _context.Subprojects.ToList() : _context.Subprojects.Where(x=>x.Project == projectId).ToList();
-            foreach (var sp in data)
-            {
-                outputList.Add(new SubprojectDTO(sp));
-            }
-            serviceResponse.Amount = outputList.Count();
-            serviceResponse.Data = outputList;
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<List<ProjectDTO>>> GetProjectsInRange(int skip, int take)
-        {
-            _logger.Debug("GetProjectsInRange");
-            var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
-            var outputList = new List<ProjectDTO>();
-            var data = _context.Projects.Skip(skip).Take(take).ToList();
-            foreach (var pro in data)
-            {
-                outputList.Add(new ProjectDTO(pro));
-            }
-            serviceResponse.Amount = _context.Projects.Count();
-            serviceResponse.Data = outputList;
-            return serviceResponse;
         }
     }
 }

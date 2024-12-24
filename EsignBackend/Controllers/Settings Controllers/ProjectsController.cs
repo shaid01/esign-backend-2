@@ -22,16 +22,17 @@ namespace EsignBackend.Controllers
         }
 
         [HttpGet("GetProjectsInRange")]
-        public async Task<IActionResult> GetProjectsInRange(int skip, int take)
+        public IActionResult GetProjectsInRange(int skip, int take)
         {
-            return Ok(await _projectsService.GetProjectsInRange(skip, take));
+            return Ok(_projectsService.GetProjectsInRange(skip, take));
         }
 
         [HttpGet("GetProjects")]
-        public async Task<IActionResult> GetProjects()
+        public IActionResult GetProjects()
         {
-            return Ok(await _projectsService.GetProjects());
+            return Ok(_projectsService.GetProjects());
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateProject")]
         public async Task<IActionResult> UpdateProject(Project updatedProject)
@@ -40,9 +41,9 @@ namespace EsignBackend.Controllers
         }
 
         [HttpGet("GetSubprojects")]
-        public async Task<IActionResult> GetSubprojectsInRange(int skip, int take)
+        public IActionResult GetSubprojectsInRange(int skip, int take)
         {
-            return Ok(await _projectsService.GetSubprojectsInRange(skip, take));
+            return Ok(_projectsService.GetSubprojectsInRange(skip, take));
         }
 
         [Authorize(Roles = "מנהל")]
@@ -51,6 +52,7 @@ namespace EsignBackend.Controllers
         {
             return Ok(await _projectsService.UpdateSubproject(updatedSubproject));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewProject")]
         public async Task<IActionResult> AddNewProject(Project newProject)
@@ -59,15 +61,16 @@ namespace EsignBackend.Controllers
         }
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewSubproject")]
+
         public async Task<IActionResult> AddNewSubproject(Subproject newSubproject)
         {
             return Ok(await _projectsService.AddNewSubroject(newSubproject));
         }
 
         [HttpGet("GetAllSubprojects")]
-        public async Task<IActionResult> GetAllSubprojects(int projectId = -1)
+        public IActionResult GetAllSubprojects(int projectId = -1)
         {
-            return Ok(await _projectsService.GetAllSubprojects(projectId));
+            return Ok(_projectsService.GetAllSubprojects(projectId));
         }
     }
 }
