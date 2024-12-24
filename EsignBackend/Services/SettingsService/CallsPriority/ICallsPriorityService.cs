@@ -9,7 +9,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 {
     public interface ICallsPriorityService
     {
-        Task<ServiceResponse<List<CallpriorityDTO>>> GetCallsPriority(int skip, int take);
+        ServiceResponse<List<CallpriorityDTO>> GetCallsPriority(int skip, int take);
         Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority);
         Task<ServiceResponse<int>> AddNewCallPriority(Callpriority callPriority);
     }

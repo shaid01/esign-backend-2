@@ -19,17 +19,20 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             _callsPriorityService = callsPriorityService;
         }
+
         [HttpGet("GetCallsPriority")]
-        public async Task<IActionResult> GetCallsPriority(int skip, int take)
+        public IActionResult GetCallsPriority(int skip, int take)
         {
-            return Ok(await _callsPriorityService.GetCallsPriority(skip, take));
+            return Ok(_callsPriorityService.GetCallsPriority(skip, take));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateCallPriority")]
         public async Task<IActionResult> UpdateCallPriority(Callpriority UpdatedCallPriority)
         {
             return Ok(await _callsPriorityService.UpdateCallPriority(UpdatedCallPriority));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewCallpriority")]
         public async Task<IActionResult> AddNewCallpriority(Callpriority callPriority)

@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
@@ -29,11 +30,13 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
                 return maxId + 1;
             }
         }
+
         private bool IsTheNameAlreadyInUse(string title)
         {
             _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Callpriorities.Where(item => item.Title.Equals(title)).Count() != 0;
         }
+
         public async Task<ServiceResponse<int>> AddNewCallPriority(Callpriority callPriority)
         {
             _logger.Debug("AddNewCallPriority");
@@ -42,7 +45,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             if (nameIsAlreadyInUse)
             {
                 serviceRespone.Success = false;
-                serviceRespone.Message = "Callpriority name is already taken";
+                serviceRespone.Message = "Call priority name is already taken";
                 serviceRespone.Data = -1;
                 return serviceRespone;
             }
@@ -69,18 +72,54 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             }
         }
 
-        public async Task<ServiceResponse<List<CallpriorityDTO>>> GetCallsPriority(int skip, int take)
+        public ServiceResponse<List<CallpriorityDTO>> GetCallsPriority(int skip, int take)
         {
             _logger.Debug("GetCallsPriority");
+
+            //var serviceResponse = new ServiceResponse<List<CallpriorityDTO>>();
+            //var data = _context.Callpriorities.Skip(skip).Take(take).ToList();
+            //var callpriorityDTOList = new List<CallpriorityDTO>();
+            //foreach (var cp in data)
+            //{
+            //    callpriorityDTOList.Add(new CallpriorityDTO(cp));
+            //}
+            //serviceResponse.Amount = _context.Callpriorities.Count();
+            //serviceResponse.Data = callpriorityDTOList;
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<CallpriorityDTO>>();
-            var data = _context.Callpriorities.Skip(skip).Take(take).ToList();
-            var callpriorityDTOList = new List<CallpriorityDTO>();
-            foreach (var cp in data)
-            {
-                callpriorityDTOList.Add(new CallpriorityDTO(cp));
-            }
             serviceResponse.Amount = _context.Callpriorities.Count();
-            serviceResponse.Data = callpriorityDTOList;
+
+            List<Callpriority> callPriorities = null;
+
+            try
+            {
+                callPriorities = _context.Callpriorities
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetCallsPriority. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
+            var outputList = new List<CallpriorityDTO>();
+
+            foreach (var callP in callPriorities)
+            {
+                outputList.Add(new CallpriorityDTO(callP));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
 
