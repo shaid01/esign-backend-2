@@ -165,12 +165,12 @@ namespace EsignBackend.Services.MainServices.Certificates
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in GetCertificatesDetails. {ex.Message}");
-                var errorData = new ServiceResponse<List<CertificateDetailsDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
             var certificateDetailsList = new List<CertificateDetailsDTO>();
@@ -181,6 +181,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 certificateDetailsList.Add(newCertificateDetail);
             }
 
+            serviceResponse.Success = true;
             serviceResponse.Data = certificateDetailsList;
             serviceResponse.Amount = _cache.GetCounterByType(CacheType.Certificate);
 
@@ -190,7 +191,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         public async Task<ServiceResponse<IEnumerable<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
             _logger.Debug("SearchCertificates");
-            var serviceRespone = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
+            var serviceResponse = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
 
             var searchQry = _context.SearchCertificates();
 
@@ -266,7 +267,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
                 try
                 {
-                    serviceRespone.Amount = await query.CountAsync(); //291
+                    serviceResponse.Amount = await query.CountAsync(); //291
                     //serviceRespone.Amount = (await query.ToListAsync()).Count(); //287
 
                     //client side count - 287 - some records with not existed values in referenced tables were eliminated
@@ -289,12 +290,12 @@ namespace EsignBackend.Services.MainServices.Certificates
                 catch (Exception ex)
                 {
                     _logger.Error($"Error while processing DB query in SearchCertificates. {ex.Message}");
-                    var errorData = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
-                    errorData.Data = null;
-                    errorData.Success = false;
-                    errorData.Message = ex.Message;
 
-                    return errorData;
+                    serviceResponse.Data = null;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = ex.Message;
+
+                    return serviceResponse;
                 }
             }
             //else
@@ -317,9 +318,10 @@ namespace EsignBackend.Services.MainServices.Certificates
                 certificateDetailsDtoList.Add(new CertificateDetailsDTO(new CertificateDetails(certificate)));
             }
 
-            serviceRespone.Data = certificateDetailsDtoList;
+            serviceResponse.Success = true;
+            serviceResponse.Data = certificateDetailsDtoList;
 
-            return serviceRespone;
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<HistoryCertificateDTO>>> GetHistoryCertificates(double certificateId)

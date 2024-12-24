@@ -22,7 +22,7 @@ namespace EsignBackend.Extensions
             services.AddTransient<IValidator<Callpriority>, CallpriorityValidator>();
             services.AddTransient<IValidator<Callstatus>, CallStatusValidator>();
             services.AddTransient<IValidator<Isscert>, CertificateIssuerValidator>();
-            services.AddTransient<IValidator<Certificatermeark>, CertificateRemarksValidator>();
+            services.AddTransient<IValidator<CertificateRemark>, CertificateRemarksValidator>();
             services.AddTransient<IValidator<Certificatesstatus>, CertificatesstatusValidator>();
             services.AddTransient<IValidator<Custident>, CustomerIdentifierValidator>();
             services.AddTransient<IValidator<Department>, DepartmentsValidator>();

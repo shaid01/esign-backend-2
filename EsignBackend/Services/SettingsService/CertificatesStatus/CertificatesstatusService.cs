@@ -54,9 +54,10 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             //serviceResponse.Data = outputList;
             //return serviceResponse;
 
-            var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
-
             List<Certificatesstatus> statuses = null;
+
+            var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
+            serviceResponse.Amount = _context.Certificatesstatuses.Count();
 
             try
             {
@@ -68,12 +69,12 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in GetCertificatesStatus. {ex.Message}");
-                var errorData = new ServiceResponse<List<CertificatesstatusDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
             var outputList = new List<CertificatesstatusDTO>();
@@ -84,7 +85,6 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             }
 
             serviceResponse.Success = true;
-            serviceResponse.Amount = _context.Smartobjects.Count();
             serviceResponse.Data = outputList;
 
             return serviceResponse;

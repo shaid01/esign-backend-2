@@ -43,6 +43,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             _logger.Debug("GetSmartObjects");
 
             var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
+            serviceResponse.Amount = _context.Smartobjects.Count();
 
             List<Smartobject> smartObjects = null;
 
@@ -56,12 +57,12 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in GetSmartObjects. {ex.Message}");
-                var errorData = new ServiceResponse<List<SmartobjectDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
             var outputList = new List<SmartobjectDTO>();
@@ -72,7 +73,6 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             }
 
             serviceResponse.Success = true;
-            serviceResponse.Amount = _context.Smartobjects.Count();
             serviceResponse.Data = outputList;
 
             return serviceResponse;

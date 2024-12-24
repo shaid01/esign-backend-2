@@ -18,7 +18,7 @@ namespace EsignBackend.Models
         DbSet<Callpriority> Callpriorities { get; set; }
         DbSet<Callstatus> Callstatuses { get; set; }
         DbSet<Certificate> Certificates { get; set; }
-        DbSet<Certificatermeark> Certificatermearks { get; set; }
+        DbSet<CertificateRemark> Certificatermearks { get; set; }
         DbSet<Certificateshistory> Certificateshistories { get; set; }
         DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
         DbSet<Custident> Custidents { get; set; }

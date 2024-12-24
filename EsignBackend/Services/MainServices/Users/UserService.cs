@@ -55,7 +55,7 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetAllUsers");
 
-            var serviceRespone = new ServiceResponse<List<UserDTO>>();
+            var serviceResponse = new ServiceResponse<List<UserDTO>>();
 
             List<Buuser> users = null;
 
@@ -71,12 +71,12 @@ namespace EsignBackend.Services.CharacterService
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in GetAllUsers. {ex.Message}");
-                var errorData = new ServiceResponse<List<UserDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
             var usersList = new List<UserDTO>();
@@ -86,11 +86,11 @@ namespace EsignBackend.Services.CharacterService
                 usersList.Add(new UserDTO(user));
             }
 
-            serviceRespone.Success = true;
-            serviceRespone.Data = usersList;
-            serviceRespone.Amount = _cache.GetCounterByType(CacheType.Users);
+            serviceResponse.Success = true;
+            serviceResponse.Data = usersList;
+            serviceResponse.Amount = _cache.GetCounterByType(CacheType.Users);
 
-            return serviceRespone;
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
@@ -127,12 +127,12 @@ namespace EsignBackend.Services.CharacterService
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in SearchUsers. {ex.Message}");
-                var errorData = new ServiceResponse<List<UserDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
             var userList = new List<UserDTO>();
@@ -142,6 +142,7 @@ namespace EsignBackend.Services.CharacterService
                 userList.Add(new UserDTO(user));
             }
 
+            serviceResponse.Success = true;
             serviceResponse.Data = userList;
             serviceResponse.Success = true;
 

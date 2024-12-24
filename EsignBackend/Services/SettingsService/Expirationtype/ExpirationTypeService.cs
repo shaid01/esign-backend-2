@@ -60,6 +60,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
+            serviceResponse.Amount = _context.Expirationtypes.Count();
 
             List<Expirationtype> expTypes = null;
 
@@ -73,12 +74,12 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in GetExpirationTypes. {ex.Message}");
-                var errorData = new ServiceResponse<List<ExpirationtypeDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
             var outputList = new List<ExpirationtypeDTO>();
@@ -89,7 +90,6 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             }
 
             serviceResponse.Success = true;
-            serviceResponse.Amount = _context.Smartobjects.Count();
             serviceResponse.Data = outputList;
 
             return serviceResponse;

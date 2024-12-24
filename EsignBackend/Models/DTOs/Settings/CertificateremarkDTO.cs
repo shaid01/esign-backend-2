@@ -7,7 +7,7 @@ namespace EsignBackend.Models.DTOs.Settings
 {
     public class CertificateremarkDTO
     {
-        public CertificateremarkDTO(Certificatermeark certificatermeark)
+        public CertificateremarkDTO(CertificateRemark certificatermeark)
         {
             if (certificatermeark == null)
                 return;

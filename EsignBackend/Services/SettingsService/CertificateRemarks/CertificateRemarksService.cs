@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.CertificateRemarks
 {
-    public class CertificateRemarksService : ICertificateRemarksService
+    public class CertificateRemarksService: ICertificateRemarksService
     {
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
@@ -42,21 +43,59 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             serviceResponse.Data = _context.Certificatermearks.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<CertificateremarkDTO>>> GetCertificateRemarks(int skip, int take)
+
+        public ServiceResponse<List<CertificateremarkDTO>> GetCertificateRemarks(int skip, int take)
         {
             _logger.Debug("GetCertificateRemarks");
+
+            //var serviceResponse = new ServiceResponse<List<CertificateremarkDTO>>();
+            //var data = _context.Certificatermearks.Skip(skip).Take(take).ToList();
+            //var outputData = new List<CertificateremarkDTO>();
+            //foreach (var cr in data)
+            //{
+            //    outputData.Add(new CertificateremarkDTO(cr));
+            //}
+            //serviceResponse.Amount = _context.Certificatermearks.Count();
+            //serviceResponse.Data = outputData;
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<CertificateremarkDTO>>();
-            var data = _context.Certificatermearks.Skip(skip).Take(take).ToList();
-            var outputData = new List<CertificateremarkDTO>();
-            foreach (var cr in data)
-            {
-                outputData.Add(new CertificateremarkDTO(cr));
-            }
             serviceResponse.Amount = _context.Certificatermearks.Count();
-            serviceResponse.Data = outputData;
+
+            List<CertificateRemark> cerRemarks = null;
+
+            try
+            {
+                cerRemarks = _context.Certificatermearks
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetCertificateRemarks. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
+            var outputList = new List<CertificateremarkDTO>();
+
+            foreach (var cerRemark in cerRemarks)
+            {
+                outputList.Add(new CertificateremarkDTO(cerRemark));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> UpdateCertificateRemarks(Certificatermeark updatedCertificateRemarks)
+
+        public async Task<ServiceResponse<int>> UpdateCertificateRemarks(CertificateRemark updatedCertificateRemarks)
         {
             _logger.Debug("UpdateCertificateRemarks");
             var serviceResponse = new ServiceResponse<int>();
@@ -77,7 +116,8 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<int>> AddNewCertificateRemarks(Certificatermeark certificateRemark)
+
+        public async Task<ServiceResponse<int>> AddNewCertificateRemarks(CertificateRemark certificateRemark)
         {
             _logger.Debug("AddNewCertificateRemarks");
             var serviceRespone = new ServiceResponse<int>();
@@ -94,7 +134,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
                 //certificateRemark.Id = GenerateId();
                 //certificateRemark.Id = 0;
                
-                var newCertificateRemarksInDb = _context.Certificatermearks.Add(new Certificatermeark() { Title = certificateRemark.Title });
+                var newCertificateRemarksInDb = _context.Certificatermearks.Add(new CertificateRemark() { Title = certificateRemark.Title });
                 try
                 {
                     _context.SaveChanges();

@@ -22,19 +22,21 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetCertificateRemarks")]
-        public async Task<IActionResult> GetCertificateRemarks(int skip, int take)
+        public IActionResult GetCertificateRemarks(int skip, int take)
         {
-            return Ok(await _certificateRemarksService.GetCertificateRemarks(skip, take));
+            return Ok(_certificateRemarksService.GetCertificateRemarks(skip, take));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateCertificateRemarks")]
-        public async Task<IActionResult> UpdateCertificatesStatus(Certificatermeark updatedCertificateRemarks)
+        public async Task<IActionResult> UpdateCertificatesStatus(CertificateRemark updatedCertificateRemarks)
         {
             return Ok(await _certificateRemarksService.UpdateCertificateRemarks(updatedCertificateRemarks));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewCertificateRemarks")]
-        public async Task<IActionResult> AddNewCertificateRemarks(Certificatermeark certificateRemark)
+        public async Task<IActionResult> AddNewCertificateRemarks(CertificateRemark certificateRemark)
         {
             return Ok(await _certificateRemarksService.AddNewCertificateRemarks(certificateRemark));
         }

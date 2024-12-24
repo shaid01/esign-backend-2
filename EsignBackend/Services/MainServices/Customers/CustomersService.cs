@@ -58,12 +58,12 @@ namespace EsignBackend.Services.CharacterService
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in GetCustomers. {ex.Message}");
-                var errorData = new ServiceResponse<List<CustomerDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceRespone.Data = null;
+                serviceRespone.Success = false;
+                serviceRespone.Message = ex.Message;
+
+                return serviceRespone;
             }
 
             var customersList = new List<CustomerDTO>();
@@ -73,6 +73,7 @@ namespace EsignBackend.Services.CharacterService
                 customersList.Add(new CustomerDTO(customer));
             }
 
+            serviceRespone.Success = true;
             serviceRespone.Data = customersList;
             serviceRespone.Amount = _cache.GetCounterByType(CacheType.Customers);
 
@@ -124,12 +125,12 @@ namespace EsignBackend.Services.CharacterService
             catch (Exception ex)
             {
                 _logger.Error($"Error while processing DB query in SearchCustomers. {ex.Message}");
-                var errorData = new ServiceResponse<IEnumerable<CustomerDTO>>();
-                errorData.Data = null;
-                errorData.Success = false;
-                errorData.Message = ex.Message;
 
-                return errorData;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
             }
 
             var customersDtoList = new List<CustomerDTO>();
@@ -139,6 +140,7 @@ namespace EsignBackend.Services.CharacterService
                 customersDtoList.Add(new CustomerDTO(customer));
             }
 
+            serviceResponse.Success = true;
             serviceResponse.Data = customersDtoList;
 
             return serviceResponse;

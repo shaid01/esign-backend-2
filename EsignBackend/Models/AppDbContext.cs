@@ -35,7 +35,7 @@ namespace EsignBackend.Models
         public DbSet<Callpriority> Callpriorities { get; set; }
         public DbSet<Callstatus> Callstatuses { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
-        public DbSet<Certificatermeark> Certificatermearks { get; set; }
+        public DbSet<CertificateRemark> Certificatermearks { get; set; }
         public DbSet<Certificateshistory> Certificateshistories { get; set; }
         public DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
         // publial DbSet<Character> Characters { get; set; }
@@ -664,7 +664,7 @@ namespace EsignBackend.Models
 
             });
 
-            modelBuilder.Entity<Certificatermeark>(entity =>
+            modelBuilder.Entity<CertificateRemark>(entity =>
             {
                 //entity.HasNoKey();
                 entity.HasKey(en => new { en.Id });
