@@ -22,9 +22,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetCallsStatus")]
-        public async Task<IActionResult> GetCallsStatus(int skip, int take)
+        public IActionResult GetCallsStatus(int skip, int take)
         {
-            return Ok(await _callStatusService.GetCallsStatus(skip, take));
+            return Ok(_callStatusService.GetCallsStatus(skip, take));
         }
 
         [Authorize(Roles = "מנהל")]

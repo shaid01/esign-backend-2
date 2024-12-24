@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
@@ -19,6 +20,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             _context = context;
             _logger = logger;
         }
+
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
@@ -29,6 +31,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             }
 
         }
+
         private bool IsTheNameAlreadyInUse(string title)
         {
             _logger.Debug("IsTheNameAlreadyInUse");
@@ -71,18 +74,54 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             }
         }
 
-        public async Task<ServiceResponse<List<CallStatusDto>>> GetCallsStatus(int skipInt, int takeInt)
+        public ServiceResponse<List<CallStatusDto>> GetCallsStatus(int skip, int take)
         {
             _logger.Debug("GetCallsStatus");
+
+            //var serviceResponse = new ServiceResponse<List<CallStatusDto>>();
+            //serviceResponse.Amount = _context.Callstatuses.Count();
+            //var dbCallStatus = _context.Callstatuses.Skip(skipInt).Take(takeInt).ToList();
+            //var CallStatusList = new List<CallStatusDto>();
+            //foreach (var cs in dbCallStatus)
+            //{
+            //    CallStatusList.Add(new CallStatusDto(cs));
+            //}
+            //serviceResponse.Data = CallStatusList;
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<CallStatusDto>>();
             serviceResponse.Amount = _context.Callstatuses.Count();
-            var dbCallStatus = _context.Callstatuses.Skip(skipInt).Take(takeInt).ToList();
-            var CallStatusList = new List<CallStatusDto>();
-            foreach (var cs in dbCallStatus)
+
+            List<Callstatus> callStatuses = null;
+
+            try
             {
-                CallStatusList.Add(new CallStatusDto(cs));
+                callStatuses = _context.Callstatuses
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
             }
-            serviceResponse.Data = CallStatusList;
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetCallsStatus. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
+            var outputList = new List<CallStatusDto>();
+
+            foreach (var callStatus in callStatuses)
+            {
+                outputList.Add(new CallStatusDto(callStatus));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
 

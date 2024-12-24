@@ -21,16 +21,18 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetDepartments")]
-        public async Task<IActionResult> GetDepartments(int skip, int take)
+        public IActionResult GetDepartments(int skip, int take)
         {
-            return Ok(await _departmentService.GetDepartments(skip, take));
+            return Ok(_departmentService.GetDepartments(skip, take));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateDepartment")]
         public async Task<IActionResult> UpdateDepartment(Department updatedDepartment)
         {
             return Ok(await _departmentService.UpdateDepartment(updatedDepartment));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewDepartment")]
         public async Task<IActionResult> AddNewDepartment(Department department)

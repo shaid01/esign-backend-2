@@ -1,4 +1,5 @@
 ﻿using EsignBackend.Models;
+using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -21,6 +22,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             _context = context;
             _logger = logger;
         }
+
         private int GenerateId()
         {
             _logger.Debug("GenerateId");
@@ -30,11 +32,13 @@ namespace EsignBackend.Services.SettingsService.Departments
                 return maxId + 1;
             }
         }
+
         private bool isTheNameAlreadyInUse(string title)
         {
             _logger.Debug("isTheNameAlreadyInUse");
             return _context.Departments.Where(item => item.Title.Equals(title)).Count() != 0;
         }
+
         public async Task<ServiceResponse<int>> AddNewDepartment(Department department)
         {
             _logger.Debug($"Add new Department {department.Id}, {department.Title}");
@@ -69,6 +73,7 @@ namespace EsignBackend.Services.SettingsService.Departments
                 }
             }
         }
+
         public async Task<ServiceResponse<int>> GetAmountOfDepartments()
         {
             _logger.Debug("GetAmountOfDepartments");
@@ -76,28 +81,76 @@ namespace EsignBackend.Services.SettingsService.Departments
             serviceResponse.Data = _context.Departments.Count();
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<DepartmentDTO>>> GetDepartments(int skip, int take)
+
+        public ServiceResponse<List<DepartmentDTO>> GetDepartments(int skip, int take)
         {
             _logger.Debug("GetDepartments");
+
+            //var serviceResponse = new ServiceResponse<List<DepartmentDTO>>();
+            //var outputList = new List<DepartmentDTO>();
+
+            //var query = _context.Departments.AsNoTracking();
+            //query = query.Skip(skip);
+            //if (take != UNLIMITED)
+            //{
+            //    query = query.Take(take);
+            //}
+            //var data = await query.ToListAsync();
+
+            //foreach (var d in data)
+            //{
+            //    outputList.Add(new DepartmentDTO(d));
+            //}
+            //serviceResponse.Amount = _context.Departments.Count();
+            //serviceResponse.Data = outputList;
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<DepartmentDTO>>();
+            serviceResponse.Amount = _context.Departments.Count();
+
+            List<Department> depts = null;
+
+            try
+            {
+                if (take != UNLIMITED)
+                {
+                    depts = _context.Departments
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+
+                }
+                else
+                {
+                    depts = _context.Departments
+                    .Skip(skip)
+                    .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetDepartments. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
             var outputList = new List<DepartmentDTO>();
 
-            var query = _context.Departments.AsNoTracking();
-            query = query.Skip(skip);
-            if (take != UNLIMITED)
+            foreach (var dept in depts)
             {
-                query = query.Take(take);
+                outputList.Add(new DepartmentDTO(dept));
             }
-            var data = await query.ToListAsync();
 
-            foreach (var d in data)
-            {
-                outputList.Add(new DepartmentDTO(d));
-            }
-            serviceResponse.Amount = _context.Departments.Count();
+            serviceResponse.Success = true;
             serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateDepartment(Department updatedDepartment)
         {
             _logger.Debug("UpdateDepartment");

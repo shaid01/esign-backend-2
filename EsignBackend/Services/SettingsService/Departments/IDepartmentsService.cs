@@ -9,7 +9,7 @@ namespace EsignBackend.Services.SettingsService.Departments
 {
     public interface IDepartmentsService
     {
-        Task<ServiceResponse<List<DepartmentDTO>>> GetDepartments(int skip, int take);
+        ServiceResponse<List<DepartmentDTO>> GetDepartments(int skip, int take);
         Task<ServiceResponse<int>> UpdateDepartment(Department updatedDepartment);
         Task<ServiceResponse<int>> AddNewDepartment(Department department);
     }
