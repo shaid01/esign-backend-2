@@ -70,20 +70,57 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             }
         }
 
-        public async Task<ServiceResponse<List<SecurityquestionDTO>>> GetSecurityQuestions(int skip, int take)
+        public ServiceResponse<List<SecurityquestionDTO>> GetSecurityQuestions(int skip, int take)
         {
             _logger.Debug("GetSecurityQuestions");
+
+            //var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
+            //var outputList = new List<SecurityquestionDTO>();
+            //var data = _context.Securityquestions.Skip(skip).Take(take).ToList();
+            //foreach (var sq in data)
+            //{
+            //    outputList.Add(new SecurityquestionDTO(sq));
+            //}
+            //serviceResponse.Data = outputList;
+            //serviceResponse.Amount = _context.Securityquestions.Count();
+            //return serviceResponse;
+
             var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
-            var outputList = new List<SecurityquestionDTO>();
-            var data = _context.Securityquestions.Skip(skip).Take(take).ToList();
-            foreach (var sq in data)
-            {
-                outputList.Add(new SecurityquestionDTO(sq));
-            }
-            serviceResponse.Data = outputList;
             serviceResponse.Amount = _context.Securityquestions.Count();
+
+            List<Securityquestion> secQuestions = null;
+
+            try
+            {
+                secQuestions = _context.Securityquestions
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in GetSecurityQuestions. {ex.Message}");
+
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
+
+            var outputList = new List<SecurityquestionDTO>();
+
+            foreach (var secQuest in secQuestions)
+            {
+                outputList.Add(new SecurityquestionDTO(secQuest));
+            }
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<int>> UpdateSecurityQuestion(Securityquestion updatedSecurityQuestion)
         {
             _logger.Debug("UpdateSecurityQuestion");
@@ -105,7 +142,8 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<List<SecurityquestionDTO>>> GetAllSecurityQuestions()
+
+        public ServiceResponse<List<SecurityquestionDTO>> GetAllSecurityQuestions()
         {
             _logger.Debug("GetAllSecurityQuestions");
             var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();

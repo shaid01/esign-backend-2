@@ -18,17 +18,20 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             this._securityQuestionsService = securityQuestionsService;
         }
+
         [HttpGet("GetSecurityQuestions")]
-        public async Task<IActionResult> GetSecurityQuestions(int skip, int take)
+        public IActionResult GetSecurityQuestions(int skip, int take)
         {
-            return Ok(await _securityQuestionsService.GetSecurityQuestions(skip, take));
+            return Ok(_securityQuestionsService.GetSecurityQuestions(skip, take));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateSecurityQuestion")]
         public async Task<IActionResult> UpdateSecurityQuestion(Securityquestion updatedSecurityQuestion)
         {
             return Ok(await _securityQuestionsService.UpdateSecurityQuestion(updatedSecurityQuestion));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewSecurityQuestion")]
         public async Task<IActionResult> AddNewSecurityQuestion(Securityquestion securityQuestion)
@@ -37,9 +40,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetAllSecurityQuestions")]
-        public async Task<IActionResult> GetAllSecurityQuestions()
+        public IActionResult GetAllSecurityQuestions()
         {
-            return Ok(await _securityQuestionsService.GetAllSecurityQuestions());
+            return Ok(_securityQuestionsService.GetAllSecurityQuestions());
         }
     }
 }
