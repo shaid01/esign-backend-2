@@ -21,9 +21,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetCustomersIdentifiers")]
-        public async Task<IActionResult> GetCustomersIdentifiers(int skip, int take)
+        public IActionResult GetCustomersIdentifiers(int skip, int take)
         {
-            return Ok(await _customerIdentifierService.GetCustomersIdentifiers(skip, take));
+            return Ok(_customerIdentifierService.GetCustomersIdentifiers(skip, take));
         }
 
         [Authorize(Roles = "מנהל")]
@@ -32,6 +32,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
         {
             return Ok(await _customerIdentifierService.UpdateCustomerIdentifer(updatedCustomerIdentifer));
         }
+
         [Authorize(Roles = "מנהל")]
         [HttpPost("AddNewCustomerIdentifer")]
         public async Task<IActionResult> AddNewCertificatesStatus(Custident customerIdentifer)
@@ -40,9 +41,9 @@ namespace EsignBackend.Controllers.Settings_Controllers
         }
 
         [HttpGet("GetAllCustomerIdentifiers")]
-        public async Task<IActionResult> GetAllCustomerIdentifiers()
+        public IActionResult GetAllCustomerIdentifiers()
         {
-            return Ok(await _customerIdentifierService.GetAllCustomerIdentifiers());
+            return Ok(_customerIdentifierService.GetAllCustomerIdentifiers());
         }
     }
 }

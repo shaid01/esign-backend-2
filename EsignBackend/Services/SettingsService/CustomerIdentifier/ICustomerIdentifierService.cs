@@ -9,9 +9,9 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 {
     public interface ICustomerIdentifierService
     {
-        Task<ServiceResponse<List<CustidentDTO>>> GetCustomersIdentifiers(int skip, int take);
+        ServiceResponse<List<CustidentDTO>> GetCustomersIdentifiers(int skip, int take);
         Task<ServiceResponse<int>> UpdateCustomerIdentifer(Custident updatedCustomerIdentifer);
         Task<ServiceResponse<int>> AddNewCustomerIdentifier(Custident customerIdentifer);
-        Task<ServiceResponse<List<CustidentDTO>>> GetAllCustomerIdentifiers();
+        ServiceResponse<List<CustidentDTO>> GetAllCustomerIdentifiers();
     }
 }
