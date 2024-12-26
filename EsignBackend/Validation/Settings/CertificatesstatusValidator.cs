@@ -12,8 +12,6 @@ namespace EsignBackend.Validation.Settings
         public CertificatesstatusValidator()
         {
             RuleFor(x => x.Title).NotEmpty().WithMessage("שם סטטוס התעודה לא קיים");
-            int value = 0;
-            RuleFor(x => x.Id.ToString()).Must(x => int.TryParse(x, out value)).WithMessage("מספר סידורי לא תקין");
         }
     }
 }

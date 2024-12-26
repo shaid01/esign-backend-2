@@ -12,7 +12,6 @@ namespace EsignBackend.Validation.Settings
         public SubProjectValidator()
         {
             RuleFor(x => x.Title).NotEmpty().WithMessage("שם תת הפרוייקט לא קיים");
-            RuleFor(x => x.Id).NotEmpty().WithMessage("מספר סידורי לא קיים");
             RuleFor(x => x.Project).NotEmpty().WithMessage("לא קיים פרוייקט עבור תת הפרוייקט");
         }
     }

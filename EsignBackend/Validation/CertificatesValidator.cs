@@ -11,7 +11,7 @@ namespace EsignBackend.Validation
     {
         public CertificatesValidator()
         {
-            RuleFor(x => x.Id).NotEmpty().WithMessage("המספר הסידורי של התעודה חסר");
+            //RuleFor(x => x.Id).NotEmpty().WithMessage("המספר הסידורי של התעודה חסר");
             RuleFor(x => x.Email).EmailAddress().WithMessage("כתובת מייל לא תקינה");
             RuleFor(x => x.Expiredate).NotEmpty().WithMessage("תאריך תפוגה לא קיים");
             RuleFor(x => x.Issuedate).NotEmpty().WithMessage("תאריך הנפקה לא קיים");

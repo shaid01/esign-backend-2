@@ -12,8 +12,6 @@ namespace EsignBackend.Validation.Settings
         public ExpirationTypeValidator()
         {
             RuleFor(x => x.Title).NotEmpty().WithMessage("סוג תפוגה לא קיים");
-            int value = 0;
-            RuleFor(x => x.Id.ToString()).Must(x => int.TryParse(x, out value)).WithMessage("מספר סידורי לא תקין");
         }
     }
 }

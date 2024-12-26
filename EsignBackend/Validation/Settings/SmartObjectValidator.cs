@@ -12,8 +12,8 @@ namespace EsignBackend.Validation.Settings
         public SmartObjectValidator()
         {
             RuleFor(x => x.Title).NotEmpty().WithMessage("שם הרכיב החכם חסר");
-            int value = 0;
-            RuleFor(x => x.Id.ToString()).Must(x => int.TryParse(x, out value)).WithMessage("מספר סידורי לא תקין");
+            //int value = 0;
+            //RuleFor(x => x.Id.ToString()).Must(x => int.TryParse(x, out value)).WithMessage("מספר סידורי לא תקין");
         }
     }
 }

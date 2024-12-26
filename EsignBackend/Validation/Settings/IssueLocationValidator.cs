@@ -12,9 +12,9 @@ namespace EsignBackend.Validation.Settings
         public IssueLocationValidator()
         {
             RuleFor(x => x.Title).NotEmpty().WithMessage("מיקום ההנפקה לא קיים");
-            int value = 0;
-            RuleFor(x => x.Id.ToString()).Must(x => int.TryParse(x, out value)).WithMessage("מספר סידורי לא תקין");
-            RuleFor(x => x.Active).Matches("^[a-zA-Z]{0,2}$").WithMessage("סטטוס יכול להכיל עד 2 אותיות באנגלית");
+            //int value = 0;
+            //RuleFor(x => x.Id.ToString()).Must(x => int.TryParse(x, out value)).WithMessage("מספר סידורי לא תקין");
+            RuleFor(x => x.Active).Matches("^[a-zA-Z]{1,2}$").WithMessage("סטטוס יכול להכיל עד 2 אותיות באנגלית");
         }
     }
 }
