@@ -27,7 +27,7 @@ namespace EsignBackend.Services.MainServices.Certificates
     {
         public static IQueryable<Certificate> SearchCertificates(this IAppDbContext context)
         {
-            return context.Certificates.AsNoTracking().Include(cer => cer.RelatedCertificateissuer)
+            return context.Certificates.AsNoTracking()
                     .Include(cer => cer.RelatedCertificateissuer)
                     .Include(cer => cer.RelatedCertificatesstatus)
                     .Include(cer => cer.RelatedCustomer)
@@ -194,6 +194,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             var serviceResponse = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
 
             var searchQry = _context.SearchCertificates();
+            //var searchQryForCount = _context.SearchCertificatesForCount();
 
             var query = searchQry.AsNoTracking().Where(cer =>
 
@@ -267,7 +268,9 @@ namespace EsignBackend.Services.MainServices.Certificates
 
                 try
                 {
-                    serviceResponse.Amount = await query.CountAsync(); //291
+                    serviceResponse.Amount = await query.CountAsync(); //294
+                    //serviceResponse.Amount = await queryForCount.CountAsync(); //161
+
                     //serviceRespone.Amount = (await query.ToListAsync()).Count(); //287
 
                     //client side count - 287 - some records with not existed values in referenced tables were eliminated

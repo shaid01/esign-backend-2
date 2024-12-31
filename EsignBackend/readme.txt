@@ -1,4 +1,6 @@
-﻿upgrade
+﻿"the query had to wait for 83 seconds for Memory Grant during execution" - reason NVARCHAR(MAX)
+
+upgrade
 	"Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20"
 
 install
