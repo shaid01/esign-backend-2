@@ -3,27 +3,27 @@ GO
 SET ANSI_PADDING ON
 GO
 
-/****** Object:  Index [Company_OrderBy]    Script Date: 30/12/2024 11:13:32 ******/
-CREATE NONCLUSTERED INDEX [Company_OrderBy] ON [dbo].[customers]
+/****** Object:  Index [CompanyCust_Where_OrderBy]    Script Date: 30/12/2024 11:13:32 ******/
+CREATE NONCLUSTERED INDEX CompanyCust_Where_OrderBy ON [dbo].[customers]
 (
 	[company] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [Email_OrderBy]    Script Date: 30/12/2024 11:47:51 ******/
-CREATE NONCLUSTERED INDEX [Email_OrderBy] ON [dbo].[customers]
+/****** Object:  Index [Email_Where_OrderBy]    Script Date: 30/12/2024 11:47:51 ******/
+CREATE NONCLUSTERED INDEX [Email_Where_OrderBy] ON [dbo].[customers]
 (
 	[email] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [FirstLastName_OrderBy]    Script Date: 30/12/2024 11:48:05 ******/
-CREATE NONCLUSTERED INDEX [FirstLastName_OrderBy] ON [dbo].[customers]
+/****** Object:  Index [FirstLastName_Where_OrderBy]    Script Date: 30/12/2024 11:48:05 ******/
+CREATE NONCLUSTERED INDEX [FirstLastName_Where_OrderBy] ON [dbo].[customers]
 (
 	[firstname] ASC,
 	[lastname] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [LastFirstName_OrderBy]    Script Date: 30/12/2024 11:48:12 ******/
-CREATE NONCLUSTERED INDEX [LastFirstName_OrderBy] ON [dbo].[customers]
+/****** Object:  Index [LastFirstName_Where_OrderBy]    Script Date: 30/12/2024 11:48:12 ******/
+CREATE NONCLUSTERED INDEX LastFirstName_Where_OrderBy ON [dbo].[customers]
 (
 	[lastname] ASC,
 	[firstname] ASC

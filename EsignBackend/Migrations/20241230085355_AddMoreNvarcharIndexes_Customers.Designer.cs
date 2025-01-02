@@ -1096,7 +1096,7 @@ namespace EsignBackend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Idnumber")
-                        .HasDatabaseName("IdNumber_OrderBy");
+                        .HasDatabaseName("IdNumber_Where_OrderBy");
 
                     b.HasIndex("Securityquestion");
 

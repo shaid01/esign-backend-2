@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EsignBackend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241212120039_AddIndexes_Customers_Certificates")]
-    partial class AddIndexes_Customers_Certificates
+    [Migration("20250102072706_AddIssueExpiryDateFieldsIndexes_Certificates")]
+    partial class AddIssueExpiryDateFieldsIndexes_Certificates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -718,7 +718,7 @@ namespace EsignBackend.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("passportid");
 
-                    b.Property<double>("Project")
+                    b.Property<double?>("Project")
                         .HasColumnType("float")
                         .HasColumnName("project");
 
@@ -753,11 +753,18 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("Certificatestatus");
 
-                    b.HasIndex("Customerid");
+                    b.HasIndex("Company")
+                        .HasDatabaseName("CompanyCert_Where_OrderBy");
+
+                    b.HasIndex("Customerid")
+                        .HasDatabaseName("CustomerID_Foreign");
 
                     b.HasIndex("Docstype");
 
                     b.HasIndex("Expire");
+
+                    b.HasIndex("Hpnumber")
+                        .HasDatabaseName("Hpnumber_Where_OrderBy");
 
                     b.HasIndex("Identify");
 
@@ -778,7 +785,7 @@ namespace EsignBackend.Migrations
                     b.ToTable("certificates", (string)null);
                 });
 
-            modelBuilder.Entity("EsignBackend.Models.Certificatermeark", b =>
+            modelBuilder.Entity("EsignBackend.Models.CertificateRemark", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1095,10 +1102,22 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Company")
+                        .HasDatabaseName("CompanyCust_Where_OrderBy");
+
+                    b.HasIndex("Email")
+                        .HasDatabaseName("Email_Where_OrderBy");
+
                     b.HasIndex("Idnumber")
                         .HasDatabaseName("IdNumber_Where_OrderBy");
 
                     b.HasIndex("Securityquestion");
+
+                    b.HasIndex("Firstname", "Lastname")
+                        .HasDatabaseName("FirstLastName_Where_OrderBy");
+
+                    b.HasIndex("Lastname", "Firstname")
+                        .HasDatabaseName("LastFirstName_Where_OrderBy");
 
                     b.ToTable("customers", (string)null);
                 });
@@ -1469,9 +1488,7 @@ namespace EsignBackend.Migrations
 
                     b.HasOne("EsignBackend.Models.Project", "RelatedProject")
                         .WithMany("Certificates")
-                        .HasForeignKey("Project")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Project");
 
                     b.HasOne("EsignBackend.Models.Securityquestion", "RelatedSecurityquestion")
                         .WithMany("Certificates")

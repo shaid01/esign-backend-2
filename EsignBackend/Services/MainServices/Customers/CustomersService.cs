@@ -105,7 +105,8 @@ namespace EsignBackend.Services.CharacterService
 
                 );
 
-            query = query.OrderByDescending(cust => cust.Id);
+            //query = query.OrderByDescending(cust => cust.Id);
+            query = query.OrderByDescending(cust => EF.Property<object>(cust, "Id"));
 
             List<Customer> customerList = null;
 

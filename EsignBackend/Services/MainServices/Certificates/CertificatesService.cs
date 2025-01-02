@@ -85,7 +85,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public CertificateDetailsExtendedDTO GetCertificateExtendedDetails(int id)
         {
-            _logger.Debug("GetCertificatesDetails");
+            _logger.Debug("GetCertificateExtendedDetails");
 
             //22/12/2024 - of unknown use
             //var serviceResponse = new ServiceResponse<CertificateDetailsDTO>();
@@ -120,47 +120,35 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
 
-            //var query = _context.Certificates
-            //    .Include(cer => cer.RelatedCertificateissuer)
-            //    .Include(cer => cer.RelatedCertificatesstatus)
-            //    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
-            //    .Include(cer => cer.RelatedCustomerIdentifier)
-            //    .Include(cer => cer.RelatedDocsType)
-            //    .Include(cer => cer.RelatedExpiration)
-            //    .Include(cer => cer.RelatedIssuerPlace)
-            //    .Include(cer => cer.RelatedProject)
-            //    //  .Include(cer => cer.RelatedSecurityquestion)
-            //    .Include(cer => cer.RelatedSmartObject)
-            //    .Include(cer => cer.RelatedSubProject).AsNoTracking();
-
-            //query = query.Skip(skip);
-            //if (take != UNLIMITED)
-            //{
-            //    query = query.Take(take);
-            //}
-            //var certificates = await query.ToListAsync();
-
             List<Certificate> certificates = null;
+
+            var query = _context.Certificates
+                .Include(cer => cer.RelatedCertificateissuer)
+                .Include(cer => cer.RelatedCertificatesstatus)
+                .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedCustomerIdentifier)
+                .Include(cer => cer.RelatedDocsType)
+                .Include(cer => cer.RelatedExpiration)
+                .Include(cer => cer.RelatedIssuerPlace)
+                .Include(cer => cer.RelatedProject)
+                //  .Include(cer => cer.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedSmartObject)
+                .Include(cer => cer.RelatedSubProject)
+                .AsNoTracking();
+
+            query = query.Skip(skip);
+
+            if (take != UNLIMITED)
+            {
+                query = query.Take(take);
+            }
 
             try
             {
-                certificates = await _context.Certificates
-                    .Include(cer => cer.RelatedCertificateissuer)
-                    .Include(cer => cer.RelatedCertificatesstatus)
-                    .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
-                    .Include(cer => cer.RelatedCustomerIdentifier)
-                    .Include(cer => cer.RelatedDocsType)
-                    .Include(cer => cer.RelatedExpiration)
-                    .Include(cer => cer.RelatedIssuerPlace)
-                    .Include(cer => cer.RelatedProject)
-                    //  .Include(cer => cer.RelatedSecurityquestion)
-                    .Include(cer => cer.RelatedSmartObject)
-                    .Include(cer => cer.RelatedSubProject)
-                    .AsNoTracking()
+                certificates = await query
 
                     .OrderByDescending(x => x.Issuedate)
-
-                    .Skip(skip).Take(take).ToListAsync();
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -223,96 +211,97 @@ namespace EsignBackend.Services.MainServices.Certificates
 
                 && (certificateAdvancedSearch.EndIssueDate == null || cer.Issuedate.Value <= certificateAdvancedSearch.EndIssueDate.Value)
 
-                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
+                //one of the reasons of "the query had to wait for 83 seconds for Memory Grant during execution"?
 
-                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
+                //&& (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Firstname : string.Empty, $"%{certificateAdvancedSearch.CustomerName}%"))
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerName) || EF.Functions.Like(cer.RelatedCustomer.Firstname, $"%{certificateAdvancedSearch.CustomerName}%"))
+
+                //&& (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer != null ? cer.RelatedCustomer.Lastname : string.Empty, $"%{certificateAdvancedSearch.CustomerLastName}%"))
+                && (string.IsNullOrWhiteSpace(certificateAdvancedSearch.CustomerLastName) || EF.Functions.Like(cer.RelatedCustomer.Lastname, $"%{certificateAdvancedSearch.CustomerLastName}%"))
 
                 && (certificateAdvancedSearch.IssuerPlace.CompareTo(-1) == 0 || (cer.RelatedIssuerPlace != null && cer.RelatedIssuerPlace.Id == certificateAdvancedSearch.IssuerPlace)));
 
             //.AsNoTracking().Skip(skip).Take(take); //right place
 
+
             List<Certificate> certificatesList = null;
 
-            //if (skip == 0)
-            {
-                //https://stackoverflow.com/questions/63071963/ef-core-queryablet-count-returns-different-number-than-queryablet-tolist
+            //https://stackoverflow.com/questions/63071963/ef-core-queryablet-count-returns-different-number-than-queryablet-tolist
 
-                /*
-                If you create your database on your own however (using a custom crafted SQL script) and leave out the foreign key constraint,
-                but still let EF Core believe that there is one in place, and then violate the referential integrity by using a non existing ID
-                in a foreign key column, you can get different results for database-side (here 291) and client-side (here 287) count operations
+            /*
+            If you create your database on your own however (using a custom crafted SQL script) and leave out the foreign key constraint,
+            but still let EF Core believe that there is one in place, and then violate the referential integrity by using a non existing ID
+            in a foreign key column, you can get different results for database-side (here 291) and client-side (here 287) count operations
+            */
+
+            /*
+                * The reason of fewer records was this row "INNER JOIN [projects] AS [p] ON [t].[project] = [p].[id]" instead of "LEFT JOIN"
+                * Fixed in Certificate class -> public int? Project { get; set; } (? sign of nullable value was added)
                 */
 
-                /*
-                 * The reason of fewer records was this row "INNER JOIN [projects] AS [p] ON [t].[project] = [p].[id]" instead of "LEFT JOIN"
-                 * Fixed in Certificate class -> public int? Project { get; set; } (? sign of nullable value was added)
-                 */
+            //server side count - 291, e.g.
+            /*
+                SELECT COUNT(*)
+                        FROM [certificates] AS [c]
+                        LEFT JOIN [customers] AS [c0] ON [c].[customerid] = [c0].[id]
+                        WHERE CASE
+                            WHEN [c0].[id] IS NOT NULL THEN [c0].[firstname]
+                            ELSE N''
+                        END LIKE '%נועה%'
 
-                //server side count - 291, e.g.
-                /*
+            Why not?:
+
                     SELECT COUNT(*)
-                          FROM [certificates] AS [c]
-                          LEFT JOIN [customers] AS [c0] ON [c].[customerid] = [c0].[id]
-                          WHERE CASE
-                              WHEN [c0].[id] IS NOT NULL THEN [c0].[firstname]
-                              ELSE N''
-                          END LIKE '%נועה%'
+                    FROM [certificates] AS [c]
+                    INNER JOIN [customers] AS [c0] ON [c].[customerid] = [c0].[id]
+                    WHERE [c0].[firstname] LIKE '%נועה%'
+            */
 
-                Why not?:
+            try
+            {
+                serviceResponse.Amount = await query.CountAsync(); //294
 
-                     SELECT COUNT(*)
-                      FROM [certificates] AS [c]
-                      INNER JOIN [customers] AS [c0] ON [c].[customerid] = [c0].[id]
-                      WHERE [c0].[firstname] LIKE '%נועה%'
-                */
+                //serviceRespone.Amount = (await query.ToListAsync()).Count(); //287
 
-                try
+                //client side count - 287 - some records with not existed values in referenced tables were eliminated
+                /*
+                    * full select query
+                    */
+                //serviceRespone.Amount = (await query.AsNoTracking().ToListAsync()).Count();
+
+                //query = query.Skip(skip);
+
+                //if (take != UNLIMITED)
+                //{
+                //    query = query.Take(take);
+                //}
+
+                //query = query.OrderByDescending(cer => cer.Issuedate);
+
+                //certificatesList = await query.ToListAsync();
+
+                //serviceResponse.Amount = certificatesList.Count;
+
+                if (take != UNLIMITED)
                 {
-                    serviceResponse.Amount = await query.CountAsync(); //294
-                    //serviceResponse.Amount = await queryForCount.CountAsync(); //161
-
-                    //serviceRespone.Amount = (await query.ToListAsync()).Count(); //287
-
-                    //client side count - 287 - some records with not existed values in referenced tables were eliminated
-                    /*
-                     * full select query
-                     */
-                    //serviceRespone.Amount = (await query.AsNoTracking().ToListAsync()).Count();
-
-                    query = query.Skip(skip);
-
-                    if (take != UNLIMITED)
-                    {
-                        query = query.Take(take);
-                    }
-
-                    query = query.OrderByDescending(cer => cer.Issuedate);
-
-                    certificatesList = await query.ToListAsync();
+                    query = query.Skip(skip).Take(take);
                 }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Error while processing DB query in SearchCertificates. {ex.Message}");
 
-                    serviceResponse.Data = null;
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = ex.Message;
+                //query = query.OrderByDescending(cer => cer.Issuedate);
+                query = query.OrderByDescending(cer => EF.Property<object>(cer, "Issuedate"));
 
-                    return serviceResponse;
-                }
+                certificatesList = await query.ToListAsync();
             }
-            //else
-            //{
-            //    query.AsNoTracking().Skip(skip).Take(take);
+            catch (Exception ex)
+            {
+                _logger.Error($"Error while processing DB query in SearchCertificates. {ex.Message}");
 
-            //    // clients will be responsible for keeping count value
-            //    //serviceRespone.Amount = -1;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
 
-            //    certificatesList = await query.ToListAsync();
-            //    serviceRespone.Amount = certificatesList.Count;
-            //}
-
-            //certificatesList = await query.ToListAsync();
+                return serviceResponse;
+            }
 
             var certificateDetailsDtoList = new List<CertificateDetailsDTO>();
 

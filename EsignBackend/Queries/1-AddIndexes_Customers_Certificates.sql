@@ -3,8 +3,8 @@ GO
 SET ANSI_PADDING ON
 GO
 
-/****** Object:  Index [IdNumber_OrderBy]    Script Date: 08/12/2024 10:24:49 ******/
-CREATE NONCLUSTERED INDEX [IdNumber_OrderBy] ON [dbo].[customers]
+/****** Object:  Index [IdNumber_Where_OrderBy]    Script Date: 08/12/2024 10:24:49 ******/
+CREATE NONCLUSTERED INDEX IdNumber_Where_OrderBy ON [dbo].[customers]
 (
 	[idnumber] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]

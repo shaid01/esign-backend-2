@@ -34,7 +34,10 @@ namespace EsignBackend.Models
         public DbSet<Buuser> Buusers { get; set; }
         public DbSet<Callpriority> Callpriorities { get; set; }
         public DbSet<Callstatus> Callstatuses { get; set; }
-        public DbSet<Certificate> Certificates { get; set; }
+        public DbSet<Certificate> Certificates { 
+            get;
+            set;
+        }
         public DbSet<CertificateRemark> Certificatermearks { get; set; }
         public DbSet<Certificateshistory> Certificateshistories { get; set; }
         public DbSet<Certificatesstatus> Certificatesstatuses { get; set; }
@@ -662,6 +665,15 @@ namespace EsignBackend.Models
                     .IsDescending(true)
                     .HasDatabaseName("IssueDate_OrderBy_Desc");
 
+                //01/01/2025
+                entity.HasIndex(x => new { x.Company })
+                    .HasDatabaseName("CompanyCert_Where_OrderBy");
+
+                entity.HasIndex(x => new { x.Hpnumber })
+                    .HasDatabaseName("Hpnumber_Where_OrderBy");
+
+                entity.HasIndex(x => new { x.Customerid })
+                    .HasDatabaseName("CustomerID_Foreign");
             });
 
             modelBuilder.Entity<CertificateRemark>(entity =>
@@ -896,7 +908,19 @@ namespace EsignBackend.Models
 
                 // 12/12/2024
                 entity.HasIndex(x => new { x.Idnumber })
-                    .HasDatabaseName("IdNumber_OrderBy");
+                    .HasDatabaseName("IdNumber_Where_OrderBy");
+
+                entity.HasIndex(x => new { x.Company })
+                    .HasDatabaseName("CompanyCust_Where_OrderBy");
+
+                entity.HasIndex(x => new { x.Email })
+                    .HasDatabaseName("Email_Where_OrderBy");
+
+                entity.HasIndex(x => new { x.Firstname, x.Lastname })
+                    .HasDatabaseName("FirstLastName_Where_OrderBy");
+
+                entity.HasIndex(x => new { x.Lastname, x.Firstname })
+                    .HasDatabaseName("LastFirstName_Where_OrderBy");
             });
 
             modelBuilder.Entity<Department>(entity =>

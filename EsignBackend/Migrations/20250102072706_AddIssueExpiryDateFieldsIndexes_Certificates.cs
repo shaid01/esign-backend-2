@@ -5,32 +5,31 @@
 namespace EsignBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIndexes_Customers_Certificates : Migration
+    public partial class AddIssueExpiryDateFieldsIndexes_Certificates : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
-                name: "IdNumber_Where_OrderBy",
-                table: "customers",
-                column: "idnumber");
+                name: "IssueExpiryDates_Where",
+                table: "certificates",
+                columns: new[] { "issuedate", "expiredate" });
 
             migrationBuilder.CreateIndex(
-                name: "IssueDate_OrderBy_Desc",
+                name: "ExpiryIssueDates_Where_OrderBy",
                 table: "certificates",
-                column: "issuedate",
-                descending: new bool[0]);
+                columns: new[] { "expiredate", "issuedate" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
-                name: "IdNumber_Where_OrderBy",
-                table: "customers");
+                name: "ExpiryIssueDates_Where_OrderBy",
+                table: "certificates");
 
             migrationBuilder.DropIndex(
-                name: "IssueDate_OrderBy_Desc",
+                name: "IssueExpiryDates_Where",
                 table: "certificates");
         }
     }

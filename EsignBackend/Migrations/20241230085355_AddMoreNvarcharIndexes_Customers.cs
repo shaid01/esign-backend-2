@@ -11,22 +11,22 @@ namespace EsignBackend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
-                name: "LastFirstName_OrderBy",
+                name: "LastFirstName_Where_OrderBy",
                 table: "customers",
                 columns: new[] { "lastname", "firstname" });
 
             migrationBuilder.CreateIndex(
-                name: "FirstLastName_OrderBy",
+                name: "FirstLastName_Where_OrderBy",
                 table: "customers",
                 columns: new[] { "firstname", "lastname" });
 
             migrationBuilder.CreateIndex(
-                name: "Email_OrderBy",
+                name: "Email_Where_OrderBy",
                 table: "customers",
                 column: "email");
 
             migrationBuilder.CreateIndex(
-                name: "Company_OrderBy",
+                name: "CompanyCust_Where_OrderBy",
                 table: "customers",
                 column: "company");
         }
@@ -35,19 +35,19 @@ namespace EsignBackend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
-                name: "Company_OrderBy",
+                name: "CompanyCust_Where_OrderBy",
                 table: "customers");
 
             migrationBuilder.DropIndex(
-                name: "Email_OrderBy",
+                name: "Email_Where_OrderBy",
                 table: "customers");
 
             migrationBuilder.DropIndex(
-                name: "FirstLastName_OrderBy",
+                name: "FirstLastName_Where_OrderBy",
                 table: "customers");
 
             migrationBuilder.DropIndex(
-                name: "LastFirstName_OrderBy",
+                name: "LastFirstName_Where_OrderBy",
                 table: "customers");
         }
     }

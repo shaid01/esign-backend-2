@@ -750,11 +750,18 @@ namespace EsignBackend.Migrations
 
                     b.HasIndex("Certificatestatus");
 
-                    b.HasIndex("Customerid");
+                    b.HasIndex("Company")
+                        .HasDatabaseName("CompanyCert_Where_OrderBy");
+
+                    b.HasIndex("Customerid")
+                        .HasDatabaseName("CustomerID_Foreign");
 
                     b.HasIndex("Docstype");
 
                     b.HasIndex("Expire");
+
+                    b.HasIndex("Hpnumber")
+                        .HasDatabaseName("Hpnumber_Where_OrderBy");
 
                     b.HasIndex("Identify");
 
@@ -1092,10 +1099,22 @@ namespace EsignBackend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Company")
+                        .HasDatabaseName("CompanyCust_Where_OrderBy");
+
+                    b.HasIndex("Email")
+                        .HasDatabaseName("Email_Where_OrderBy");
+
                     b.HasIndex("Idnumber")
-                        .HasDatabaseName("IdNumber_OrderBy");
+                        .HasDatabaseName("IdNumber_Where_OrderBy");
 
                     b.HasIndex("Securityquestion");
+
+                    b.HasIndex("Firstname", "Lastname")
+                        .HasDatabaseName("FirstLastName_Where_OrderBy");
+
+                    b.HasIndex("Lastname", "Firstname")
+                        .HasDatabaseName("LastFirstName_Where_OrderBy");
 
                     b.ToTable("customers", (string)null);
                 });

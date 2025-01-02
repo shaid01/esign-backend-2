@@ -12,17 +12,17 @@ namespace EsignBackend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
-                name: "CustomerID_Query",
+                name: "CustomerID_Foreign",
                 table: "certificates",
                 column: "customerid");
 
             migrationBuilder.CreateIndex(
-                name: "Hpnumber_OrderBy",
+                name: "Hpnumber_Where_OrderBy",
                 table: "certificates",
                 column: "hpnumber");
 
             migrationBuilder.CreateIndex(
-                name: "Company_OrderBy",
+                name: "CompanyCert_Where_OrderBy",
                 table: "certificates",
                 column: "company");
         }
@@ -30,6 +30,17 @@ namespace EsignBackend.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropIndex(
+                name: "CompanyCert_Where_OrderBy",
+                table: "certificates");
+
+            migrationBuilder.DropIndex(
+                name: "Hpnumber_Where_OrderBy",
+                table: "certificates");
+
+            migrationBuilder.DropIndex(
+                name: "CustomerID_Foreign",
+                table: "certificates");
         }
     }
 }
