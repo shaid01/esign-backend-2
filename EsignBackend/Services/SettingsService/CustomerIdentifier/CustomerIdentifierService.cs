@@ -32,23 +32,23 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
         }
 
-        private bool isTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("isTheNameAlreadyInUse");
+            _logger.Debug("isNameAlreadyInUse");
             return _context.Custidents.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
         public async Task<ServiceResponse<int>> AddNewCustomerIdentifier(Custident customerIdentifer)
         {
             _logger.Debug("AddNewCertificatesStatus");
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = isTheNameAlreadyInUse(customerIdentifer.Title);
+            var serviceResponse = new ServiceResponse<int>();
+            var nameIsAlreadyTaken = isNameAlreadyInUse(customerIdentifer.Title);
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "CustomerIdentifer name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "CustomerIdentifer name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
             lock (_locker)
             {
@@ -58,17 +58,18 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newCustomerIdentifierInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Custidents.Count();
-                    return serviceRespone;
+                    serviceResponse.Data = newCustomerIdentifierInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Custidents.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewCertificatesStatus: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new customerIdentifer failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new customerIdentifer failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -132,9 +133,9 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             try
             {
                 _context.SaveChanges();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedCustomerIdentifierInDb.Entity.Id;
                 serviceResponse.Message = "CustomerIdentifer updated successfully.";
+                serviceResponse.Success = true;
                 return serviceResponse;
             }
             catch (Exception exception)

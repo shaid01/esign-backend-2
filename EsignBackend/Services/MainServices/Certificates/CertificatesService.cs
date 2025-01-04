@@ -63,31 +63,6 @@ namespace EsignBackend.Services.MainServices.Certificates
             _appSettings = appSettings.Value;
         }
 
-        public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
-        {
-            _logger.Debug("UpdateCertificate");
-
-            var serviceResponse = new ServiceResponse<int>();
-            updatedCertificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(updatedCertificate.Securityansware);
-            var updatedCertificateInDb = _context.Certificates.Update(updatedCertificate);
-            try
-            {
-                _context.SaveChanges();
-                serviceResponse.Success = true;
-                serviceResponse.Data = updatedCertificateInDb.Entity.Id;
-                serviceResponse.Message = "Certificate updated successfully.";
-                _logger.Debug("Changes have been saved");
-            }
-            catch (Exception exception)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = $"Updated failed. {exception}";
-                serviceResponse.Data = -1;
-                _logger.Debug("UpdateCertificate failed " + exception);
-            }
-            return serviceResponse;
-        }
-
         public CertificateDetailsExtendedDTO GetCertificateExtendedDetails(int id)
         {
             _logger.Debug("GetCertificateExtendedDetails");
@@ -277,13 +252,13 @@ namespace EsignBackend.Services.MainServices.Certificates
                     return serviceResponse;
                 }
 
-                //serviceRespone.Amount = (await query.ToListAsync()).Count(); //287
+                //serviceResponse.Amount = (await query.ToListAsync()).Count(); //287
 
                 //client side count - 287 - some records with not existed values in referenced tables were eliminated
                 /*
                     * full select query
                     */
-                //serviceRespone.Amount = (await query.AsNoTracking().ToListAsync()).Count();
+                //serviceResponse.Amount = (await query.AsNoTracking().ToListAsync()).Count();
 
                 //query = query.Skip(skip);
 
@@ -443,7 +418,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         {
             _logger.Debug("Hangfire Job - *************** UpdateExpiredCertificates ***************");
             var cert = _context.Certificatesstatuses.FirstOrDefault(cer => cer.Title.Equals("פג תוקף"));
-            var serviceRespone = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<int>();
             if (cert != null)
             {
                 var certificateStatus = cert.Id;
@@ -457,24 +432,25 @@ namespace EsignBackend.Services.MainServices.Certificates
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = expiredCertificates.Count();
-                    serviceRespone.Message = "Updated expired certificates successfully";
+                    serviceResponse.Data = expiredCertificates.Count();
+                    serviceResponse.Message = "Updated expired certificates successfully";
+                    serviceResponse.Success = true;
                 }
                 catch (Exception ex)
                 {
                     _logger.Error("UpdateExpiredCertificates error, " + ex.Message);
-                    serviceRespone.Success = false;
-                    serviceRespone.Data = -1;
-                    serviceRespone.Message = "Updating expired certificates failed. " + ex;
+                    serviceResponse.Success = false;
+                    serviceResponse.Data = -1;
+                    serviceResponse.Message = "Updating expired certificates failed. " + ex;
                 }
             }
-            return serviceRespone;
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<int>> AddCertificate(Certificate certificate)
         {
             _logger.Debug("AddCertificate");
-            var serviceRespone = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<int>();
             certificate.Issuedate = certificate.Issuedate.Value.ToLocalTime();
             certificate.Expiredate = certificate.Expiredate.Value.ToLocalTime();
             lock (_locker)
@@ -487,20 +463,47 @@ namespace EsignBackend.Services.MainServices.Certificates
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newCertificateInDb.Entity.Id;
+                    serviceResponse.Data = newCertificateInDb.Entity.Id;
                     _cache.Increment(CacheType.Certificate);
-                    return serviceRespone;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception ex)
                 {
                     _logger.Debug("exception detected while trying to AddCertificate - " + ex);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding certificate failed. {ex}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding certificate failed. {ex}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
+
+        public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
+        {
+            _logger.Debug("UpdateCertificate");
+
+            var serviceResponse = new ServiceResponse<int>();
+            updatedCertificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(updatedCertificate.Securityansware);
+            var updatedCertificateInDb = _context.Certificates.Update(updatedCertificate);
+            try
+            {
+                _context.SaveChanges();
+                serviceResponse.Data = updatedCertificateInDb.Entity.Id;
+                serviceResponse.Message = "Certificate updated successfully.";
+                serviceResponse.Success = true;
+                _logger.Debug("Changes have been saved");
+            }
+            catch (Exception exception)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Updated failed. {exception}";
+                serviceResponse.Data = -1;
+                _logger.Debug("UpdateCertificate failed " + exception);
+            }
+            return serviceResponse;
+        }
+
 
         public byte[] GenerateXlsxFile(IEnumerable<CertificateDetailsDTO> certificateDetails)
         {

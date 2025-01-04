@@ -32,9 +32,8 @@ namespace EsignBackend.Services.SettingsService.CallStatus
 
         }
 
-        private bool IsTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Callstatuses.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
@@ -42,15 +41,18 @@ namespace EsignBackend.Services.SettingsService.CallStatus
         {
             _logger.Debug("AddNewCallStatus");
 
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = IsTheNameAlreadyInUse(callstatus.Title);
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(callstatus.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "Callstatus name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Callstatus name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //callstatus.Id = GenerateId();
@@ -59,17 +61,18 @@ namespace EsignBackend.Services.SettingsService.CallStatus
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newCallStatusInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Callstatuses.Count();
-                    return serviceRespone;
+                    serviceResponse.Data = newCallStatusInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Callstatuses.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewCallStatus: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new expirationType failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new expirationType failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -128,14 +131,27 @@ namespace EsignBackend.Services.SettingsService.CallStatus
         public async Task<ServiceResponse<int>> UpdateCallStatus(Callstatus updatedCallstatus)
         {
             _logger.Debug("UpdateCallStatus");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCallstatus.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Callstatus name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedCallStatusInDb = _context.Callstatuses.Update(updatedCallstatus);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedCallStatusInDb.Entity.Id;
                 serviceResponse.Message = "CallStatus updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {

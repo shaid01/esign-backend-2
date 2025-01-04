@@ -30,9 +30,8 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
                 return maxId + 1;
             }
         }
-        private bool IsTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Certificatermearks.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
@@ -98,14 +97,27 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
         public async Task<ServiceResponse<int>> UpdateCertificateRemarks(CertificateRemark updatedCertificateRemarks)
         {
             _logger.Debug("UpdateCertificateRemarks");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificateRemarks.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "ExpirationType name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedCertificateRemarksInDb = _context.Certificatermearks.Update(updatedCertificateRemarks);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedCertificateRemarksInDb.Entity.Id;
                 serviceResponse.Message = "CertificateRemarks updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {
@@ -120,35 +132,41 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
         public async Task<ServiceResponse<int>> AddNewCertificateRemarks(CertificateRemark certificateRemark)
         {
             _logger.Debug("AddNewCertificateRemarks");
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = IsTheNameAlreadyInUse(certificateRemark.Title);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(certificateRemark.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "ExpirationType name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "ExpirationType name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //certificateRemark.Id = GenerateId();
                 //certificateRemark.Id = 0;
                
                 var newCertificateRemarksInDb = _context.Certificatermearks.Add(new CertificateRemark() { Title = certificateRemark.Title });
+
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Amount = _context.Certificatermearks.Count();
-                    serviceRespone.Data = newCertificateRemarksInDb.Entity.Id;
-                    return serviceRespone;
+                    serviceResponse.Amount = _context.Certificatermearks.Count();
+                    serviceResponse.Data = newCertificateRemarksInDb.Entity.Id;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewCertificateRemarks: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new expirationType failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new expirationType failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }

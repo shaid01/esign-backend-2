@@ -1,4 +1,5 @@
-﻿using EsignBackend.Models;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Microsoft.EntityFrameworkCore;
@@ -33,43 +34,46 @@ namespace EsignBackend.Services.SettingsService.Departments
             }
         }
 
-        private bool isTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("isTheNameAlreadyInUse");
             return _context.Departments.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
-        public async Task<ServiceResponse<int>> AddNewDepartment(Department department)
+        public async Task<ServiceResponse<int>> AddNewDepartment(Models.Department department)
         {
             _logger.Debug($"Add new Department {department.Id}, {department.Title}");
-            _logger.Debug("AddNewDepartment");
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = isTheNameAlreadyInUse(department.Title);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(department.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "Department name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Department name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //department.Id = GenerateId();
-                var newDepartmentInDb = _context.Departments.Add(new Department() { Title = department.Title });
+                var newDepartmentInDb = _context.Departments.Add(new Models.Department() { Title = department.Title });
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newDepartmentInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Departments.Count();
-                    return serviceRespone;
+                    serviceResponse.Data = newDepartmentInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Departments.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewDepartment: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new department failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new department failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -108,7 +112,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             var serviceResponse = new ServiceResponse<List<DepartmentDTO>>();
             serviceResponse.Amount = _context.Departments.Count();
 
-            List<Department> depts = null;
+            List<Models.Department> depts = null;
 
             try
             {
@@ -151,17 +155,30 @@ namespace EsignBackend.Services.SettingsService.Departments
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<int>> UpdateDepartment(Department updatedDepartment)
+        public async Task<ServiceResponse<int>> UpdateDepartment(Models.Department updatedDepartment)
         {
             _logger.Debug("UpdateDepartment");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedDepartment.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Department name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedDepartmentInDb = _context.Departments.Update(updatedDepartment);
+
             try
             {
                 _context.SaveChanges();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedDepartmentInDb.Entity.Id;
                 serviceResponse.Message = "Department updated successfully.";
+                serviceResponse.Success = true;
                 return serviceResponse;
             }
             catch (Exception exception)

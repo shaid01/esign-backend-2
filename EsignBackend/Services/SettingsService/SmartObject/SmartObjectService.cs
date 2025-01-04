@@ -1,4 +1,5 @@
-﻿using EsignBackend.Models;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -32,9 +33,8 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 
         }
 
-        private bool IsNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("IsNameAlreadyInUse");
             return _context.Smartobjects.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
@@ -132,14 +132,27 @@ namespace EsignBackend.Services.SettingsService.SmartObject
         public async Task<ServiceResponse<int>> UpdateSmartObject(Smartobject updatedSmartObject)
         {
             _logger.Debug("UpdateSmartObject");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var smartObjectNameIsAlreadyTaken = isNameAlreadyInUse(updatedSmartObject.Title);
+
+            if (smartObjectNameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "SmartObject name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedSmartObjectInDb = _context.Smartobjects.Update(updatedSmartObject);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedSmartObjectInDb.Entity.Id;
                 serviceResponse.Message = "SmartObject updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {
@@ -154,15 +167,18 @@ namespace EsignBackend.Services.SettingsService.SmartObject
         public async Task<ServiceResponse<int>> AddNewSmartObject(Smartobject smartobject)
         {
             _logger.Debug("AddNewSmartObject");
-            var serviceRespone = new ServiceResponse<int>();
-            var smartObjectNameIsAlreadyTaken = IsNameAlreadyInUse(smartobject.Title);
+            var serviceResponse = new ServiceResponse<int>();
+
+            var smartObjectNameIsAlreadyTaken = isNameAlreadyInUse(smartobject.Title);
+
             if (smartObjectNameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "SmartObject name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "SmartObject name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //smartobject.Id = GenerateId();
@@ -171,17 +187,18 @@ namespace EsignBackend.Services.SettingsService.SmartObject
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Amount = _context.Smartobjects.Count();
-                    serviceRespone.Data = newcertificatesStatusInDb.Entity.Id;
-                    return serviceRespone;
+                    serviceResponse.Amount = _context.Smartobjects.Count();
+                    serviceResponse.Data = newcertificatesStatusInDb.Entity.Id;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Debug("exception detected while trying to AddNewSmartObject: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new smartObject failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new smartObject failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }

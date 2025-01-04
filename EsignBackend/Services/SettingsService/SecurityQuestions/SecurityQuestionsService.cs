@@ -31,22 +31,25 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
         }
         private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("isNameAlreadyInUse");
             return _context.Securityquestions.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
         public async Task<ServiceResponse<int>> AddNewSecurityQuestion(Securityquestion securityQuestion)
         {
             _logger.Debug("AddNewSecurityQuestion");
-            var serviceRespone = new ServiceResponse<int>();
+
+            var serviceResponse = new ServiceResponse<int>();
+
             var nameIsAlreadyTaken = isNameAlreadyInUse(securityQuestion.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "SecurityQuestion name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "SecurityQuestion name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //securityQuestion.Id = GenerateId();
@@ -55,17 +58,18 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Amount = _context.Securityquestions.Count();
-                    serviceRespone.Data = newSecurityQuestionInDb.Entity.Id;
-                    return serviceRespone;
+                    serviceResponse.Amount = _context.Securityquestions.Count();
+                    serviceResponse.Data = newSecurityQuestionInDb.Entity.Id;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewSecurityQuestion: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new expirationType failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new expirationType failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -124,14 +128,27 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
         public async Task<ServiceResponse<int>> UpdateSecurityQuestion(Securityquestion updatedSecurityQuestion)
         {
             _logger.Debug("UpdateSecurityQuestion");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedSecurityQuestion.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "SecurityQuestion name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedSecurityQuestionInDb = _context.Securityquestions.Update(updatedSecurityQuestion);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedSecurityQuestionInDb.Entity.Id;
                 serviceResponse.Message = "Securityquestion updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {

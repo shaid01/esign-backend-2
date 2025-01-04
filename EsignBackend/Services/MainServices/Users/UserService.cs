@@ -148,16 +148,16 @@ namespace EsignBackend.Services.CharacterService
 
             return serviceResponse;
 
-            //serviceRespone.Amount = dbUsers.Count();
-            //serviceRespone.Data = take == UNLIMITED ? dbUsers.Skip(skip).ToList() : dbUsers.Skip(skip).Take(take).ToList();
-            //return serviceRespone;
+            //serviceResponse.Amount = dbUsers.Count();
+            //serviceResponse.Data = take == UNLIMITED ? dbUsers.Skip(skip).ToList() : dbUsers.Skip(skip).Take(take).ToList();
+            //return serviceResponse;
         }
 
         public UserDTO GetUserByUsername(string username)
         {
             _logger.Debug("GetUserByUsername");
 
-            //var serviceRespone = new ServiceResponse<UserDTO>();
+            //var serviceResponse = new ServiceResponse<UserDTO>();
 
             var user = _context.Buusers
                 .Where(x => x.Username == username)
@@ -168,9 +168,9 @@ namespace EsignBackend.Services.CharacterService
 
             //if (user == null)
             //{
-            //    serviceRespone.Amount = 0;
+            //    serviceResponse.Amount = 0;
             //    _logger.Error($"Not found user by Username = {username}");
-            //    return serviceRespone;
+            //    return serviceResponse;
             //}
 
             Department department = _context.Departments
@@ -193,15 +193,15 @@ namespace EsignBackend.Services.CharacterService
 
             //if (department == null)
             //{
-            //    serviceRespone.Success = false;
-            //    serviceRespone.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmentid}";
-            //    serviceRespone.Data = new UserDTO(user, "???");
-            //    return serviceRespone;
+            //    serviceResponse.Success = false;
+            //    serviceResponse.Message = $" Not found department for user {user.Username}: departmentId = {user.Departmentid}";
+            //    serviceResponse.Data = new UserDTO(user, "???");
+            //    return serviceResponse;
             //}
 
-            //serviceRespone.Amount = 1;
-            //serviceRespone.Data = new UserDTO(user, department.Title);
-            //return serviceRespone;
+            //serviceResponse.Amount = 1;
+            //serviceResponse.Data = new UserDTO(user, department.Title);
+            //return serviceResponse;
 
             return userDto;
         }
@@ -209,9 +209,9 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<int>> GetAmountOfUsers()
         {
             _logger.Debug("GetAmountOfUsers");
-            var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _cache.GetCounterByType(CacheType.Users);
-            return serviceRespone;
+            var serviceResponse = new ServiceResponse<int>();
+            serviceResponse.Data = _cache.GetCounterByType(CacheType.Users);
+            return serviceResponse;
         }
 
         /// <summary>
@@ -224,14 +224,14 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<int>> AddNewUser(Buuser newUser)
         {
             _logger.Debug("AddNewUser");
-            var serviceRespone = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<int>();
             var userNameIsAlreadyTaken = IsUserNameAlreadyInUse(newUser.Username);
             if (userNameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "Username is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Username is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
             lock (_locker)
             {
@@ -244,17 +244,18 @@ namespace EsignBackend.Services.CharacterService
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newUserInDb.Entity.Id;
+                    serviceResponse.Data = newUserInDb.Entity.Id;
                     _cache.Increment(CacheType.Users);
-                    return serviceRespone;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception ex)
                 {
                     _logger.Debug("AddNewUser exception: " + ex);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Registration failed. {ex}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Registration failed. {ex}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -273,9 +274,9 @@ namespace EsignBackend.Services.CharacterService
             try
             {
                 _context.SaveChanges();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedUserInDb.Entity.Id;
                 serviceResponse.Message = "User updated successfully.";
+                serviceResponse.Success = true;
                 return serviceResponse;
             }
             catch (Exception exception)
@@ -299,9 +300,9 @@ namespace EsignBackend.Services.CharacterService
             try
             {
                 _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedUserInDb.Entity.Id;
                 serviceResponse.Message = "Password updated successfully.";
+                serviceResponse.Success = true;
                 return serviceResponse;
             }
             catch (Exception exception)

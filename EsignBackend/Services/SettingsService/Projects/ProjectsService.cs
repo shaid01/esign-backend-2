@@ -26,9 +26,8 @@ namespace EsignBackend.Services.SettingsService
             SUBPROJECT
         }
 
-        private bool IsTheNameAlreadyInUse(string title, projectType projectType)
+        private bool isNameAlreadyInUse(string title, projectType projectType)
         {
-            _logger.Debug("IsTheNameAlreadyInUse");
             if (projectType == projectType.SUBPROJECT)
             {
                 return _context.Subprojects.Where(subproject => subproject.Title.Equals(title)).Count() != 0;
@@ -76,14 +75,27 @@ namespace EsignBackend.Services.SettingsService
         public async Task<ServiceResponse<int>> UpdateProject(Project updatedProject)
         {
             _logger.Debug("UpdateProject");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var projectNameIsAlreadyTaken = isNameAlreadyInUse(updatedProject.Title, projectType.PROJECT);
+
+            if (projectNameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Project name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedProjectInDb = _context.Projects.Update(updatedProject);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedProjectInDb.Entity.Id;
                 serviceResponse.Message = "Project updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {
@@ -215,14 +227,27 @@ namespace EsignBackend.Services.SettingsService
         public async Task<ServiceResponse<int>> UpdateSubproject(Subproject updatedSubproject)
         {
             _logger.Debug("UpdateSubproject");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var subprojectNameIsAlreadyTaken = isNameAlreadyInUse(updatedSubproject.Title, projectType.SUBPROJECT);
+
+            if (subprojectNameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "SubProject name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedSubprojectInDb = _context.Subprojects.Update(updatedSubproject);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedSubprojectInDb.Entity.Id;
                 serviceResponse.Message = "Subproject updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {
@@ -237,34 +262,41 @@ namespace EsignBackend.Services.SettingsService
         public async Task<ServiceResponse<int>> AddNewProject(Project newProject)
         {
             _logger.Debug("AddNewProject");
-            var serviceRespone = new ServiceResponse<int>();
-            var projectNameIsAlreadyTaken = IsTheNameAlreadyInUse(newProject.Title, projectType.PROJECT);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var projectNameIsAlreadyTaken = isNameAlreadyInUse(newProject.Title, projectType.PROJECT);
+
             if (projectNameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "Project name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Project name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //newProject.Id = GenerateId(projectType.PROJECT);
                 newProject.Id = 0;
+
                 var newProjectInDb = _context.Projects.Add(newProject);
+
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newProjectInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Projects.Count();
-                    return serviceRespone;
+                    serviceResponse.Data = newProjectInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Projects.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewProject: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new project failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new project failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -272,15 +304,19 @@ namespace EsignBackend.Services.SettingsService
         public async Task<ServiceResponse<int>> AddNewSubroject(Subproject newSubproject)
         {
             _logger.Debug("AddNewSubroject");
-            var serviceRespone = new ServiceResponse<int>();
-            var subprojectNameIsAlreadyTaken = IsTheNameAlreadyInUse(newSubproject.Title, projectType.SUBPROJECT);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var subprojectNameIsAlreadyTaken = isNameAlreadyInUse(newSubproject.Title, projectType.SUBPROJECT);
+
             if (subprojectNameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "Project name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "SubProject name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //newSubproject.Id = GenerateId(projectType.SUBPROJECT);
@@ -289,17 +325,18 @@ namespace EsignBackend.Services.SettingsService
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newSubprojectInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Subprojects.Count();
-                    return serviceRespone;
+                    serviceResponse.Data = newSubprojectInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Subprojects.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewSubroject: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new subproject failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new subproject failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }

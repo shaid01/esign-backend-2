@@ -31,43 +31,49 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             }
         }
 
-        private bool isTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("isTheNameAlreadyInUse");
             return _context.Docstypes.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
         public async Task<ServiceResponse<int>> AddNewIdentificationDocument(Docstype identificationDocument)
         {
             _logger.Debug("AddNewIdentificationDocument");
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = isTheNameAlreadyInUse(identificationDocument.Title);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(identificationDocument.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "IdentificationDocument name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "IdentificationDocument name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 /* identificationDocument.Id = GenerateId();*/
                 identificationDocument.Id = 0;
+
                 var newIdentificationDocumentInDb = _context.Docstypes.Add(identificationDocument);
+
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Amount = _context.Docstypes.Count();
-                    serviceRespone.Data = newIdentificationDocumentInDb.Entity.Id;
-                    return serviceRespone;
+                    serviceResponse.Amount = _context.Docstypes.Count();
+                    serviceResponse.Data = newIdentificationDocumentInDb.Entity.Id;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewIdentificationDocument: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new identificationDocument failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new identificationDocument failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -126,14 +132,27 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
         public async Task<ServiceResponse<int>> UpdateIdentificationDocument(Docstype updatedIdentificationDocument)
         {
             _logger.Debug("UpdateIdentificationDocument");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedIdentificationDocument.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "IdentificationDocument name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedIdentificationDocumentInDb = _context.Docstypes.Update(updatedIdentificationDocument);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedIdentificationDocumentInDb.Entity.Id;
                 serviceResponse.Message = "IdentificationDocument updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {

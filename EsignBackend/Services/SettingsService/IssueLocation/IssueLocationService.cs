@@ -31,9 +31,8 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             }
         }
 
-        private bool isTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("isTheNameAlreadyInUse");
             return _context.Issplaces.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
@@ -41,34 +40,40 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
         {
             _logger.Debug("AddNewIssueLocation");
 
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = isTheNameAlreadyInUse(issueLocation.Title);
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(issueLocation.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "IssueLocation name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "IssueLocation name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //issueLocation.Id = GenerateId();
                 issueLocation.Id = 0;
+
                 var newIssueLocationInDb = _context.Issplaces.Add(issueLocation);
+
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newIssueLocationInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Issplaces.Count();
-                    return serviceRespone;
+                    serviceResponse.Data = newIssueLocationInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Issplaces.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewIssueLocation: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new issueLocation failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new issueLocation failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -128,14 +133,27 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
         public async Task<ServiceResponse<int>> UpdateIssueLocation(Issplace updatedIssueLocation)
         {
             _logger.Debug("UpdateIssueLocation");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedIssueLocation.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "IssueLocation name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedIssueLocationInDb = _context.Issplaces.Update(updatedIssueLocation);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedIssueLocationInDb.Entity.Id;
                 serviceResponse.Message = "IssueLocation updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {

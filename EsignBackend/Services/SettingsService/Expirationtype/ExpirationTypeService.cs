@@ -31,9 +31,8 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
         }
 
-        private bool isTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("isTheNameAlreadyInUse");
             return _context.Expirationtypes.Where(item => item.Title.Equals(title)).Count() != 0;
         }
         /*        public async Task<ServiceResponse<int>> GetAmountOfExpirationTypes()
@@ -98,14 +97,27 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
         public async Task<ServiceResponse<int>> UpdateExpirationType(Models.Expirationtype updatedExpirationType)
         {
             _logger.Debug("UpdateExpirationType");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedExpirationType.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "ExpirationType name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedExpirationTypeInDb = _context.Expirationtypes.Update(updatedExpirationType);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedExpirationTypeInDb.Entity.Id;
                 serviceResponse.Message = "ExpirationType updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {
@@ -120,34 +132,41 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
         public async Task<ServiceResponse<int>> AddNewExpirationType(Models.Expirationtype expirationType)
         {
             _logger.Debug("AddNewExpirationType");
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = isTheNameAlreadyInUse(expirationType.Title);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(expirationType.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "ExpirationType name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "ExpirationType name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 /*expirationType.Id = GenerateId();*/
                 expirationType.Id = 0;
+
                 var newExpirationTypeInDb = _context.Expirationtypes.Add(expirationType);
+
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Amount = _context.Expirationtypes.Count();
-                    serviceRespone.Data = newExpirationTypeInDb.Entity.Id;
-                    return serviceRespone;
+                    serviceResponse.Amount = _context.Expirationtypes.Count();
+                    serviceResponse.Data = newExpirationTypeInDb.Entity.Id;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Debug("exception detected while trying to AddNewExpirationType: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new expirationType failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new expirationType failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Serilog;
@@ -31,43 +32,49 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             }
         }
 
-        private bool IsTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Callpriorities.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
         public async Task<ServiceResponse<int>> AddNewCallPriority(Callpriority callPriority)
         {
             _logger.Debug("AddNewCallPriority");
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyInUse = IsTheNameAlreadyInUse(callPriority.Title);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyInUse = isNameAlreadyInUse(callPriority.Title);
+
             if (nameIsAlreadyInUse)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "Call priority name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Call priority name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //callPriority.Id = GenerateId();
                 callPriority.Id = 0;
+
                 var newCallsPriorityInDb = _context.Callpriorities.Add(callPriority);
+
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newCallsPriorityInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Callpriorities.Count();
-                    return serviceRespone;
+                    serviceResponse.Data = newCallsPriorityInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Callpriorities.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewCallPriority: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new callPriority failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new callPriority failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -126,14 +133,27 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
         public async Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority)
         {
             _logger.Debug("UpdateCallPriority");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyInUse = isNameAlreadyInUse(updatedCallPriority.Title);
+
+            if (nameIsAlreadyInUse)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Call priority name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedCallsPriorityInDb = _context.Callpriorities.Update(updatedCallPriority);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedCallsPriorityInDb.Entity.Id;
                 serviceResponse.Message = "CallPriority updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {

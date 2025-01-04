@@ -30,23 +30,25 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             }
         }
 
-        private bool IsTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Isscerts.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
         public async Task<ServiceResponse<int>> AddNewCertificateIssuer(Isscert certificateIssuer)
         {
             _logger.Debug("AddNewCertificatesStatus");
-            var serviceRespone = new ServiceResponse<int>();
-            var nameIsAlreadyTaken = IsTheNameAlreadyInUse(certificateIssuer.Title);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(certificateIssuer.Title);
+
             if (nameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "CertificateIssuer name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "CertificateIssuer name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
 
             lock (_locker)
@@ -55,20 +57,23 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                 certificateIssuer.Id = 0;
 
                 var newCertificateIssuerInDb = _context.Isscerts.Add(certificateIssuer);
+
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newCertificateIssuerInDb.Entity.Id;
-                    serviceRespone.Amount = _context.Isscerts.Count();
-                    return serviceRespone;
+                    serviceResponse.Success = true;
+                    serviceResponse.Data = newCertificateIssuerInDb.Entity.Id;
+                    serviceResponse.Amount = _context.Isscerts.Count();
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("exception detected while trying to AddNewCertificatesStatus: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new certificateIssuer failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new certificateIssuer failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
@@ -126,15 +131,28 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
         public async Task<ServiceResponse<int>> UpdateCertificateIssuer(Isscert updatedCertificateIssuer)
         {
-            _logger.Debug("UpdateCustomerIdentifer");
+            _logger.Debug("UpdateCertificateIssuer");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificateIssuer.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "CertificateIssuer name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedCertificateIssuerInDb = _context.Isscerts.Update(updatedCertificateIssuer);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedCertificateIssuerInDb.Entity.Id;
                 serviceResponse.Message = "CertificateIssuer updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {

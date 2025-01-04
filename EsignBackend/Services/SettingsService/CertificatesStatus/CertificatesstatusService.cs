@@ -30,9 +30,8 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             }
         }
 
-        private bool IsTheNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(string title)
         {
-            _logger.Debug("IsTheNameAlreadyInUse");
             return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
         }
 
@@ -110,13 +109,25 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             _logger.Debug("UpdateCertificatesStatus");
 
             var serviceResponse = new ServiceResponse<int>();
+
+            var certificatesStatusNameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificatestatus.Title);
+
+            if (certificatesStatusNameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "certificatesStatus name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedCertificatesStatusInDb = _context.Certificatesstatuses.Update(updatedCertificatestatus);
+
             try
             {
                 await _context.SaveChangesAsync();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedCertificatesStatusInDb.Entity.Id;
                 serviceResponse.Message = "Certificate Status updated successfully.";
+                serviceResponse.Success = true;
             }
             catch (Exception exception)
             {
@@ -131,15 +142,19 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
         public async Task<ServiceResponse<int>> AddNewCertificatesStatus(Certificatesstatus certificatestatus)
         {
             _logger.Debug("AddNewCertificatesStatus");
-            var serviceRespone = new ServiceResponse<int>();
-            var certificatesStatusNameIsAlreadyTaken = IsTheNameAlreadyInUse(certificatestatus.Title);
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            var certificatesStatusNameIsAlreadyTaken = isNameAlreadyInUse(certificatestatus.Title);
+
             if (certificatesStatusNameIsAlreadyTaken)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = "certificatesStatus name is already taken";
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "certificatesStatus name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
+
             lock (_locker)
             {
                 //certificatestatus.Id = GenerateId();
@@ -148,17 +163,18 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Amount = _context.Certificatesstatuses.Count();
-                    serviceRespone.Data = newcertificatesStatusInDb.Entity.Id;
-                    return serviceRespone;
+                    serviceResponse.Amount = _context.Certificatesstatuses.Count();
+                    serviceResponse.Data = newcertificatesStatusInDb.Entity.Id;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Debug("exception detected while trying to AddNewCertificatesStatus");
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Adding new certificatesStatus failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Adding new certificatesStatus failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }

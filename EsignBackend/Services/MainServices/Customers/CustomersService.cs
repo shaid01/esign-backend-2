@@ -42,7 +42,7 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetCustomers");
 
-            var serviceRespone = new ServiceResponse<List<CustomerDTO>>();
+            var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
 
             List<Customer> customers = null;
 
@@ -62,11 +62,11 @@ namespace EsignBackend.Services.CharacterService
             {
                 _logger.Error($"Error while processing DB query in GetCustomers. {ex.Message}");
 
-                serviceRespone.Data = null;
-                serviceRespone.Success = false;
-                serviceRespone.Message = ex.Message;
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
 
-                return serviceRespone;
+                return serviceResponse;
             }
 
             var customersList = new List<CustomerDTO>();
@@ -76,11 +76,11 @@ namespace EsignBackend.Services.CharacterService
                 customersList.Add(new CustomerDTO(customer));
             }
 
-            serviceRespone.Success = true;
-            serviceRespone.Data = customersList;
-            serviceRespone.Amount = _cache.GetCounterByType(CacheType.Customers);
+            serviceResponse.Success = true;
+            serviceResponse.Data = customersList;
+            serviceResponse.Amount = _cache.GetCounterByType(CacheType.Customers);
 
-            return serviceRespone;
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<IEnumerable<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
@@ -164,9 +164,9 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()
         {
             _logger.Debug("GetAmountOfCustomers");
-            var serviceRespone = new ServiceResponse<int>();
-            serviceRespone.Data = _cache.GetCounterByType(CacheType.Customers);
-            return serviceRespone;
+            var serviceResponse = new ServiceResponse<int>();
+            serviceResponse.Data = _cache.GetCounterByType(CacheType.Customers);
+            return serviceResponse;
         }
 
         public CustomerDTO GetCustomerById(int id)
@@ -194,7 +194,7 @@ namespace EsignBackend.Services.CharacterService
 
             var customerDto = new CustomerDTO(customer);
 
-            //return serviceRespone;
+            //return serviceResponse;
             return customerDto;
         }
 
@@ -215,9 +215,9 @@ namespace EsignBackend.Services.CharacterService
             try
             {
                 _context.SaveChanges();
-                serviceResponse.Success = true;
                 serviceResponse.Data = updatedCustomerInDb.Entity.Id;
                 serviceResponse.Message = "Customer updated successfully.";
+                serviceResponse.Success = true;
                 return serviceResponse;
             }
             catch (Exception exception)
@@ -234,15 +234,15 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("AddNewCustomer");
 
-            var serviceRespone = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<int>();
             var customerIdAlreadyInDb = IsUserIdAlreadyInUse(customer.Idnumber);
             if (customerIdAlreadyInDb)
             {
-                serviceRespone.Success = false;
-                serviceRespone.Message = $"Customer {customer.Idnumber} is already exists";
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Customer {customer.Idnumber} is already exists";
                 _logger.Error($"Customer {customer.Idnumber} is already exists");
-                serviceRespone.Data = -1;
-                return serviceRespone;
+                serviceResponse.Data = -1;
+                return serviceResponse;
             }
 
             lock (_locker)
@@ -255,17 +255,18 @@ namespace EsignBackend.Services.CharacterService
                 try
                 {
                     _context.SaveChanges();
-                    serviceRespone.Data = newCustomerInDb.Entity.Id;
+                    serviceResponse.Data = newCustomerInDb.Entity.Id;
                     _cache.Increment(CacheType.Customers);
-                    return serviceRespone;
+                    serviceResponse.Success = true;
+                    return serviceResponse;
                 }
                 catch (Exception exception)
                 {
                     _logger.Error("Exception detected while trying to AddNewCustomer: " + exception);
-                    serviceRespone.Success = false;
-                    serviceRespone.Message = $"Registration failed. {exception}";
-                    serviceRespone.Data = -1;
-                    return serviceRespone;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Registration failed. {exception}";
+                    serviceResponse.Data = -1;
+                    return serviceResponse;
                 }
             }
         }
