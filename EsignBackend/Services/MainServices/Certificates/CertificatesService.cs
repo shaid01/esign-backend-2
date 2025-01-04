@@ -20,6 +20,9 @@ using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.InkML;
 using System.Runtime.ConstrainedExecution;
 using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.Extensions.Options;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using System.Composition;
 
 namespace EsignBackend.Services.MainServices.Certificates
 {
@@ -49,13 +52,15 @@ namespace EsignBackend.Services.MainServices.Certificates
         private static object _locker = new object();
         private const int UNLIMITED = -1;
         private IServiceScopeFactory _scopeFactory;
+        private readonly AppSettings _appSettings;
 
-        public CertificatesService(AppDbContext context, ILogger logger, ICache cache, IServiceScopeFactory scopeFactory)
+        public CertificatesService(AppDbContext context, ILogger logger, ICache cache, IServiceScopeFactory scopeFactory, IOptions<AppSettings> appSettings)
         {
             _context = context;
             _logger = logger;
             _cache = cache;
             _scopeFactory = scopeFactory;
+            _appSettings = appSettings.Value;
         }
 
         public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
@@ -260,6 +265,17 @@ namespace EsignBackend.Services.MainServices.Certificates
             try
             {
                 serviceResponse.Amount = await query.CountAsync(); //294
+
+                if ((serviceResponse.Amount > _appSettings.MaxRecordsForExport) && (take == UNLIMITED))
+                {
+                    _logger.Error($"Certificates: Too many records for export: {serviceResponse.Amount}");
+
+                    serviceResponse.Data = null;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Too many records for export: {serviceResponse.Amount}";
+
+                    return serviceResponse;
+                }
 
                 //serviceRespone.Amount = (await query.ToListAsync()).Count(); //287
 

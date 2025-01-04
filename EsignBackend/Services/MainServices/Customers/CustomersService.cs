@@ -6,6 +6,7 @@ using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.Tools;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,14 @@ namespace EsignBackend.Services.CharacterService
         private readonly ILogger _logger;
         private static object _locker = new object();
         private const int UNLIMITED = -1;
+        private readonly AppSettings _appSettings;
 
-        public CustomersService(AppDbContext context, ILogger logger, ICache cache)
+        public CustomersService(AppDbContext context, ILogger logger, ICache cache, IOptions<AppSettings> appSettings)
         {
             _context = context;
             _logger = logger;
             _cache = cache;
+            _appSettings = appSettings.Value;
         }
 
         private bool IsUserIdAlreadyInUse(string username)
@@ -114,11 +117,22 @@ namespace EsignBackend.Services.CharacterService
             {
                 serviceResponse.Amount = await query.CountAsync();
 
-                query = query.Skip(skip);
+                if ((serviceResponse.Amount > _appSettings.MaxRecordsForExport) && (take == UNLIMITED))
+                {
+                    _logger.Error($"Customers: Too many records for export: {serviceResponse.Amount}");
+
+                    serviceResponse.Data = null;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = $"Too many records for export: {serviceResponse.Amount}";
+
+                    return serviceResponse;
+                }
+
+                //query = query.Skip(skip);
 
                 if (take != UNLIMITED)
                 {
-                    query = query.Take(take);
+                    query = query.Skip(skip).Take(take);
                 }
 
                 customerList = await query.ToListAsync();

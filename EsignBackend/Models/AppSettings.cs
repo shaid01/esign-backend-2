@@ -12,5 +12,7 @@ namespace EsignBackend.Models
         public int SessionExpireMinuteTime { get; set; }
 
         public int SqlServerWaitTimeToExecuteCommand {  get; set; }
+
+        public int MaxRecordsForExport { get; set; }
     }
 }

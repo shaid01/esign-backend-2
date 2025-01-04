@@ -31,7 +31,7 @@ CREATE TABLE dbo.Tmp_certificates
 	licenceid nvarchar(50) NULL,
 	hotem nvarchar(50) NULL,
 	securityquestion float(53) NULL,
-	securityansware nvarchar(250) NULL,
+	securityansware nvarchar(900) NULL,
 	remarksdesc nvarchar(250) NULL,
 	job nvarchar(250) NULL,
 	identify float(53) NULL,
@@ -50,7 +50,7 @@ SET IDENTITY_INSERT dbo.Tmp_certificates ON
 GO
 IF EXISTS(SELECT * FROM dbo.certificates)
 	 EXEC('INSERT INTO dbo.Tmp_certificates (id, project, company, hpnumber, email, issuedate, expiredate, expire, smartobject, certificatestatus, customerid, subproject, docstype, passportid, licenceid, hotem, securityquestion, securityansware, remarksdesc, job, identify, certificateissuer, issuerplace, remarks, ducrypt, attorneylicensenumber, notariolicensenumber)
-		SELECT id, project, CONVERT(nvarchar(150), company), hpnumber, CONVERT(nvarchar(150), email), issuedate, expiredate, expire, smartobject, certificatestatus, customerid, subproject, docstype, passportid, licenceid, hotem, securityquestion, CONVERT(nvarchar(250), securityansware), CONVERT(nvarchar(250), remarksdesc), CONVERT(nvarchar(250), job), identify, certificateissuer, issuerplace, CONVERT(nvarchar(250), remarks), ducrypt, attorneylicensenumber, notariolicensenumber FROM dbo.certificates WITH (HOLDLOCK TABLOCKX)')
+		SELECT id, project, CONVERT(nvarchar(150), company), hpnumber, CONVERT(nvarchar(150), email), issuedate, expiredate, expire, smartobject, certificatestatus, customerid, subproject, docstype, passportid, licenceid, hotem, securityquestion, CONVERT(nvarchar(900), securityansware), CONVERT(nvarchar(250), remarksdesc), CONVERT(nvarchar(250), job), identify, certificateissuer, issuerplace, CONVERT(nvarchar(250), remarks), ducrypt, attorneylicensenumber, notariolicensenumber FROM dbo.certificates WITH (HOLDLOCK TABLOCKX)')
 GO
 SET IDENTITY_INSERT dbo.Tmp_certificates OFF
 GO

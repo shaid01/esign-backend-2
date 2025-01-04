@@ -25,7 +25,14 @@ namespace EsignBackend.Models
             this.Licenseid = certificate.Licenceid;
             this.Signer = HttpUtility.HtmlDecode(certificate.Hotem);
             this.Securityquestion = certificate.Securityquestion;
-            this.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificate.Securityansware);
+            try
+            {
+                this.Securityanswer = EncryptDecryptHandler.decryptSecurityAns(certificate.Securityansware);
+            }
+            catch (Exception)
+            {
+                this.Securityanswer = "ERROR";
+            }
             this.Remarks = HttpUtility.HtmlDecode(certificate.Remarks);
             this.Remarkdesc = HttpUtility.HtmlDecode(certificate.Remarksdesc);
             this.Job = HttpUtility.HtmlDecode(certificate.Job);
