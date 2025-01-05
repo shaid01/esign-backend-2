@@ -40,9 +40,12 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
         public async Task<ServiceResponse<int>> AddNewCustomerIdentifier(Custident customerIdentifer)
         {
-            _logger.Debug("AddNewCertificatesStatus");
+            _logger.Debug("AddNewCustomerIdentifier");
+
             var serviceResponse = new ServiceResponse<int>();
+
             var nameIsAlreadyTaken = isNameAlreadyInUse(customerIdentifer.Title);
+
             if (nameIsAlreadyTaken)
             {
                 serviceResponse.Success = false;
@@ -50,6 +53,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
+
             lock (_locker)
             {
                 //customerIdentifer.Id = GenerateId();
@@ -128,8 +132,21 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
         public async Task<ServiceResponse<int>> UpdateCustomerIdentifer(Custident updatedCustomerIdentifer)
         {
             _logger.Debug("UpdateCustomerIdentifer");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCustomerIdentifer.Title);
+
+            if (nameIsAlreadyTaken)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "CustomerIdentifer name is already taken";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var updatedCustomerIdentifierInDb = _context.Custidents.Update(updatedCustomerIdentifer);
+
             try
             {
                 _context.SaveChanges();
