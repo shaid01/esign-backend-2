@@ -46,17 +46,25 @@ namespace EsignBackend.Services.CharacterService
 
             List<Customer> customers = null;
 
-            try
-            {
-                customers = await _context.Customers
+            var query = _context.Customers
                     .Include(c => c.RelatedSecurityquestion)
                     //.Where(c => c.Idnumber != "")
-                    .AsNoTracking()
+                    .AsNoTracking();
+
+            query = query.Skip(skip);
+
+            if (take != UNLIMITED)
+            {
+                query = query.Take(take);
+            }
+
+            try
+            {
+                customers = await query
 
                     //.OrderBy(c => c.Idnumber)
                     .OrderByDescending(c => c.Id)
-
-                    .Skip(skip).Take(take).ToListAsync();
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
