@@ -114,20 +114,21 @@ namespace EsignBackend.Services.MainServices.Certificates
                 //  .Include(cer => cer.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
-                .AsNoTracking();
+                .AsNoTracking()
+                .OrderByDescending(x => x.Issuedate);
 
-            query = query.Skip(skip);
+            query = (IOrderedQueryable<Certificate>)query.Skip(skip);
 
             if (take != UNLIMITED)
             {
-                query = query.Take(take);
+                query = (IOrderedQueryable<Certificate>)query.Take(take);
             }
 
             try
             {
                 certificates = await query
 
-                    .OrderByDescending(x => x.Issuedate)
+                    //.OrderByDescending(x => x.Issuedate)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -273,13 +274,15 @@ namespace EsignBackend.Services.MainServices.Certificates
 
                 //serviceResponse.Amount = certificatesList.Count;
 
+                query = query.OrderByDescending(cer => EF.Property<object>(cer, "Issuedate"));
+
                 if (take != UNLIMITED)
                 {
                     query = query.Skip(skip).Take(take);
                 }
 
                 //query = query.OrderByDescending(cer => cer.Issuedate);
-                query = query.OrderByDescending(cer => EF.Property<object>(cer, "Issuedate"));
+                //query = query.OrderByDescending(cer => EF.Property<object>(cer, "Issuedate"));
 
                 certificatesList = await query.ToListAsync();
             }

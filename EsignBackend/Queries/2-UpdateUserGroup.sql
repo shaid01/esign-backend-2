@@ -17,3 +17,8 @@ update buusers
 set usergroup = 'תומך'
 where usergroup = 'אורח'
 GO
+
+update buusers
+set usergroup = 'תומך'
+where usergroup = 'מתאם' OR usergroup = '' OR usergroup IS NULL
+GO

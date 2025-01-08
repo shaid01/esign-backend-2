@@ -48,7 +48,8 @@ namespace EsignBackend.Services.CharacterService
 
             var query = _context.Customers
                     .Include(c => c.RelatedSecurityquestion)
-                    //.Where(c => c.Idnumber != "")
+                     //.Where(c => c.Idnumber != "")
+                    .OrderByDescending(c => c.Id)
                     .AsNoTracking();
 
             query = query.Skip(skip);
@@ -62,8 +63,7 @@ namespace EsignBackend.Services.CharacterService
             {
                 customers = await query
 
-                    //.OrderBy(c => c.Idnumber)
-                    .OrderByDescending(c => c.Id)
+                    //.OrderByDescending(c => c.Id)
                     .ToListAsync();
             }
             catch (Exception ex)
