@@ -1,4 +1,6 @@
-﻿"the query had to wait for 83 seconds for Memory Grant during execution" - reason NVARCHAR(MAX)?
+﻿OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF doesn't work in MSSQL14
+
+"the query had to wait for 83 seconds for Memory Grant during execution" - reason NVARCHAR(MAX)?
 
 upgrade
 	"Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20"

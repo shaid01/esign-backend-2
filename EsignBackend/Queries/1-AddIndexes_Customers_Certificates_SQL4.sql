@@ -1,0 +1,18 @@
+USE [Esign]
+GO
+SET ANSI_PADDING ON
+GO
+
+/****** Object:  Index [IdNumber_Where_OrderBy]    Script Date: 08/12/2024 10:24:49 ******/
+CREATE NONCLUSTERED INDEX IdNumber_Where_OrderBy ON [dbo].[customers]
+(
+	[idnumber] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+/****** Object:  Index [IssueDate_OrderBy_Desc]    Script Date: 09/12/2024 11:55:20 ******/
+CREATE NONCLUSTERED INDEX [IssueDate_OrderBy_Desc] ON [dbo].[certificates]
+(
+	[issuedate] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
