@@ -381,20 +381,24 @@ namespace EsignBackend.Services.MainServices.Certificates
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
             _logger.Debug("CheckSecurityAnswer");
-            var ServiceResponse = new ServiceResponse<bool>();
+
+            var serviceResponse = new ServiceResponse<bool>();
             secAns = EncryptDecryptHandler.encryptSecurityAns(secAns);
 
             var certificate = _context.Certificates.Include(cer => cer.RelatedCustomer)
                 .Where(cer => cer.Id == cerId).ToListAsync().Result.FirstOrDefault();
 
-            var certificateSecurityAnswerMatches = certificate.Securityansware.Equals(secAns)
-                && certificate.Securityquestion == question;
+            var certificateSecurityAnswerMatches = 
+                certificate.Securityansware.ToLower().Equals(secAns.ToLower()) && certificate.Securityquestion == question;
+
             bool customerSecurityAnswerMatches = false;
+
             if (certificate.RelatedCustomer != null)
             {
-                customerSecurityAnswerMatches = certificate.RelatedCustomer.Securityansware != null &&
-                                                    certificate.RelatedCustomer.Securityansware.Equals(secAns) &&
-                                                    certificate.RelatedCustomer.Securityquestion == question;
+                customerSecurityAnswerMatches = 
+                    !string.IsNullOrEmpty(certificate.RelatedCustomer.Securityansware)
+                    && certificate.RelatedCustomer.Securityansware.ToLower().Equals(secAns.ToLower())
+                    && certificate.RelatedCustomer.Securityquestion == question;
             }
 
             var foundMatch = certificateSecurityAnswerMatches || customerSecurityAnswerMatches;
@@ -403,18 +407,22 @@ namespace EsignBackend.Services.MainServices.Certificates
             {
                 // Checking in all other customer's certificates.
                 _logger.Debug("Checking security answer in all customer's certificates");
+
                 var customersCertificates = await _context.Certificates.Where(cer => (cer.Customerid == certificate.Customerid)).ToListAsync();
+
                 foreach (Certificate cer in customersCertificates)
                 {
-                    if (cer.Securityansware.Equals(secAns) && cer.Securityquestion == question)
+                    if (cer.Securityansware.ToLower().Equals(secAns.ToLower()) && cer.Securityquestion == question)
                     {
                         foundMatch = true;
                         break;
                     }
                 }
             }
-            ServiceResponse.Data = foundMatch;
-            return ServiceResponse;
+
+            serviceResponse.Data = foundMatch;
+
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<int>> UpdateExpiredCertificates()
