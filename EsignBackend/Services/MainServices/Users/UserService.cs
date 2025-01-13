@@ -263,14 +263,20 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<int>> UpdateUser(Buuser updatedUser)
         {
             _logger.Debug("UpdateUser");
+
             updatedUser.Updateddate = updatedUser.Updateddate.Value.ToLocalTime();
+
             var serviceResponse = new ServiceResponse<int>();
+
             var dbUser = _context.Buusers.AsNoTracking().FirstOrDefault(x => x.Id == updatedUser.Id);
+
             if (dbUser != null)
             {
                 updatedUser.Pass = dbUser.Pass;
             }
+
             var updatedUserInDb = _context.Buusers.Update(updatedUser);
+
             try
             {
                 _context.SaveChanges();

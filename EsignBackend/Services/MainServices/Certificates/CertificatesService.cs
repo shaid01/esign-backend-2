@@ -383,13 +383,14 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("CheckSecurityAnswer");
 
             var serviceResponse = new ServiceResponse<bool>();
-            secAns = EncryptDecryptHandler.encryptSecurityAns(secAns);
+
+            string secAnsEncrypted = EncryptDecryptHandler.encryptSecurityAns(secAns);
 
             var certificate = _context.Certificates.Include(cer => cer.RelatedCustomer)
                 .Where(cer => cer.Id == cerId).ToListAsync().Result.FirstOrDefault();
 
             var certificateSecurityAnswerMatches = 
-                certificate.Securityansware.ToLower().Equals(secAns.ToLower()) && certificate.Securityquestion == question;
+                certificate.Securityansware.ToLower().Equals(secAnsEncrypted.ToLower()) && certificate.Securityquestion == question;
 
             bool customerSecurityAnswerMatches = false;
 
@@ -397,7 +398,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             {
                 customerSecurityAnswerMatches = 
                     !string.IsNullOrEmpty(certificate.RelatedCustomer.Securityansware)
-                    && certificate.RelatedCustomer.Securityansware.ToLower().Equals(secAns.ToLower())
+                    && certificate.RelatedCustomer.Securityansware.ToLower().Equals(secAnsEncrypted.ToLower())
                     && certificate.RelatedCustomer.Securityquestion == question;
             }
 
@@ -412,7 +413,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
                 foreach (Certificate cer in customersCertificates)
                 {
-                    if (cer.Securityansware.ToLower().Equals(secAns.ToLower()) && cer.Securityquestion == question)
+                    if (cer.Securityansware.ToLower().Equals(secAnsEncrypted.ToLower()) && cer.Securityquestion == question)
                     {
                         foundMatch = true;
                         break;
@@ -461,16 +462,19 @@ namespace EsignBackend.Services.MainServices.Certificates
         public async Task<ServiceResponse<int>> AddCertificate(Certificate certificate)
         {
             _logger.Debug("AddCertificate");
+
             var serviceResponse = new ServiceResponse<int>();
+
             certificate.Issuedate = certificate.Issuedate.Value.ToLocalTime();
             certificate.Expiredate = certificate.Expiredate.Value.ToLocalTime();
+
             lock (_locker)
             {
-                //certificate.Id = GenerateCertificateId();
                 certificate.Id = 0;
                 certificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(certificate.Securityansware);
 
                 var newCertificateInDb = _context.Certificates.Add(certificate);
+
                 try
                 {
                     _context.SaveChanges();
@@ -495,8 +499,11 @@ namespace EsignBackend.Services.MainServices.Certificates
             _logger.Debug("UpdateCertificate");
 
             var serviceResponse = new ServiceResponse<int>();
+
             updatedCertificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(updatedCertificate.Securityansware);
+
             var updatedCertificateInDb = _context.Certificates.Update(updatedCertificate);
+
             try
             {
                 _context.SaveChanges();
@@ -512,6 +519,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 serviceResponse.Data = -1;
                 _logger.Debug("UpdateCertificate failed " + exception);
             }
+
             return serviceResponse;
         }
 
