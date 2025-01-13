@@ -21,17 +21,6 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Callstatuses.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-
-        }
-
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Callstatuses.Where(item => item.Title.Equals(title)).Count() != 0;
@@ -62,7 +51,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
                 {
                     _context.SaveChanges();
                     serviceResponse.Data = newCallStatusInDb.Entity.Id;
-                    serviceResponse.Amount = _context.Callstatuses.Count();
+                    serviceResponse.Amount = _context.Callstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }
@@ -93,13 +82,13 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<CallStatusDto>>();
-            serviceResponse.Amount = _context.Callstatuses.Count();
+            serviceResponse.Amount = _context.Callstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Callstatus> callStatuses = null;
 
             try
             {
-                callStatuses = _context.Callstatuses
+                callStatuses = _context.Callstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();

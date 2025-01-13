@@ -61,13 +61,17 @@ namespace EsignBackend.Services.SettingsService
             _logger.Debug("GetProjects");
 
             var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
+
             var outputList = new List<ProjectDTO>();
-            var data = _context.Projects.ToList();
+
+            var data = _context.Projects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var p in data)
             {
                 outputList.Add(new ProjectDTO(p));
             }
-            serviceResponse.Amount = data.Count();
+
+            serviceResponse.Amount = outputList.Count();
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
@@ -123,13 +127,13 @@ namespace EsignBackend.Services.SettingsService
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
-            serviceResponse.Amount = _context.Subprojects.Count();
+            serviceResponse.Amount = _context.Subprojects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Subproject> subProjects = null;
 
             try
             {
-                subProjects = _context.Subprojects
+                subProjects = _context.Subprojects.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -161,13 +165,21 @@ namespace EsignBackend.Services.SettingsService
         public ServiceResponse<List<SubprojectDTO>> GetAllSubprojects(int projectId = -1)
         {
             _logger.Debug("GetAllSubprojects");
+
             var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
+
             var outputList = new List<SubprojectDTO>();
-            var data = projectId == -1 ? _context.Subprojects.ToList() : _context.Subprojects.Where(x => x.Project == projectId).ToList();
+
+            var data = projectId == -1
+                ? _context.Subprojects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList()
+                : _context.Subprojects.Where(x => (x.Project == projectId) && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var sp in data)
             {
                 outputList.Add(new SubprojectDTO(sp));
             }
+
+            serviceResponse.Success = true;
             serviceResponse.Amount = outputList.Count();
             serviceResponse.Data = outputList;
             return serviceResponse;
@@ -189,13 +201,13 @@ namespace EsignBackend.Services.SettingsService
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
-            serviceResponse.Amount = _context.Projects.Count();
+            serviceResponse.Amount = _context.Projects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Project> projects = null;
 
             try
             {
-                projects = _context.Projects
+                projects = _context.Projects.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -286,7 +298,7 @@ namespace EsignBackend.Services.SettingsService
                 {
                     _context.SaveChanges();
                     serviceResponse.Data = newProjectInDb.Entity.Id;
-                    serviceResponse.Amount = _context.Projects.Count();
+                    serviceResponse.Amount = _context.Projects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }
@@ -326,7 +338,7 @@ namespace EsignBackend.Services.SettingsService
                 {
                     _context.SaveChanges();
                     serviceResponse.Data = newSubprojectInDb.Entity.Id;
-                    serviceResponse.Amount = _context.Subprojects.Count();
+                    serviceResponse.Amount = _context.Subprojects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }

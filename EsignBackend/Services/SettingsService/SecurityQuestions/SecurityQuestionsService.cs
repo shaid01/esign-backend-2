@@ -20,15 +20,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             _context = context;
             _logger = logger;
         }
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Securityquestions.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
+
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Securityquestions.Where(item => item.Title.Equals(title)).Count() != 0;
@@ -58,7 +50,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
                 try
                 {
                     _context.SaveChanges();
-                    serviceResponse.Amount = _context.Securityquestions.Count();
+                    serviceResponse.Amount = _context.Securityquestions.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Data = newSecurityQuestionInDb.Entity.Id;
                     serviceResponse.Success = true;
                     return serviceResponse;
@@ -90,13 +82,13 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
-            serviceResponse.Amount = _context.Securityquestions.Count();
+            serviceResponse.Amount = _context.Securityquestions.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Securityquestion> secQuestions = null;
 
             try
             {
-                secQuestions = _context.Securityquestions
+                secQuestions = _context.Securityquestions.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -163,15 +155,21 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
         public ServiceResponse<List<SecurityquestionDTO>> GetAllSecurityQuestions()
         {
             _logger.Debug("GetAllSecurityQuestions");
+
             var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
+
             var outputList = new List<SecurityquestionDTO>();
-            var data = _context.Securityquestions.ToList();
+
+            var data = _context.Securityquestions.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var sq in data)
             {
                 outputList.Add(new SecurityquestionDTO(sq));
             }
+
             serviceResponse.Data = outputList;
-            serviceResponse.Amount = serviceResponse.Data.Count();
+            serviceResponse.Amount = outputList.Count();//serviceResponse.Data.Count();
+
             return serviceResponse;
         }
     }

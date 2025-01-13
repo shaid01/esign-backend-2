@@ -21,17 +21,6 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Custidents.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-
-        }
-
         private bool isNameAlreadyInUse(string title)
         {
             _logger.Debug("isNameAlreadyInUse");
@@ -63,7 +52,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 {
                     _context.SaveChanges();
                     serviceResponse.Data = newCustomerIdentifierInDb.Entity.Id;
-                    serviceResponse.Amount = _context.Custidents.Count();
+                    serviceResponse.Amount = _context.Custidents.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }
@@ -94,13 +83,13 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<CustidentDTO>>();
-            serviceResponse.Amount = _context.Custidents.Count();
+            serviceResponse.Amount = _context.Custidents.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Custident> custIds = null;
 
             try
             {
-                custIds = _context.Custidents
+                custIds = _context.Custidents.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -168,14 +157,19 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
         public ServiceResponse<List<CustidentDTO>> GetAllCustomerIdentifiers()
         {
             _logger.Debug("GetAllCustomerIdentifiers");
+
             var serviceResponse = new ServiceResponse<List<CustidentDTO>>();
+
             var outputList = new List<CustidentDTO>();
-            var data = _context.Custidents.ToList();
+
+            var data = _context.Custidents.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var ci in data)
             {
                 outputList.Add(new CustidentDTO(ci));
             }
-            serviceResponse.Amount = _context.Custidents.Count();
+
+            serviceResponse.Amount = outputList.Count();//_context.Custidents.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             serviceResponse.Data = outputList;
             return serviceResponse;
         }

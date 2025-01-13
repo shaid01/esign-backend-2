@@ -21,16 +21,6 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Docstypes.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
-
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Docstypes.Where(item => item.Title.Equals(title)).Count() != 0;
@@ -62,7 +52,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
                 try
                 {
                     _context.SaveChanges();
-                    serviceResponse.Amount = _context.Docstypes.Count();
+                    serviceResponse.Amount = _context.Docstypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Data = newIdentificationDocumentInDb.Entity.Id;
                     serviceResponse.Success = true;
                     return serviceResponse;
@@ -94,13 +84,13 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<DocstypeDTO>>();
-            serviceResponse.Amount = _context.Docstypes.Count();
+            serviceResponse.Amount = _context.Docstypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Docstype> docTypes = null;
 
             try
             {
-                docTypes = _context.Docstypes
+                docTypes = _context.Docstypes.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -169,14 +159,19 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             _logger.Debug("GetAllIdentificationDocuments");
 
             var serviceResponse = new ServiceResponse<List<DocstypeDTO>>();
+
             var outputList = new List<DocstypeDTO>();
-            var data = _context.Docstypes.ToList();
+
+            var data = _context.Docstypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var id in data)
             {
                 outputList.Add(new DocstypeDTO(id));
             }
-            serviceResponse.Amount = _context.Docstypes.Count();
+
+            serviceResponse.Amount = outputList.Count();//_context.Docstypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
     }

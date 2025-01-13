@@ -378,6 +378,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             return serviceResponse;
         }
 
+        // see https://learn.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver16
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
             _logger.Debug("CheckSecurityAnswer");
@@ -389,6 +390,8 @@ namespace EsignBackend.Services.MainServices.Certificates
             var certificate = _context.Certificates.Include(cer => cer.RelatedCustomer)
                 .Where(cer => cer.Id == cerId).ToListAsync().Result.FirstOrDefault();
 
+            // case-sensitive (collation "Hebrew_CI_AS" - case-insensitive, accent-sensitive) because of certificate object was created
+            // as ToListAsync() (IEnumerable)?
             var certificateSecurityAnswerMatches = 
                 certificate.Securityansware.ToLower().Equals(secAnsEncrypted.ToLower()) && certificate.Securityquestion == question;
 

@@ -33,6 +33,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
         private bool isNameAlreadyInUse(string title)
         {
+            // case-insensitive (collation "Hebrew_CI_AS" case-insensitive) IQueryable<T>
             return _context.Issplaces.Where(item => item.Title.Equals(title)).Count() != 0;
         }
 
@@ -95,13 +96,14 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
-            serviceResponse.Amount = _context.Issplaces.Count();
+            serviceResponse.Amount = _context.Issplaces.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Issplace> issPlaces = null;
 
             try
             {
                 issPlaces = _context.Issplaces
+                    .Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -170,14 +172,19 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             _logger.Debug("GetAllIssueLocations");
 
             var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
+
             var outputList = new List<IssplaceDTO>();
-            var data = _context.Issplaces.ToList();
+
+            var data = _context.Issplaces.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var il in data)
             {
                 outputList.Add(new IssplaceDTO(il));
             }
-            serviceResponse.Amount = _context.Issplaces.Count();
+
+            serviceResponse.Amount = _context.Issplaces.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
     }

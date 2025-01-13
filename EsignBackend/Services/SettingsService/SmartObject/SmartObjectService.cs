@@ -22,17 +22,6 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Smartobjects.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-
-        }
-
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Smartobjects.Where(item => item.Title.Equals(title)).Count() != 0;
@@ -43,13 +32,13 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             _logger.Debug("GetSmartObjects");
 
             var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
-            serviceResponse.Amount = _context.Smartobjects.Count();
+            serviceResponse.Amount = _context.Smartobjects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Smartobject> smartObjects = null;
 
             try
             {
-                smartObjects = _context.Smartobjects
+                smartObjects = _context.Smartobjects.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -117,15 +106,20 @@ namespace EsignBackend.Services.SettingsService.SmartObject
         public ServiceResponse<List<SmartobjectDTO>> GetAllSmartObjects()
         {
             _logger.Debug("GetAllSmartObjects");
+
             var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
+
             var outputList = new List<SmartobjectDTO>();
-            var data = _context.Smartobjects.ToList();
+
+            var data = _context.Smartobjects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var so in data)
             {
                 outputList.Add(new SmartobjectDTO(so));
             }
+
             serviceResponse.Data = outputList;
-            serviceResponse.Amount = serviceResponse.Data.Count();
+            serviceResponse.Amount = outputList.Count();//serviceResponse.Data.Count();
             return serviceResponse;
         }
 
@@ -187,7 +181,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
                 try
                 {
                     _context.SaveChanges();
-                    serviceResponse.Amount = _context.Smartobjects.Count();
+                    serviceResponse.Amount = _context.Smartobjects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Data = newcertificatesStatusInDb.Entity.Id;
                     serviceResponse.Success = true;
                     return serviceResponse;

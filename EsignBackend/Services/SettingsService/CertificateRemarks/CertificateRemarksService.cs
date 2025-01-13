@@ -21,15 +21,6 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Certificatermearks.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Certificatermearks.Where(item => item.Title.Equals(title)).Count() != 0;
@@ -39,7 +30,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
         {
             _logger.Debug("GetAmountOfCertificateRemarks");
             var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Certificatermearks.Count();
+            serviceResponse.Data = _context.Certificatermearks.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             return serviceResponse;
         }
 
@@ -59,13 +50,13 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<CertificateremarkDTO>>();
-            serviceResponse.Amount = _context.Certificatermearks.Count();
+            serviceResponse.Amount = _context.Certificatermearks.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<CertificateRemark> cerRemarks = null;
 
             try
             {
-                cerRemarks = _context.Certificatermearks
+                cerRemarks = _context.Certificatermearks.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -155,7 +146,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
                 try
                 {
                     _context.SaveChanges();
-                    serviceResponse.Amount = _context.Certificatermearks.Count();
+                    serviceResponse.Amount = _context.Certificatermearks.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Data = newCertificateRemarksInDb.Entity.Id;
                     serviceResponse.Success = true;
                     return serviceResponse;

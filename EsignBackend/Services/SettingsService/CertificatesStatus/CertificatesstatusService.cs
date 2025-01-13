@@ -20,16 +20,6 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Certificatesstatuses.OrderByDescending(project => project.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
-
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
@@ -56,11 +46,11 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             List<Certificatesstatus> statuses = null;
 
             var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
-            serviceResponse.Amount = _context.Certificatesstatuses.Count();
+            serviceResponse.Amount = _context.Certificatesstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             try
             {
-                statuses = _context.Certificatesstatuses
+                statuses = _context.Certificatesstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -92,14 +82,19 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
         public ServiceResponse<List<CertificatesstatusDTO>> GetAllCertificatesStatus()
         {
             _logger.Debug("GetAllCertificatesStatus");
+
             var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
+
             var outputList = new List<CertificatesstatusDTO>();
-            var data = _context.Certificatesstatuses.ToList();
+
+            var data = _context.Certificatesstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var cs in data)
             {
                 outputList.Add(new CertificatesstatusDTO(cs));
             }
-            serviceResponse.Amount = _context.Certificatesstatuses.Count();
+
+            serviceResponse.Amount = outputList.Count();//_context.Certificatesstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             serviceResponse.Data = outputList;
             return serviceResponse;
         }
@@ -163,7 +158,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                 try
                 {
                     _context.SaveChanges();
-                    serviceResponse.Amount = _context.Certificatesstatuses.Count();
+                    serviceResponse.Amount = _context.Certificatesstatuses.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Data = newcertificatesStatusInDb.Entity.Id;
                     serviceResponse.Success = true;
                     return serviceResponse;

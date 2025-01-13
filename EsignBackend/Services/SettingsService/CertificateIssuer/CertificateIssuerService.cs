@@ -20,16 +20,6 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Isscerts.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
-
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Isscerts.Where(item => item.Title.Equals(title)).Count() != 0;
@@ -63,7 +53,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                     _context.SaveChanges();
                     serviceResponse.Success = true;
                     serviceResponse.Data = newCertificateIssuerInDb.Entity.Id;
-                    serviceResponse.Amount = _context.Isscerts.Count();
+                    serviceResponse.Amount = _context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }
@@ -94,13 +84,13 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
-            serviceResponse.Amount = _context.Isscerts.Count();
+            serviceResponse.Amount = _context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Isscert> issCerts = null;
 
             try
             {
-                issCerts = _context.Isscerts
+                issCerts = _context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -167,14 +157,19 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
         public ServiceResponse<List<IsscertDTO>> GetAllCertificateIssuers()
         {
             _logger.Debug("GetAllCertificateIssuers");
+
             var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
+
             var outputList = new List<IsscertDTO>();
-            var data = _context.Isscerts.ToList();
+
+            var data = _context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var ci in data)
             {
                 outputList.Add(new IsscertDTO(ci));
             }
-            serviceResponse.Amount = _context.Isscerts.Count();
+
+            serviceResponse.Amount = outputList.Count();//_context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             serviceResponse.Data = outputList;
             return serviceResponse;
         }

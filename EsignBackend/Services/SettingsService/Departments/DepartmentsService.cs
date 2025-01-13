@@ -24,16 +24,6 @@ namespace EsignBackend.Services.SettingsService.Departments
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Departments.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
-
         private bool isNameAlreadyInUse(string title)
         {
             return _context.Departments.Where(item => item.Title.Equals(title)).Count() != 0;
@@ -63,7 +53,7 @@ namespace EsignBackend.Services.SettingsService.Departments
                 {
                     _context.SaveChanges();
                     serviceResponse.Data = newDepartmentInDb.Entity.Id;
-                    serviceResponse.Amount = _context.Departments.Count();
+                    serviceResponse.Amount = _context.Departments.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }
@@ -81,8 +71,10 @@ namespace EsignBackend.Services.SettingsService.Departments
         public async Task<ServiceResponse<int>> GetAmountOfDepartments()
         {
             _logger.Debug("GetAmountOfDepartments");
+
             var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _context.Departments.Count();
+            serviceResponse.Data = _context.Departments.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
+
             return serviceResponse;
         }
 
@@ -110,7 +102,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<DepartmentDTO>>();
-            serviceResponse.Amount = _context.Departments.Count();
+            serviceResponse.Amount = _context.Departments.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Models.Department> depts = null;
 
@@ -118,7 +110,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             {
                 if (take != UNLIMITED)
                 {
-                    depts = _context.Departments
+                    depts = _context.Departments.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -126,7 +118,7 @@ namespace EsignBackend.Services.SettingsService.Departments
                 }
                 else
                 {
-                    depts = _context.Departments
+                    depts = _context.Departments.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .ToList();
                 }

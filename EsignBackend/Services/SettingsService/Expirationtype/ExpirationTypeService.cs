@@ -20,16 +20,6 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             _context = context;
             _logger = logger;
         }
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Expirationtypes.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-
-        }
 
         private bool isNameAlreadyInUse(string title)
         {
@@ -59,13 +49,13 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
-            serviceResponse.Amount = _context.Expirationtypes.Count();
+            serviceResponse.Amount = _context.Expirationtypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Expirationtype> expTypes = null;
 
             try
             {
-                expTypes = _context.Expirationtypes
+                expTypes = _context.Expirationtypes.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
@@ -155,7 +145,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
                 try
                 {
                     _context.SaveChanges();
-                    serviceResponse.Amount = _context.Expirationtypes.Count();
+                    serviceResponse.Amount = _context.Expirationtypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Data = newExpirationTypeInDb.Entity.Id;
                     serviceResponse.Success = true;
                     return serviceResponse;
@@ -174,15 +164,21 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
         public ServiceResponse<List<ExpirationtypeDTO>> GetAllExpirationTypes()
         {
             _logger.Debug("GetAllExpirationTypes");
+
             var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
+
             var outputList = new List<ExpirationtypeDTO>();
-            var data = _context.Expirationtypes.ToList();
+
+            var data = _context.Expirationtypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
             foreach (var et in data)
             {
                 outputList.Add(new ExpirationtypeDTO(et));
             }
-            serviceResponse.Amount = _context.Expirationtypes.Count();
+
+            serviceResponse.Amount = outputList.Count();//_context.Expirationtypes.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             serviceResponse.Data = outputList;
+
             return serviceResponse;
         }
     }

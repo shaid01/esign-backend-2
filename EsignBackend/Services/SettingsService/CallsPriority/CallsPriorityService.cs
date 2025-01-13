@@ -64,7 +64,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
                 {
                     _context.SaveChanges();
                     serviceResponse.Data = newCallsPriorityInDb.Entity.Id;
-                    serviceResponse.Amount = _context.Callpriorities.Count();
+                    serviceResponse.Amount = _context.Callpriorities.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }
@@ -95,13 +95,13 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             //return serviceResponse;
 
             var serviceResponse = new ServiceResponse<List<CallpriorityDTO>>();
-            serviceResponse.Amount = _context.Callpriorities.Count();
+            serviceResponse.Amount = _context.Callpriorities.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
 
             List<Callpriority> callPriorities = null;
 
             try
             {
-                callPriorities = _context.Callpriorities
+                callPriorities = _context.Callpriorities.Where(x => !string.IsNullOrWhiteSpace(x.Title))
                     .Skip(skip)
                     .Take(take)
                     .ToList();
