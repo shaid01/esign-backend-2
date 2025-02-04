@@ -39,6 +39,7 @@ namespace EsignBackend.Models.DTOs
             Securityanswer = certificate.Securityanswer;
             Email = certificate.Email;
             Licenseid = certificate.Licenseid;
+            Signer = certificate.Signer;
         }
         public int Id { get; set; }
         public ProjectDTO Project { get; set; }
@@ -59,7 +60,7 @@ namespace EsignBackend.Models.DTOs
         public string Email { get; set; }
         public string Passportid { get; set; }
         public string Licenseid { get; set; }
-        //    public string Signer { get; set; }
+        public string Signer { get; set; }
         //     public double? Securityquestion { get; set; }
         public SecurityquestionDTO RelatedSecurityQuestion { get; set; }
         public string Securityanswer { get; set; }
