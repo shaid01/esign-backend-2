@@ -31,10 +31,17 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             }
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
             // case-insensitive (collation "Hebrew_CI_AS" case-insensitive) IQueryable<T>
-            return _context.Issplaces.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Issplaces.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Issplaces.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> AddNewIssueLocation(Issplace issueLocation)
@@ -43,7 +50,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(issueLocation.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, issueLocation.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -138,7 +145,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedIssueLocation.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedIssueLocation.Id, updatedIssueLocation.Title);
 
             if (nameIsAlreadyTaken)
             {

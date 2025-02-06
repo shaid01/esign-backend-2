@@ -21,9 +21,16 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Certificatermearks.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Certificatermearks.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Certificatermearks.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> GetAmountOfCertificateRemarks()
@@ -91,7 +98,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificateRemarks.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificateRemarks.Id,  updatedCertificateRemarks.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -126,7 +133,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(certificateRemark.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, certificateRemark.Title);
 
             if (nameIsAlreadyTaken)
             {

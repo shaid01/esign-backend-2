@@ -32,9 +32,16 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             }
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Callpriorities.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Callpriorities.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Callpriorities.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> AddNewCallPriority(Callpriority callPriority)
@@ -43,7 +50,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyInUse = isNameAlreadyInUse(callPriority.Title);
+            var nameIsAlreadyInUse = isNameAlreadyInUse(-1, callPriority.Title);
 
             if (nameIsAlreadyInUse)
             {
@@ -136,7 +143,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyInUse = isNameAlreadyInUse(updatedCallPriority.Title);
+            var nameIsAlreadyInUse = isNameAlreadyInUse(updatedCallPriority.Id, updatedCallPriority.Title);
 
             if (nameIsAlreadyInUse)
             {

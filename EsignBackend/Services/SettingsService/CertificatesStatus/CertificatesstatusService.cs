@@ -24,11 +24,11 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
         {
             if (id >= 0)
             {
-                return _context.Certificatesstatuses.Where(project => project.Title.Equals(title) && project.Id != id).Count() != 0;
+                return _context.Certificatesstatuses.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
             }
             else
             {
-                return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
+                return _context.Certificatesstatuses.Where(x => x.Title.Equals(title)).Count() != 0;
             }
         }
 

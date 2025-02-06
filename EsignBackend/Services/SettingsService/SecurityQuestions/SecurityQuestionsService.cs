@@ -21,9 +21,16 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Securityquestions.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Securityquestions.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Securityquestions.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> AddNewSecurityQuestion(Securityquestion securityQuestion)
@@ -32,7 +39,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(securityQuestion.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, securityQuestion.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -123,7 +130,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedSecurityQuestion.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedSecurityQuestion.Id, updatedSecurityQuestion.Title);
 
             if (nameIsAlreadyTaken)
             {

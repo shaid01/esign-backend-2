@@ -21,9 +21,16 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Docstypes.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Docstypes.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Docstypes.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> AddNewIdentificationDocument(Docstype identificationDocument)
@@ -32,7 +39,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(identificationDocument.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, identificationDocument.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -125,7 +132,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedIdentificationDocument.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedIdentificationDocument.Id, updatedIdentificationDocument.Title);
 
             if (nameIsAlreadyTaken)
             {

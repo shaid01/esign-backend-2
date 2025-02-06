@@ -21,10 +21,18 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Expirationtypes.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Expirationtypes.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Expirationtypes.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
+
         /*        public async Task<ServiceResponse<int>> GetAmountOfExpirationTypes()
                 {
                     _logger.Debug("GetAmountOfExpirationTypes");
@@ -90,7 +98,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedExpirationType.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedExpirationType.Id, updatedExpirationType.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -125,7 +133,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(expirationType.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, expirationType.Title);
 
             if (nameIsAlreadyTaken)
             {

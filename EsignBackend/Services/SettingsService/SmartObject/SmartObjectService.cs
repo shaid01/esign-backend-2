@@ -22,9 +22,16 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Smartobjects.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Smartobjects.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Smartobjects.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public ServiceResponse<List<SmartobjectDTO>> GetSmartObjects(int skip, int take)
@@ -129,7 +136,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var smartObjectNameIsAlreadyTaken = isNameAlreadyInUse(updatedSmartObject.Title);
+            var smartObjectNameIsAlreadyTaken = isNameAlreadyInUse(updatedSmartObject.Id, updatedSmartObject.Title);
 
             if (smartObjectNameIsAlreadyTaken)
             {
@@ -163,7 +170,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             _logger.Debug("AddNewSmartObject");
             var serviceResponse = new ServiceResponse<int>();
 
-            var smartObjectNameIsAlreadyTaken = isNameAlreadyInUse(smartobject.Title);
+            var smartObjectNameIsAlreadyTaken = isNameAlreadyInUse(-1, smartobject.Title);
 
             if (smartObjectNameIsAlreadyTaken)
             {

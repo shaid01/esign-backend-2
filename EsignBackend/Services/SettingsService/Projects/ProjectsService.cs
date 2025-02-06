@@ -26,15 +26,29 @@ namespace EsignBackend.Services.SettingsService
             SUBPROJECT
         }
 
-        private bool isNameAlreadyInUse(string title, projectType projectType)
+        private bool isNameAlreadyInUse(int id, string title, projectType projectType)
         {
             if (projectType == projectType.SUBPROJECT)
             {
-                return _context.Subprojects.Where(subproject => subproject.Title.Equals(title)).Count() != 0;
+                if (id >= 0)
+                {
+                    return _context.Subprojects.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+                }
+                else
+                {
+                    return _context.Subprojects.Where(x => x.Title.Equals(title)).Count() != 0;
+                }
             }
             else
             {
-                return _context.Projects.Where(project => project.Title.Equals(title)).Count() != 0;
+                if (id >= 0)
+                {
+                    return _context.Projects.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+                }
+                else
+                {
+                    return _context.Projects.Where(project => project.Title.Equals(title)).Count() != 0;
+                }
             }
         }
 
@@ -82,7 +96,7 @@ namespace EsignBackend.Services.SettingsService
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var projectNameIsAlreadyTaken = isNameAlreadyInUse(updatedProject.Title, projectType.PROJECT);
+            var projectNameIsAlreadyTaken = isNameAlreadyInUse(updatedProject.Id, updatedProject.Title, projectType.PROJECT);
 
             if (projectNameIsAlreadyTaken)
             {
@@ -242,7 +256,7 @@ namespace EsignBackend.Services.SettingsService
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var subprojectNameIsAlreadyTaken = isNameAlreadyInUse(updatedSubproject.Title, projectType.SUBPROJECT);
+            var subprojectNameIsAlreadyTaken = isNameAlreadyInUse(updatedSubproject.Id, updatedSubproject.Title, projectType.SUBPROJECT);
 
             if (subprojectNameIsAlreadyTaken)
             {
@@ -277,7 +291,7 @@ namespace EsignBackend.Services.SettingsService
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var projectNameIsAlreadyTaken = isNameAlreadyInUse(newProject.Title, projectType.PROJECT);
+            var projectNameIsAlreadyTaken = isNameAlreadyInUse(-1, newProject.Title, projectType.PROJECT);
 
             if (projectNameIsAlreadyTaken)
             {
@@ -319,7 +333,7 @@ namespace EsignBackend.Services.SettingsService
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var subprojectNameIsAlreadyTaken = isNameAlreadyInUse(newSubproject.Title, projectType.SUBPROJECT);
+            var subprojectNameIsAlreadyTaken = isNameAlreadyInUse(-1, newSubproject.Title, projectType.SUBPROJECT);
 
             if (subprojectNameIsAlreadyTaken)
             {

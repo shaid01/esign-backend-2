@@ -20,9 +20,16 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Isscerts.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Isscerts.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Isscerts.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> AddNewCertificateIssuer(Isscert certificateIssuer)
@@ -31,7 +38,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(certificateIssuer.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, certificateIssuer.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -125,7 +132,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificateIssuer.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificateIssuer.Id, updatedCertificateIssuer.Title);
 
             if (nameIsAlreadyTaken)
             {

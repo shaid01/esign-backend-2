@@ -21,10 +21,16 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            _logger.Debug("isNameAlreadyInUse");
-            return _context.Custidents.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Custidents.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Custidents.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> AddNewCustomerIdentifier(Custident customerIdentifer)
@@ -33,7 +39,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(customerIdentifer.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, customerIdentifer.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -124,7 +130,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCustomerIdentifer.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedCustomerIdentifer.Id, updatedCustomerIdentifer.Title);
 
             if (nameIsAlreadyTaken)
             {

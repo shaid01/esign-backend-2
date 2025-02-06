@@ -24,9 +24,16 @@ namespace EsignBackend.Services.SettingsService.Departments
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Departments.Where(item => item.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Departments.Where(x => x.Title.Equals(title) && x.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Departments.Where(x => x.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public async Task<ServiceResponse<int>> AddNewDepartment(Models.Department department)
@@ -35,7 +42,7 @@ namespace EsignBackend.Services.SettingsService.Departments
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(department.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(-1, department.Title);
 
             if (nameIsAlreadyTaken)
             {
@@ -153,7 +160,7 @@ namespace EsignBackend.Services.SettingsService.Departments
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedDepartment.Title);
+            var nameIsAlreadyTaken = isNameAlreadyInUse(updatedDepartment.Id, updatedDepartment.Title);
 
             if (nameIsAlreadyTaken)
             {
