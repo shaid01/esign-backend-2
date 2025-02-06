@@ -20,9 +20,16 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             _logger = logger;
         }
 
-        private bool isNameAlreadyInUse(string title)
+        private bool isNameAlreadyInUse(int id, string title)
         {
-            return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
+            if (id >= 0)
+            {
+                return _context.Certificatesstatuses.Where(project => project.Title.Equals(title) && project.Id != id).Count() != 0;
+            }
+            else
+            {
+                return _context.Certificatesstatuses.Where(project => project.Title.Equals(title)).Count() != 0;
+            }
         }
 
         public ServiceResponse<List<CertificatesstatusDTO>> GetCertificatesStatus(int skip, int take)
@@ -105,7 +112,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var certificatesStatusNameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificatestatus.Title);
+            var certificatesStatusNameIsAlreadyTaken = isNameAlreadyInUse(updatedCertificatestatus.Id, updatedCertificatestatus.Title);
 
             if (certificatesStatusNameIsAlreadyTaken)
             {
@@ -140,7 +147,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
             var serviceResponse = new ServiceResponse<int>();
 
-            var certificatesStatusNameIsAlreadyTaken = isNameAlreadyInUse(certificatestatus.Title);
+            var certificatesStatusNameIsAlreadyTaken = isNameAlreadyInUse(-1, certificatestatus.Title);
 
             if (certificatesStatusNameIsAlreadyTaken)
             {
