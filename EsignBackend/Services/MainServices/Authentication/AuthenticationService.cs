@@ -69,32 +69,46 @@ namespace EsignBackend.Services.CharacterService
             _logger.Debug("Login");
 
             var response = new ServiceResponse<string>();
-            var user = await _context.Buusers.FirstOrDefaultAsync(x => x.Username.Equals(username));
-            if (user == null)
+
+            try
             {
-                _logger.Debug("user is null");
+                var user = await _context.Buusers.FirstOrDefaultAsync(x => x.Username.Equals(username));
+
+                if (user == null)
+                {
+                    _logger.Debug("user is null");
+                    response.Success = false;
+                    response.Message = "Username or Password incorrect";
+                }
+                else if (!VerifyPassword(password, user.Pass))
+                {
+                    _logger.Debug("verifyPassword failed");
+                    response.Success = false;
+                    response.Message = "Username or Password incorrect";
+                }
+                else if (IsExpired(user.Expires))
+                {
+                    _logger.Debug("Expiration date expired");
+                    response.Success = false;
+                    response.Message = "Expiration date expired";
+                }
+                else
+                {
+                    _logger.Debug("user successfully login");
+                    response.Data = CreateToken(user);
+                    response.Message = JsonConvert.SerializeObject(user);
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug("Select user exception: " + ex.Message);
                 response.Success = false;
-                response.Message = "Username or Password incorrect";
+                response.Message = ex.Message;
+
+                return response;
             }
-            else if (!VerifyPassword(password, user.Pass))
-            {
-                _logger.Debug("verifyPassword failed");
-                response.Success = false;
-                response.Message = "Username or Password incorrect";
-            }
-            else if (IsExpired(user.Expires))
-            {
-                _logger.Debug("Expiration date expired");
-                response.Success = false;
-                response.Message = "Expiration date expired";
-            }
-            else
-            {
-                _logger.Debug("user successfully login");
-                response.Data = CreateToken(user);
-                response.Message = JsonConvert.SerializeObject(user);
-                response.Success = true;
-            }
+
             return response;
         }
 

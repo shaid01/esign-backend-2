@@ -67,6 +67,8 @@ namespace EsignBackend.Services.CharacterService
                     .OrderByDescending(c => c.Id)
 
                     .Skip(skip).Take(take).ToListAsync();
+
+                serviceResponse.Amount = _cache.GetCounterByType(CacheType.Users);
             }
             catch (Exception ex)
             {
@@ -88,7 +90,6 @@ namespace EsignBackend.Services.CharacterService
 
             serviceResponse.Success = true;
             serviceResponse.Data = usersList;
-            serviceResponse.Amount = _cache.GetCounterByType(CacheType.Users);
 
             return serviceResponse;
         }
@@ -210,7 +211,19 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("GetAmountOfUsers");
             var serviceResponse = new ServiceResponse<int>();
-            serviceResponse.Data = _cache.GetCounterByType(CacheType.Users);
+
+            try
+            {
+                serviceResponse.Data = _cache.GetCounterByType(CacheType.Users);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Data = -1;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+
+                return serviceResponse;
+            }
             return serviceResponse;
         }
 

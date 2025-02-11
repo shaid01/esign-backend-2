@@ -130,6 +130,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
                     //.OrderByDescending(x => x.Issuedate)
                     .ToListAsync();
+                serviceResponse.Amount = _cache.GetCounterByType(CacheType.Certificate);
             }
             catch (Exception ex)
             {
@@ -152,7 +153,6 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             serviceResponse.Success = true;
             serviceResponse.Data = certificateDetailsList;
-            serviceResponse.Amount = _cache.GetCounterByType(CacheType.Certificate);
 
             return serviceResponse;
         }
