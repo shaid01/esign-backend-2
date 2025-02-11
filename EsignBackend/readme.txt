@@ -1,4 +1,10 @@
-﻿OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF doesn't work in MSSQL14
+﻿HTTP Error 405 - see "web.config":
+	  <modules runAllManagedModulesForAllRequests="false">
+		<remove name="WebDAVModule" />
+	  </modules>
+
+
+OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF doesn't work in MSSQL14
 
 "the query had to wait for 83 seconds for Memory Grant during execution" - reason NVARCHAR(MAX)?
 
