@@ -438,14 +438,17 @@ namespace EsignBackend.Services.MainServices.Certificates
             {
                 var certificateStatus = cert.Id;
                 var now = DateTime.Now.ToLocalTime();
+
                 var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now && x.Certificatestatus != certificateStatus).ToListAsync();
-                foreach (Certificate c in expiredCertificates)
-                {
-                    c.Certificatestatus = certificateStatus;
-                    _context.Certificates.Update(c);
-                }
+
                 try
                 {
+                    foreach (Certificate c in expiredCertificates)
+                    {
+                        c.Certificatestatus = certificateStatus;
+                        _context.Certificates.Update(c);
+                    }
+
                     _context.SaveChanges();
                     serviceResponse.Data = expiredCertificates.Count();
                     serviceResponse.Message = "Updated expired certificates successfully";
@@ -476,19 +479,22 @@ namespace EsignBackend.Services.MainServices.Certificates
                 certificate.Id = 0;
                 certificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(certificate.Securityansware);
 
-                var newCertificateInDb = _context.Certificates.Add(certificate);
-
                 try
                 {
+                    var newCertificateInDb = _context.Certificates.Add(certificate);
+
                     _context.SaveChanges();
+
                     serviceResponse.Data = newCertificateInDb.Entity.Id;
+
                     _cache.Increment(CacheType.Certificate);
+
                     serviceResponse.Success = true;
                     return serviceResponse;
                 }
                 catch (Exception ex)
                 {
-                    _logger.Debug("exception detected while trying to AddCertificate - " + ex);
+                    _logger.Debug("Exception detected while trying to AddCertificate - " + ex);
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding certificate failed. {ex}";
                     serviceResponse.Data = -1;
@@ -505,11 +511,12 @@ namespace EsignBackend.Services.MainServices.Certificates
 
             updatedCertificate.Securityansware = EncryptDecryptHandler.encryptSecurityAns(updatedCertificate.Securityansware);
 
-            var updatedCertificateInDb = _context.Certificates.Update(updatedCertificate);
-
             try
             {
+                var updatedCertificateInDb = _context.Certificates.Update(updatedCertificate);
+
                 _context.SaveChanges();
+
                 serviceResponse.Data = updatedCertificateInDb.Entity.Id;
                 serviceResponse.Message = "Certificate updated successfully.";
                 serviceResponse.Success = true;
@@ -526,6 +533,34 @@ namespace EsignBackend.Services.MainServices.Certificates
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<int>> DeleteCertificates(List<Certificate> certsToDelete)
+        {
+            _logger.Debug("DeleteCertificates");
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            try
+            {
+                _context.Certificates.RemoveRange(certsToDelete);
+
+                _context.SaveChanges();
+
+                serviceResponse.Data = certsToDelete.Count;
+                serviceResponse.Message = $"{certsToDelete.Count} certificates was successfully deleted.";
+                serviceResponse.Success = true;
+
+                _logger.Debug("Changes have been saved");
+            }
+            catch (Exception exception)
+            {
+                _logger.Error("Exception detected while trying to delete certificates: " + exception);
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Delete failed. {exception}";
+                serviceResponse.Data = -1;
+            }
+
+            return serviceResponse;
+        }
 
         public byte[] GenerateXlsxFile(IEnumerable<CertificateDetailsDTO> certificateDetails)
         {

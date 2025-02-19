@@ -6,6 +6,7 @@ using System;
 //using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Vml.Office;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -921,6 +922,8 @@ namespace EsignBackend.Models
 
                 entity.HasIndex(x => new { x.Lastname, x.Firstname })
                     .HasDatabaseName("LastFirstName_Where_OrderBy");
+
+                entity.ToTable("customers", tb => tb.HasTrigger("ReplaceNullTrigger"));
             });
 
             modelBuilder.Entity<Department>(entity =>

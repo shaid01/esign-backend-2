@@ -30,7 +30,6 @@ namespace EsignBackend.Controllers
         [HttpGet("GetCertificateExtendedDetails")]
         public IActionResult GetCertificateExtendedDetails(int id)
         {
-            _logger.Debug("GetCertificateExtendedDetails");
             Response.Headers.Add("Access-Control-Allow-Origin", "*");
             return Ok(_certificatesService.GetCertificateExtendedDetails(id));
         }
@@ -39,16 +38,23 @@ namespace EsignBackend.Controllers
         [HttpGet("GetCertificatesDetails")]
         public async Task<IActionResult> GetCertificatesDetails(int skip, int take)
         {
-            _logger.Debug("GetCertificatesDetails");
             return Ok(await _certificatesService.GetCertificatesDetails(skip, take));
         }
+
         [Authorize(Roles = "מנפיק,מנהל")]
         [HttpPut("UpdateCertificate")]
         public async Task<IActionResult> UpdateCertificate(Certificate updatedCertificate)
         {
-            _logger.Debug("UpdateCertificate");
             return Ok(await _certificatesService.UpdateCertificate(updatedCertificate));
         }
+
+        [Authorize(Roles = "מנפיק,מנהל")]
+        [HttpPut("DeleteCertificates")]
+        public async Task<IActionResult> DeleteCertificates(List<Certificate> certsToDelete)
+        {
+            return Ok(await _certificatesService.DeleteCertificates(certsToDelete));
+        }
+
         /*        [Authorize(Roles = "אדמין,מחדש,מנהל")]
         [HttpPost("AddNewHistoryCertificate")]
         public async Task<IActionResult> AddNewHistoryCertificate(Certificateshistory certificateshistory)
@@ -56,10 +62,10 @@ namespace EsignBackend.Controllers
             _logger.Debug("AddNewHistoryCertificate");
             return Ok(await _certificatesService.AddNewHistoryCertificate(certificateshistory));
         }*/
+
         [HttpGet("GetHistoryCertificates")]
         public async Task<IActionResult> GetHistoryCertificates(string certificateId)
         {
-            _logger.Debug("GetHistoryCertificates");
             double certificateIdInDouble = -1;
             Double.TryParse(certificateId, out certificateIdInDouble);
             return Ok(await _certificatesService.GetHistoryCertificates(certificateIdInDouble));
@@ -68,23 +74,20 @@ namespace EsignBackend.Controllers
         [HttpGet("GetCustomerCertificates")]
         public async Task<IActionResult> GetCustomerCertificates(double customerId)
         {
-            _logger.Debug("GetCustomerCertificates");
             return Ok(await _certificatesService.GetCustomerCertificates(customerId));
         }
+
         [HttpPost("SearchCertificates")]
         public async Task<IActionResult> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
-            _logger.Debug("SearchCertificates");
             var response = await _certificatesService.SearchCertificates(certificateAdvancedSearch, skip, take);
 
             return Ok(response);
-            
         }
 
         [HttpPost("export")]
         public async Task<IActionResult> ExportCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
-            _logger.Debug("ExportCertificates");
             var response = await _certificatesService.SearchCertificates(certificateAdvancedSearch, skip, take);
             var fileContent = _certificatesService.GenerateXlsxFile(response.Data);
             Response.Headers.Add("x-file-name", WebUtility.UrlEncode($"certificates_{DateTime.Now.Date.ToString("dd-MM-yyyy")}.xlsx"));
@@ -98,16 +101,16 @@ namespace EsignBackend.Controllers
         [HttpGet ("CheckSecurityAnswer")]
         public async Task<IActionResult> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
-            _logger.Debug("CheckSecurityAnswer");
             return Ok(await _certificatesService.CheckSecurityAnswer(cerId, secAns,question));
         }
+
         [Authorize(Roles = "מנהל,מנפיק")]
         [HttpPost("AddCertificate")]
         public async Task<IActionResult> AddCertificate(Certificate certificate)
         {
-            _logger.Debug("AddCertificate");
             return Ok(await _certificatesService.AddCertificate(certificate));
         }
+
         [HttpPut("UpdateExpiredCertificates")]
         public async Task<IActionResult> UpdateExpiredCertificates()
         {

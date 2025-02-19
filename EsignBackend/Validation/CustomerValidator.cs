@@ -12,7 +12,8 @@ namespace EsignBackend.Validation
         public CustomerValidator()
         {
             RuleFor(x => x.Idnumber).NotEmpty().WithMessage("תעודת זהות לא תקינה").Matches(@"^[0-9]*$").WithMessage("תעודת זהות לא תקינה");
-            RuleFor(x => x.Email).EmailAddress().WithMessage("כתובת מייל לא תקינה");
+            //RuleFor(x => x.Email).EmailAddress().WithMessage("כתובת מייל לא תקינה");
+            RuleFor(e => e.Email).EmailAddress().When(x => !string.IsNullOrEmpty(x.Email)).WithMessage("כתובת מייל לא תקינה");
             RuleFor(x => x.Firstname).NotEmpty().WithMessage("שם פרטי לא הוזן");
             RuleFor(x => x.Lastname).NotEmpty().WithMessage("שם משפחה לא הוזן");
             RuleFor(x => x.Phone1).Matches(@"^([0-9-]+$)*").WithMessage("מספר הטלפון יכול להכיל רק מספרים");

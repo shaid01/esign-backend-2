@@ -21,6 +21,6 @@ namespace EsignBackend.Services.MainServices.Certificates
         Task<ServiceResponse<int>> AddCertificate(Certificate certificate);
         Task<ServiceResponse<int>> UpdateExpiredCertificates();
         byte[] GenerateXlsxFile(IEnumerable<CertificateDetailsDTO> certificateDetails);
-
+        Task<ServiceResponse<int>> DeleteCertificates(List<Certificate> certsToDelete);
     }
 }

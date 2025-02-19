@@ -231,9 +231,9 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug("UpdateCustomer");
             var serviceResponse = new ServiceResponse<int>();
-            var updatedCustomerInDb = _context.Customers.Update(updatedCustomer);
             try
             {
+                var updatedCustomerInDb = _context.Customers.Update(updatedCustomer);
                 _context.SaveChanges();
                 serviceResponse.Data = updatedCustomerInDb.Entity.Id;
                 serviceResponse.Message = "Customer updated successfully.";
@@ -242,9 +242,39 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateCustomer: " + exception);
+                _logger.Error("Exception detected while trying to UpdateCustomer: " + exception);
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+        }
+
+        public async Task<ServiceResponse<int>> DeleteCustomers(List<Customer> custsToDelete)
+        {
+            _logger.Debug("DeleteCustomers");
+
+            var serviceResponse = new ServiceResponse<int>();
+
+            try
+            {
+                _context.Customers.RemoveRange(custsToDelete);
+
+                _context.SaveChanges();
+
+                serviceResponse.Data = custsToDelete.Count;
+
+                serviceResponse.Message = $"{custsToDelete.Count} customer(s) was deleted successfully.";
+
+                serviceResponse.Success = true;
+
+                return serviceResponse;
+            }
+            catch (Exception exception)
+            {
+                _logger.Error("Exception detected while trying to delete customers: " + exception);
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Delete failed. {exception}";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -271,13 +301,18 @@ namespace EsignBackend.Services.CharacterService
                 customer.Id = 0;
                 var encryptedSecurityAns = EncryptDecryptHandler.encryptSecurityAns(customer.Securityansware);
                 customer.Securityansware = encryptedSecurityAns;
-                var newCustomerInDb = _context.Customers.Add(customer);
                 try
                 {
+                    var newCustomerInDb = _context.Customers.Add(customer);
+
                     _context.SaveChanges();
+
                     serviceResponse.Data = newCustomerInDb.Entity.Id;
+
                     _cache.Increment(CacheType.Customers);
+
                     serviceResponse.Success = true;
+
                     return serviceResponse;
                 }
                 catch (Exception exception)

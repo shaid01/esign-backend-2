@@ -17,5 +17,6 @@ namespace EsignBackend.Services.CharacterService
         Task<ServiceResponse<int>> UpdateCustomer(Customer updatedCustomer);
         Task<ServiceResponse<IEnumerable<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take);
         Task<ServiceResponse<int>> AddNewCustomer(Customer customer);
+        Task<ServiceResponse<int>> DeleteCustomers(List<Customer> custsToDelete);
     }
 }

@@ -28,43 +28,44 @@ namespace EsignBackend.Controllers
         [HttpGet("GetCustomersInRange")]
         public async Task<IActionResult> GetAllCustomersInRange(int skip, int take)
         {
-            _logger.Debug("GetAllCustomersInRange");
             return Ok(await _customersService.GetCustomers(skip, take));
         }
 
         [HttpGet("GetAmountOfCustomers")]
         public async Task<IActionResult> GetAmountOfCustomers()
         {
-            _logger.Debug("GetAmountOfCustomers");
             return Ok(await _customersService.GetAmountOfCustomers());
         }
         
         [HttpGet("GetCustomerById")]
         public IActionResult GetCustomerById(int id)
         {
-            _logger.Debug("GetCustomerById");
             return Ok(_customersService.GetCustomerById(id));
         }
 
         [HttpGet("GetSecurityQuestions")]
         public async Task<IActionResult> GetSecurityQuestions()
         {
-            _logger.Debug("GetSecurityQuestions");
             return Ok(await _customersService.GetSecurityQuestions());
         }
 
         [Authorize(Roles = "מנהל")]
         [HttpPut("UpdateCustomer")]
-        public async Task<IActionResult> UpdateUser(Customer updatedCustomer)
+        public async Task<IActionResult> UpdateCustomer(Customer updatedCustomer)
         {
-            _logger.Debug("UpdateUser");
             return Ok(await _customersService.UpdateCustomer(updatedCustomer));
+        }
+
+        [Authorize(Roles = "מנהל")]
+        [HttpPut("DeleteCustomers")]
+        public async Task<IActionResult> DeleteCustomers(List<Customer> custsToDelete)
+        {
+            return Ok(await _customersService.DeleteCustomers(custsToDelete));
         }
 
         [HttpPost("SearchCustomers")]
         public async Task<IActionResult> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
-            _logger.Debug("SearchCustomers");
             return Ok(await _customersService.SearchCustomers(customerAdvancedSearch, skip, take));
         }
 
@@ -72,7 +73,6 @@ namespace EsignBackend.Controllers
         [HttpPost("AddNewCustomer")]
         public async Task<IActionResult> AddNewCustomer(Customer customer)
         {
-            _logger.Debug("AddNewCustomer");
             return Ok(await _customersService.AddNewCustomer(customer));
         }
     }
