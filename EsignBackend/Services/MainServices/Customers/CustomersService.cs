@@ -258,13 +258,40 @@ namespace EsignBackend.Services.CharacterService
 
             try
             {
-                _context.Customers.RemoveRange(custsToDelete);
+                List<Customer> validToDelete = new List<Customer>();
+
+                List<string> invalidToDelete = new List<string>();
+
+                foreach (var cust in custsToDelete)
+                {
+                    var certificates = _context.Certificates
+                        .Where(cer => cer.Customerid == cust.Id).ToList();
+
+                    if (!certificates.Any())
+                    {
+                        validToDelete.Add(cust);
+                    }
+                    else
+                    {
+                        invalidToDelete.Add(cust.Idnumber);
+                    }
+                }
+
+                _context.Customers.RemoveRange(validToDelete);
 
                 _context.SaveChanges();
 
-                serviceResponse.Data = custsToDelete.Count;
+                serviceResponse.Data = validToDelete.Count;
 
-                serviceResponse.Message = $"{custsToDelete.Count} customer(s) was deleted successfully.";
+                if (validToDelete.Count == custsToDelete.Count)
+                {
+                    serviceResponse.Message = $"{validToDelete.Count} customer(s) was deleted successfully.";
+                }
+                else
+                {
+                    string notDeleted = string.Join(", ", invalidToDelete);
+                    serviceResponse.Message = $"Some customer record(s) was not deleted: {notDeleted}";
+                }
 
                 serviceResponse.Success = true;
 
