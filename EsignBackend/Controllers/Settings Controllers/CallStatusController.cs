@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CallStatusController : ControllerBase
@@ -21,6 +20,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _callStatusService = callStatusService;
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetCallsStatus")]
         public IActionResult GetCallsStatus(int skip, int take)
         {

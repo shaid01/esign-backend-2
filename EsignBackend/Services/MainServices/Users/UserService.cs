@@ -266,7 +266,7 @@ namespace EsignBackend.Services.CharacterService
                 {
                     _logger.Debug("AddNewUser exception: " + ex);
                     serviceResponse.Success = false;
-                    serviceResponse.Message = $"Registration failed. {ex}";
+                    serviceResponse.Message = $"Adding new user failed. {ex}";
                     serviceResponse.Data = -1;
                     return serviceResponse;
                 }

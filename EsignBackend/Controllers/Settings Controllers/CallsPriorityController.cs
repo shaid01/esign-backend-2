@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CallsPriorityController : ControllerBase
@@ -20,6 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _callsPriorityService = callsPriorityService;
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetCallsPriority")]
         public IActionResult GetCallsPriority(int skip, int take)
         {

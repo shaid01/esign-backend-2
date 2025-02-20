@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CustomersController : ControllerBase
@@ -25,51 +24,56 @@ namespace EsignBackend.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetCustomersInRange")]
         public async Task<IActionResult> GetAllCustomersInRange(int skip, int take)
         {
             return Ok(await _customersService.GetCustomers(skip, take));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAmountOfCustomers")]
         public async Task<IActionResult> GetAmountOfCustomers()
         {
             return Ok(await _customersService.GetAmountOfCustomers());
         }
-        
+
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetCustomerById")]
         public IActionResult GetCustomerById(int id)
         {
             return Ok(_customersService.GetCustomerById(id));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetSecurityQuestions")]
         public async Task<IActionResult> GetSecurityQuestions()
         {
             return Ok(await _customersService.GetSecurityQuestions());
         }
 
-        [Authorize(Roles = "מנהל")]
+        [Authorize(Roles = "מנהל,מנפיק")]
         [HttpPut("UpdateCustomer")]
         public async Task<IActionResult> UpdateCustomer(Customer updatedCustomer)
         {
             return Ok(await _customersService.UpdateCustomer(updatedCustomer));
         }
 
-        [Authorize(Roles = "מנהל")]
+        [Authorize(Roles = "מנהל,מנפיק")]
         [HttpPut("DeleteCustomers")]
         public async Task<IActionResult> DeleteCustomers(List<Customer> custsToDelete)
         {
             return Ok(await _customersService.DeleteCustomers(custsToDelete));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpPost("SearchCustomers")]
         public async Task<IActionResult> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
             return Ok(await _customersService.SearchCustomers(customerAdvancedSearch, skip, take));
         }
 
-        [Authorize(Roles = "מנהל")]
+        [Authorize(Roles = "מנהל,מנפיק")]
         [HttpPost("AddNewCustomer")]
         public async Task<IActionResult> AddNewCustomer(Customer customer)
         {

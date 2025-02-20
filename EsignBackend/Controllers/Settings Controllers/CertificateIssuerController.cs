@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CertificateIssuerController : ControllerBase
@@ -20,6 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _certificateIssuerService = certificateIssuerService;
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetCertificateIssuers")]
         public IActionResult GetCertificateIssuers(int skip, int take)
         {
@@ -39,6 +39,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _certificateIssuerService.AddNewCertificateIssuer(certificateIssuer));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAllCertificateIssuers")]
         public IActionResult GetAllCertificateIssuers()
         {

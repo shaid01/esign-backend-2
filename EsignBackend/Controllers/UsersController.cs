@@ -28,14 +28,13 @@ namespace EsignBackend.Controllers
         [HttpGet("GetAllUsersByRange")]
         public async Task<IActionResult> GetAllUsersInRange(int skip, int take)
         {
-            _logger.Debug("GetAllUsersByRange");
             return Ok(await _usersService.GetAllUsers(skip, take));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetUserByUsername")]
         public IActionResult GetUserByUsername(string username)
         {
-            _logger.Debug("GetUsersByUsername");
             return Ok(_usersService.GetUserByUsername(username));
         }
 
@@ -43,7 +42,6 @@ namespace EsignBackend.Controllers
         [HttpGet("GetAmountOfUsers")]
         public async Task<IActionResult> GetAmountOfUsers()
         {
-            _logger.Debug("GetAmountOfUsers");
             return Ok(await _usersService.GetAmountOfUsers());
         }
 
@@ -51,7 +49,6 @@ namespace EsignBackend.Controllers
         [HttpPost("AddNewUser")]
         public async Task<IActionResult> AddNewUser(Buuser newUser)
         {
-            _logger.Debug("AddNewUser");
             return Ok(await _usersService.AddNewUser(newUser));
         }
 
@@ -59,7 +56,6 @@ namespace EsignBackend.Controllers
         [HttpPut("UpdateUser")]
         public async Task<IActionResult> UpdateUser(Buuser updatedUser)
         {
-            _logger.Debug("UpdateUser");
             return Ok(await _usersService.UpdateUser(updatedUser));
         }
 
@@ -67,7 +63,6 @@ namespace EsignBackend.Controllers
         [HttpPost("SearchUsers")]  // TODO: change to Get
         public async Task<IActionResult> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
-            _logger.Debug("SearchUsers");
             return Ok(await _usersService.SearchUsers(userAdvancedSearch, skip, take));
         }
 
@@ -75,7 +70,6 @@ namespace EsignBackend.Controllers
         [HttpPut("ChangeUserPassword")]
         public async Task<IActionResult> ChangeUserPassword(Buuser User)
         {
-            _logger.Debug("ChangeUserPassword");
             return Ok(await _usersService.ChangeUserPassword(User));
         }
     }
