@@ -34,12 +34,18 @@ namespace EsignBackend.Controllers
         {
             _logger.Debug("Login");
 
-            var response = await _authenticateService.Login(request.UserName, request.Password);
-            if (!response.Success)
-            {
-                return BadRequest(response);
-            }
-            return Ok(response);
+            //var response = await _authenticateService.Login(request.UserName, request.Password);
+
+            return Ok(await _authenticateService.Login(request.UserName, request.Password));
+
+            //if (!response.Success)
+            //{
+            //    return BadRequest(response);
+            //}
+            //else
+            //{
+            //    return Ok(response);
+            //}
         }
     }
 }

@@ -102,7 +102,7 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
-                _logger.Debug("Select user exception: " + ex.Message);
+                _logger.Debug("Login user exception: " + ex.Message);
                 response.Success = false;
                 response.Message = ex.Message;
 
