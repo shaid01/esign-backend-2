@@ -675,6 +675,10 @@ namespace EsignBackend.Models
 
                 entity.HasIndex(x => new { x.Customerid })
                     .HasDatabaseName("CustomerID_Foreign");
+
+                // 25/02/2025
+                entity.HasIndex(x => new { x.Securityquestion })
+                    .HasDatabaseName("Securityquestion_Foreign");
             });
 
             modelBuilder.Entity<CertificateRemark>(entity =>
