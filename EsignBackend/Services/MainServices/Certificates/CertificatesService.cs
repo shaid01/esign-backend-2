@@ -40,7 +40,9 @@ namespace EsignBackend.Services.MainServices.Certificates
                     .Include(cer => cer.RelatedIssuerPlace)
                     .Include(cer => cer.RelatedProject)
                     .Include(cer => cer.RelatedSmartObject)
-                    .Include(cer => cer.RelatedSubProject);
+                    .Include(cer => cer.RelatedSubProject)
+                    .Include(cer => cer.RelatedSecurityquestion);
+
         }
     }
 
@@ -111,7 +113,7 @@ namespace EsignBackend.Services.MainServices.Certificates
                 .Include(cer => cer.RelatedExpiration)
                 .Include(cer => cer.RelatedIssuerPlace)
                 .Include(cer => cer.RelatedProject)
-                //  .Include(cer => cer.RelatedSecurityquestion)
+                .Include(cer => cer.RelatedSecurityquestion)
                 .Include(cer => cer.RelatedSmartObject)
                 .Include(cer => cer.RelatedSubProject)
                 .AsNoTracking()
