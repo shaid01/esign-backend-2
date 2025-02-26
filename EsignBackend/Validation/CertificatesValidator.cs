@@ -24,9 +24,10 @@ namespace EsignBackend.Validation
             RuleFor(x => x.Securityquestion).NotEmpty().GreaterThanOrEqualTo(0).WithMessage("חסרה שאלת אבטחה");
             RuleFor(x => x.Securityansware).NotEmpty().WithMessage("תשובה לשאלת אבטחה חסרה");
 
-            RuleFor(x => x.Issuerplace).NotEmpty().GreaterThanOrEqualTo(0).When(x=> x.Certificatestatus !=7 && x.Certificatestatus !=11).WithMessage("מיקום הנפקה חסר");
-            RuleFor(x => x.Certificateissuer).NotEmpty().GreaterThanOrEqualTo(0).WithMessage("מנפיק תעודה חסר");
-            RuleFor(x => x.Identify).NotEmpty().GreaterThanOrEqualTo(0).WithMessage("מזהה הלקוח חסר");
+            //26/02/2025
+            //RuleFor(x => x.Issuerplace).NotEmpty().GreaterThanOrEqualTo(0).When(x=> x.Certificatestatus !=7 && x.Certificatestatus !=11).WithMessage("מיקום הנפקה חסר");
+            //RuleFor(x => x.Certificateissuer).NotEmpty().GreaterThanOrEqualTo(0).WithMessage("מנפיק תעודה חסר");
+            //RuleFor(x => x.Identify).NotEmpty().GreaterThanOrEqualTo(0).WithMessage("מזהה הלקוח חסר");
 
             RuleFor(x => x.Licenceid).Matches(@"^[0-9]*$").WithMessage("מספר רישיון לא תקין");
             RuleFor(x => x.Hpnumber).Matches(@"^[0-9]*$").WithMessage("מספר ח.פ. לא תקין");

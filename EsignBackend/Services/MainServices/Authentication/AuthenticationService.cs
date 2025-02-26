@@ -78,19 +78,19 @@ namespace EsignBackend.Services.CharacterService
                 {
                     _logger.Debug("user is null");
                     response.Success = false;
-                    response.Message = "Username or Password incorrect";
+                    response.Message = "User not found";
                 }
                 else if (!VerifyPassword(password, user.Pass))
                 {
                     _logger.Debug("verifyPassword failed");
                     response.Success = false;
-                    response.Message = "Username or Password incorrect";
+                    response.Message = "Password incorrect";
                 }
                 else if (IsExpired(user.Expires))
                 {
                     _logger.Debug("Expiration date expired");
                     response.Success = false;
-                    response.Message = "Expiration date expired";
+                    response.Message = "User expired";
                 }
                 else
                 {
