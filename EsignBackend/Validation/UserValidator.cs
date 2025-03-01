@@ -14,11 +14,12 @@ namespace EsignBackend.Validation
         {
            // RuleFor(x => x.Id).NotEmpty().WithMessage("User id is missing");
             RuleFor(x => x.Username).NotEmpty().WithMessage("שם המשתמש לא הוזן").Matches("^[A-Za-z0-9]$*").WithMessage("שם המשתמש יכול להכיל רק אותיות באנגלית ומספרים").Matches("^[^# “”]*$").WithMessage("הוכנסו תווים לא חוקיים לשם המשתמש");
-            RuleFor(x => x.Email).EmailAddress().WithMessage("כתובת אימייל אינה תקינה");
+            RuleFor(e => e.Email).EmailAddress().When(x => !string.IsNullOrEmpty(x.Email)).WithMessage("כתובת אימייל אינה תקינה");
             RuleFor(x => x.Firstname).NotEmpty().WithMessage("שם פרטי לא הוזן");
             RuleFor(x => x.Lastname).NotEmpty().WithMessage("שם משפחה לא הוזן");
             RuleFor(x => x.Expires).NotEmpty().WithMessage("תאריך תפוגה לא הוזן");
-            RuleFor(x => x.Phone).Matches(@"^[0-9-]+$").WithMessage("מספר הטלפון יכול להכיל רק מספרים");
+            //RuleFor(x => x.Phone).Matches(@"^[0-9-]+$").When(x => !string.IsNullOrEmpty(x.Phone)).WithMessage("מספר הטלפון יכול להכיל רק מספרים");
+            RuleFor(x => x.Phone).Matches(@"^([0-9-]+$)*").WithMessage("מספר הטלפון יכול להכיל רק מספרים");
             //08-DEC-2024
             RuleFor(x => x.Usergroup).NotEmpty().Must(BeAValidUserGroup).WithMessage("המשתמש חייב להשתייך לאחד מהקבוצות הבאות: 'מנהל', 'מנפיק' או 'תומך'");
         }
