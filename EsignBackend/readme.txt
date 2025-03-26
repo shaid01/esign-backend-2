@@ -1,4 +1,6 @@
-﻿HTTP Error 405 - see "web.config":
+﻿-- to see all ports already used by another processes: netsh interface ipv4 show excludedportrange protocol=tcp
+
+HTTP Error 405 - see "web.config":
 	  <modules runAllManagedModulesForAllRequests="false">
 		<remove name="WebDAVModule" />
 	  </modules>

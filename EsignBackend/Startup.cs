@@ -33,6 +33,7 @@ using System.Text.Json;
 using EsignBackend.Extensions.CacheHandlers;
 using System.Threading;
 using Microsoft.Extensions.Options;
+using Serilog.Context;
 
 namespace EsignBackend
 {
@@ -100,6 +101,7 @@ namespace EsignBackend
             services.AddSingleton<ILogger>(
                 new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
+                .Enrich.FromLogContext()
                 .CreateLogger());
 
             services.AddRateLimiting(_config);
@@ -151,6 +153,8 @@ namespace EsignBackend
             app.UseErrorHandlingMiddleware();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<LogUserNameMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
