@@ -383,7 +383,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         // see https://learn.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver16
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
-            _logger.Debug("CheckSecurityAnswer");
+            _logger.Debug($"CheckSecurityAnswer: {cerId}, {question} - {secAns}");
 
             var serviceResponse = new ServiceResponse<bool>();
 
@@ -434,7 +434,9 @@ namespace EsignBackend.Services.MainServices.Certificates
         public async Task<ServiceResponse<int>> UpdateExpiredCertificates()
         {
             _logger.Debug("Hangfire Job - *************** UpdateExpiredCertificates ***************");
+
             var cert = _context.Certificatesstatuses.FirstOrDefault(cer => cer.Title.Equals("פג תוקף"));
+
             var serviceResponse = new ServiceResponse<int>();
             if (cert != null)
             {
@@ -469,7 +471,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<int>> AddCertificate(Certificate certificate)
         {
-            _logger.Debug("AddCertificate");
+            _logger.Debug($"AddCertificate - {certificate.Company} - {certificate.Email}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -507,7 +509,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
         {
-            _logger.Debug("UpdateCertificate");
+            _logger.Debug($"UpdateCertificate: ID - {updatedCertificate.Id}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -537,7 +539,8 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<int>> DeleteCertificates(List<Certificate> certsToDelete)
         {
-            _logger.Debug("DeleteCertificates");
+
+            _logger.Debug($"DeleteCertificates: {String.Join(", ", certsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}");
 
             var serviceResponse = new ServiceResponse<int>();
 

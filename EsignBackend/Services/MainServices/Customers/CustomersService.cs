@@ -229,7 +229,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> UpdateCustomer(Customer updatedCustomer)
         {
-            _logger.Debug("UpdateCustomer");
+            _logger.Debug($"UpdateCustomer: {updatedCustomer.Id}");
             var serviceResponse = new ServiceResponse<int>();
             try
             {
@@ -252,7 +252,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> DeleteCustomers(List<Customer> custsToDelete)
         {
-            _logger.Debug("DeleteCustomers");
+            _logger.Debug($"DeleteCustomers: {String.Join(", ", custsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -309,7 +309,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> AddNewCustomer(Customer customer)
         {
-            _logger.Debug("AddNewCustomer");
+            _logger.Debug($"AddNewCustomer: {customer.Idnumber} - {customer.Lastname} - {customer.Firstname}");
 
             var serviceResponse = new ServiceResponse<int>();
             var customerIdAlreadyInDb = IsUserIdAlreadyInUse(customer.Idnumber);

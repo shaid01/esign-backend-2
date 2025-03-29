@@ -32,8 +32,6 @@ namespace EsignBackend.Controllers
 
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
-            _logger.Debug("Login");
-
             //var response = await _authenticateService.Login(request.UserName, request.Password);
 
             return Ok(await _authenticateService.Login(request.UserName, request.Password));

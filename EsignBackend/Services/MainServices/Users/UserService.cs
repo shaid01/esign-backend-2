@@ -310,7 +310,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> ChangeUserPassword(Buuser user)
         {
-            _logger.Debug("ChangeUserPassword");
+            _logger.Debug($"ChangeUserPassword for user: {user.Username}");
 
             var encryptedPass = encryptPass(user.Pass);
             user.Pass = encryptedPass;

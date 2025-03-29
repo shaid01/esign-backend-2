@@ -65,10 +65,11 @@ namespace EsignBackend.Services.CharacterService
 
             return tokenHandler.WriteToken(token);
         }
+
         public async Task<ServiceResponse<string>> Login(string username, string password)
         {
             // password = "123456";
-            _logger.Debug("Login");
+            _logger.Debug($"Login username: {username}");
 
             var response = new ServiceResponse<string>();
 
@@ -78,7 +79,7 @@ namespace EsignBackend.Services.CharacterService
 
                 if (user == null)
                 {
-                    _logger.Debug("user is null");
+                    _logger.Debug("User not found");
                     response.Success = false;
                     response.Message = "User not found";
                 }
@@ -96,7 +97,7 @@ namespace EsignBackend.Services.CharacterService
                 }
                 else
                 {
-                    _logger.Debug("user successfully login");
+                    _logger.Debug("User successfully login");
                     response.Data = CreateToken(user);
                     response.Message = JsonConvert.SerializeObject(user);
                     response.Success = true;
