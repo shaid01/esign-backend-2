@@ -9,6 +9,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.CharacterService
@@ -236,9 +237,22 @@ namespace EsignBackend.Services.CharacterService
         /// <returns></returns>
         public async Task<ServiceResponse<int>> AddNewUser(Buuser newUser)
         {
-            _logger.Debug("AddNewUser");
+            _logger.Debug($"AddNewUser: {newUser.Username}");
+
             var serviceResponse = new ServiceResponse<int>();
+
+            string validateMessage = string.Empty;
+
+            if (!ValidateUserPassword(newUser.Pass, out validateMessage))
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = validateMessage;
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
             var userNameIsAlreadyTaken = IsUserNameAlreadyInUse(newUser.Username);
+
             if (userNameIsAlreadyTaken)
             {
                 serviceResponse.Success = false;
@@ -275,7 +289,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> UpdateUser(Buuser updatedUser)
         {
-            _logger.Debug("UpdateUser");
+            _logger.Debug($"UpdateUser: {updatedUser.Username}");
 
             updatedUser.Updateddate = updatedUser.Updateddate.Value.ToLocalTime();
 
@@ -312,9 +326,22 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Debug($"ChangeUserPassword for user: {user.Username}");
 
-            var encryptedPass = encryptPass(user.Pass);
-            user.Pass = encryptedPass;
             var serviceResponse = new ServiceResponse<int>();
+
+            string validateMessage = string.Empty;
+
+            if (!ValidateUserPassword(user.Pass, out validateMessage))
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = validateMessage;
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
+            var encryptedPass = encryptPass(user.Pass);
+
+            user.Pass = encryptedPass;
+
             var updatedUserInDb = _context.Buusers.Update(user);
             try
             {
@@ -332,6 +359,36 @@ namespace EsignBackend.Services.CharacterService
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
+        }
+
+        private bool ValidateUserPassword(string plainPass, out string messageStr)
+        {
+            messageStr = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(plainPass))
+            {
+                messageStr = "הסיסמה לא הוזנה";
+                return false;
+            }
+
+            if (plainPass.Length < 8)
+            {
+                messageStr = "אורך הסיסמה המינימלי חייב להיות לפחות 8 תווים";
+                return false;
+            }
+
+            bool isValid =
+                plainPass.Any(ch => char.IsLower(ch)) &&
+                plainPass.Any(ch => char.IsDigit(ch)) &&
+                !plainPass.Any(ch => char.IsUpper(ch));
+
+            if (!isValid)
+            {
+                messageStr = "סיסמה יכול להכיל רק אותיות קטנות באנגלית ומספרים";
+                return false;
+            }
+
+            return true;
         }
 
     }

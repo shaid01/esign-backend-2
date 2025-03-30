@@ -15,6 +15,7 @@ namespace EsignBackend.Extensions
     {
         public static void AddValidation(this IServiceCollection services)
         {
+            //services.AddHttpContextAccessor(); //30/03/2025
             services.AddTransient<IValidator<LoginDto>, LoginDtoValidator>();
             services.AddTransient<IValidator<Buuser>, UserValidator>();
             services.AddTransient<IValidator<Customer>, CustomerValidator>();

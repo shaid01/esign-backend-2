@@ -1,5 +1,6 @@
 ﻿using EsignBackend.Models;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,18 @@ namespace EsignBackend.Validation
 {
     public class UserValidator : AbstractValidator<Buuser>
     {
+        //private readonly IHttpContextAccessor _httpContextAccessor;
+
+        //public UserValidator(IHttpContextAccessor httpContextAccessor)
         public UserValidator()
         {
-           // RuleFor(x => x.Id).NotEmpty().WithMessage("User id is missing");
-            RuleFor(x => x.Username).NotEmpty().WithMessage("שם המשתמש לא הוזן").Matches("^[A-Za-z0-9]$*").WithMessage("שם המשתמש יכול להכיל רק אותיות באנגלית ומספרים").Matches("^[^# “”]*$").WithMessage("הוכנסו תווים לא חוקיים לשם המשתמש");
+            //this._httpContextAccessor = httpContextAccessor;
+
+            // it is better to verify password value in the service method
+            //RuleFor(x => x.Pass).NotEmpty().WithMessage("הסיסמה לא הוזנה").Matches("^[a-z0-9]$*").WithMessage("סיסמה יכול להכיל רק אותיות קטנות באנגלית ומספרים").Matches("^[^# “”]*$").WithMessage("הוכנסו תווים לא חוקיים לשם המשתמש").MinimumLength(8).WithMessage("אורך הסיסמה המינימלי חייב להיות לפחות 8 תווים");
+
+            // RuleFor(x => x.Id).NotEmpty().WithMessage("User id is missing");
+            RuleFor(x => x.Username).NotEmpty().WithMessage("שם המשתמש לא הוזן").Matches("^[A-Za-z0-9]$*").WithMessage("שם המשתמש יכול להכיל רק אותיות באנגלית ומספרים").Matches("^[^# “”]*$").WithMessage("הוכנסו תווים לא חוקיים לשם המשתמש").MinimumLength(3).WithMessage("אורך המינימלי של שם המשתמש חייב להיות לפחות 3 תווים");
             RuleFor(e => e.Email).EmailAddress().When(x => !string.IsNullOrEmpty(x.Email)).WithMessage("כתובת אימייל אינה תקינה");
             RuleFor(x => x.Firstname).NotEmpty().WithMessage("שם פרטי לא הוזן");
             RuleFor(x => x.Lastname).NotEmpty().WithMessage("שם משפחה לא הוזן");
