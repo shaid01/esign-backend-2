@@ -126,6 +126,8 @@ namespace EsignBackend
 
             services.AddValidation();
             services.AddConfiguration(_config);
+            //How to apply in Swagger authorize text box:
+            //Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyMTMiLCJ1bmlxdWVfbmFtZSI6ImdhbGgiLCJyb2xlIjoi157XoNeU15wiLCJuYmYiOjE3NDM0MTQ5OTgsImV4cCI6MTc0MzQyMjE5OCwiaWF0IjoxNzQzNDE0OTk4fQ.RSBBL5bIU6NfOvILnbbw__5H6YjtelR756xtFSbFC4E
             services.AddSwagger();
 
         }
