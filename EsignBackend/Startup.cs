@@ -111,7 +111,7 @@ namespace EsignBackend
             {
                 options.AddPolicy("CorsPolicy",
                 builder => builder.WithOrigins(address)
-                .AllowAnyOrigin()
+                //.AllowAnyOrigin() - bug 03/04/2025
                 .AllowAnyMethod()
                 .AllowAnyHeader()                
                 );
