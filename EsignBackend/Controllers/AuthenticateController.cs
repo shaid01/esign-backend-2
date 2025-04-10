@@ -1,4 +1,5 @@
-﻿using EsignBackend.Dtos.Login;
+﻿using Azure;
+using EsignBackend.Dtos.Login;
 using EsignBackend.Models;
 using EsignBackend.Services.CharacterService;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,17 @@ namespace EsignBackend.Controllers
         {
             //var response = await _authenticateService.Login(request.UserName, request.Password);
 
-            return Ok(await _authenticateService.Login(request.UserName, request.Password));
+            var response = await _authenticateService.Login(request.UserName, request.Password);
+
+            if (response.Success)
+            {
+                _authenticateService.SetTokensInsideCookie(response.Data.Token, HttpContext);
+
+                response.Data.Token = null;
+            }
+
+            return Ok(response);
+            //return Ok();
 
             //if (!response.Success)
             //{
@@ -44,6 +55,14 @@ namespace EsignBackend.Controllers
             //{
             //    return Ok(response);
             //}
+        }
+
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutDto request)
+        {
+            _authenticateService.DeleteCookie(request.CookieName, HttpContext);
+
+            return Ok(true);
         }
     }
 }

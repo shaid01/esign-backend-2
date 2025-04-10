@@ -1,4 +1,6 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Dtos.Login;
+using EsignBackend.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,8 @@ namespace EsignBackend.Services.CharacterService
 {
     public interface IAuthenticationService
     {
-        Task<ServiceResponse<string>> Login(string username,string password);        
+        Task<ServiceResponse<UserClaimsDataDto>> Login(string username,string password);
+        void SetTokensInsideCookie(string token, HttpContext context);
+        void DeleteCookie(string cookieName, HttpContext context);
     }
 }

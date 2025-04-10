@@ -34,6 +34,5 @@ namespace EsignBackend
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
     }
 }

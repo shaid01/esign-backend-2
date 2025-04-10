@@ -34,6 +34,9 @@ using EsignBackend.Extensions.CacheHandlers;
 using System.Threading;
 using Microsoft.Extensions.Options;
 using Serilog.Context;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using DocumentFormat.OpenXml.InkML;
 
 namespace EsignBackend
 {
@@ -57,10 +60,13 @@ namespace EsignBackend
                 .UseDefaultTypeSerializer()
                 .UseMemoryStorage();
             });
+
             // Add the processing server as IHostedService
             services.AddHangfireServer();
+
             //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             services.AddDbContext<AppDbContext>(config =>
                 config.UseSqlServer(_config.GetConnectionString("DefaultConnection"),
                     providerOptions =>
@@ -69,26 +75,87 @@ namespace EsignBackend
                     }
                 )
             );
-            services.AddControllersWithViews()
-                .AddNewtonsoftJson(options =>
-            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
-            services.AddControllers();
-            services.AddAutoMapper(typeof(Startup));
-            services.AddRazorPages();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+
+            services.AddControllersWithViews(options =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    //options.AllowEmptyInputInBodyModelBinding = true;
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                }
+                );
+
+        services.AddControllers();
+
+        services.AddAutoMapper(typeof(Startup));
+
+        services.AddRazorPages();
+
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuerSigningKey = true,
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("AppSettings:Token").Value)),
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false,
+            //            ValidateLifetime = true,
+            //            ClockSkew = TimeSpan.Zero
+            //        };
+            //    });
+
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.Name = "tokenInCookie";
+            //    options.Cookie.HttpOnly = true;
+            //    options.Cookie.SameSite = SameSiteMode.Strict;
+            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //    //options.Cookie.Domain = "localhost";
+            //    //options.SlidingExpiration = true;
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(Convert.ToDouble(_config.GetSection("AppSettings").GetSection("SessionExpireMinuteTime").Value));
+            //    options.Cookie.IsEssential = true;
+
+            //});
+
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("AppSettings:Token").Value)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx =>
                     {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("AppSettings:Token").Value)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+                        ctx.Request.Cookies.TryGetValue("accessToken", out var accessToken);
+
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            ctx.Token = accessToken;
+
+                            //ctx.Request.Headers.Add("Authorization", $"Bearer: {accessToken}");
+                        }
+                        return Task.CompletedTask;
+                    },
+                };
+            });
+
             services.AddHttpContextAccessor();
 
             services.AddHandlers(_env);
@@ -113,7 +180,11 @@ namespace EsignBackend
                 builder => builder.WithOrigins(address)
                 //.AllowAnyOrigin() - bug 03/04/2025
                 .AllowAnyMethod()
-                .AllowAnyHeader()                
+                .AllowAnyHeader()
+                //.WithExposedHeaders("Access-Control-Expose-Headers")
+                //.WithExposedHeaders("X-Access-Token")
+                //.WithExposedHeaders("Set-Cookie")
+                .AllowCredentials()
                 );
             });
 
@@ -153,6 +224,8 @@ namespace EsignBackend
             app.UseAuthentication();
 
             app.UseErrorHandlingMiddleware();
+
+            app.UseMiddleware<AddTokenFromCookieMiddleware>();
 
             app.UseAuthorization();
 

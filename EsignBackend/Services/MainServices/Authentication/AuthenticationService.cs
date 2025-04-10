@@ -1,6 +1,10 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using Azure;
+using Azure.Core;
+using DocumentFormat.OpenXml.Spreadsheet;
+using EsignBackend.Dtos.Login;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -40,9 +44,60 @@ namespace EsignBackend.Services.CharacterService
             return userPassInDb.Equals(encryptedPass);
         }
 
-        private string CreateToken(Buuser user)
+        //https://code-maze.com/how-to-use-httponly-cookie-in-net-core-for-authentication-and-refresh-token-actions/
+        public void SetTokensInsideCookie(string tokenDto, HttpContext context)
+        {
+            //context.Response.Cookies.Delete("accessToken");
+            //context.Response.Headers.Add("Access-Control-Expose-Headers",
+            context.Response.Cookies.Append("accessToken", tokenDto,
+                new CookieOptions
+                {
+                    Expires = DateTime.Now.AddMinutes(_appSettings.SessionExpireMinuteTime),//DateTimeOffset.UtcNow.AddMinutes(5),
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Secure = true,
+                    // don't use SameSiteMode.Strict, it won't work with Angular!
+                    SameSite = SameSiteMode.None,
+                    MaxAge = null
+                });
+
+            //var x = context.Response.Headers["Set-Cookie"][0];
+
+            //context.Response.Headers.Add("Access-Control-Expose-Headers", x);
+
+            //context.Response.Cookies.Append("refreshToken", tokenDto.RefreshToken,
+            //    new CookieOptions
+            //    {
+            //        Expires = DateTimeOffset.UtcNow.AddDays(7),
+            //        HttpOnly = true,
+            //        IsEssential = true,
+            //        Secure = true,
+            //        SameSite = SameSiteMode.None
+            //    });
+        }
+
+        public void DeleteCookie(string cookieName, HttpContext context)
+        {
+            foreach (var cookieKey in context.Request.Cookies.Keys)
+            {
+                if (cookieKey.Equals(cookieName))
+                {
+                    //context.Response.Cookies.Delete(cookieKey);
+                    context.Response.Cookies.Append(cookieKey, "",
+                        new CookieOptions
+                        {
+                            Expires = DateTime.Now.AddDays(-1)
+                        });
+                }
+            }
+        }
+
+        private string CreateToken(Buuser user, ref UserClaimsDataDto userClaimsData)
         {
             _logger.Debug("CreateToken");
+
+            userClaimsData.UserName = user.Username;
+            userClaimsData.UserRole = user.Usergroup.ToString();
 
             List<Claim> claims = new List<Claim>
             {
@@ -66,12 +121,12 @@ namespace EsignBackend.Services.CharacterService
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<ServiceResponse<string>> Login(string username, string password)
+        public async Task<ServiceResponse<UserClaimsDataDto>> Login(string username, string password)
         {
             // password = "123456";
             _logger.Debug($"Login username: {username}");
 
-            var response = new ServiceResponse<string>();
+            var response = new ServiceResponse<UserClaimsDataDto>();
 
             try
             {
@@ -98,7 +153,30 @@ namespace EsignBackend.Services.CharacterService
                 else
                 {
                     _logger.Debug("User successfully login");
-                    response.Data = CreateToken(user);
+
+                    //here we are creating token!
+                    UserClaimsDataDto userData = new UserClaimsDataDto();
+                    response.Data = userData;
+
+                    response.Data.Token = CreateToken(user, ref userData);
+
+                    Department department = _context.Departments
+                        .Where(x => x.Id == user.Departmentid)
+                        .FirstOrDefault();
+
+                    if (department != null)
+                    {
+                        response.Data.UserDep = department.Title;
+                    }
+                    else
+                    {
+                        response.Data.UserDep = "Unknown";
+                    }
+
+                    response.Data.UserName = userData.UserName;
+                    response.Data.UserRole = userData.UserRole;
+                    response.Data.UserFirstName = user.Firstname;
+
                     response.Message = JsonConvert.SerializeObject(user);
                     response.Success = true;
                 }

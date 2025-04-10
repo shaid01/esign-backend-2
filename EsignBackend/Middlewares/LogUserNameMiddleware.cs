@@ -17,7 +17,8 @@ namespace EsignBackend.Middlewares
         {
             LogContext.PushProperty("UserName", context.User.Identity.Name);
 
-            return next(context);
+            var result = next(context);
+            return result;
         }
     }
 }
