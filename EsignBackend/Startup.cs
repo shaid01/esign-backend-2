@@ -37,6 +37,7 @@ using Serilog.Context;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using DocumentFormat.OpenXml.InkML;
+using Serilog.Events;
 
 namespace EsignBackend
 {
@@ -168,6 +169,11 @@ namespace EsignBackend
             services.AddSingleton<ILogger>(
                 new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
+                //.WriteTo.EventLog(
+                //      logName: "Application",
+                //      source: "Esign",
+                //      manageEventSource: true,
+                //      restrictedToMinimumLevel: LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .CreateLogger());
 

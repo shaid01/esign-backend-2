@@ -166,11 +166,11 @@ namespace EsignBackend.Services.CharacterService
 
                     if (department != null)
                     {
-                        response.Data.UserDep = department.Title;
+                        response.Data.UserDept = department.Title;
                     }
                     else
                     {
-                        response.Data.UserDep = "Unknown";
+                        response.Data.UserDept = "Unknown";
                     }
 
                     response.Data.UserName = userData.UserName;

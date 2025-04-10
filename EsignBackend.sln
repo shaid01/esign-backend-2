@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EsignBackend", "EsignBacken
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D92A96FA-D47A-4BC2-AC25-E469F8102555}"
 	ProjectSection(SolutionItems) = preProject
+		CreateEventLogForEsign.txt = CreateEventLogForEsign.txt
 		Esign-db-compare-plan.txt = Esign-db-compare-plan.txt
 	EndProjectSection
 EndProject

@@ -5,7 +5,7 @@
         public string Token { get; set; }
         public string UserName { get; set; }
         public string UserRole { get; set; }
-        public string UserDep { get; set; }
+        public string UserDept { get; set; }
         public string UserFirstName { get; internal set; }
     }
 }
