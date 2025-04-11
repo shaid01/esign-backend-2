@@ -36,9 +36,8 @@ namespace EsignBackend.Services.CharacterService
             _appSettings = appSettings.Value;
         }
 
-        private bool VerifyPassword(string password, string userPassInDb)
+        private bool verifyPassword(string password, string userPassInDb)
         {
-            _logger.Debug("VerifyPassword");
             var encryptedPass = EncryptDecryptHandler.encryptUserPass(password);
 
             return userPassInDb.Equals(encryptedPass);
@@ -92,9 +91,9 @@ namespace EsignBackend.Services.CharacterService
             }
         }
 
-        private string CreateToken(Buuser user, ref UserClaimsDataDto userClaimsData)
+        private string createToken(Buuser user, ref UserClaimsDataDto userClaimsData)
         {
-            _logger.Debug("CreateToken");
+            _logger.Debug("Create token start");
 
             userClaimsData.UserName = user.Username;
             userClaimsData.UserRole = user.Usergroup.ToString();
@@ -118,13 +117,16 @@ namespace EsignBackend.Services.CharacterService
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return tokenHandler.WriteToken(token);
+            string tokenString = tokenHandler.WriteToken(token);
+
+            _logger.Debug("Create token end");
+
+            return tokenString;
         }
 
         public async Task<ServiceResponse<UserClaimsDataDto>> Login(string username, string password)
         {
-            // password = "123456";
-            _logger.Debug($"Login username: {username}");
+            _logger.Information($"Login username: {username}");
 
             var response = new ServiceResponse<UserClaimsDataDto>();
 
@@ -134,31 +136,31 @@ namespace EsignBackend.Services.CharacterService
 
                 if (user == null)
                 {
-                    _logger.Debug("User not found");
+                    _logger.Warning($"User [{username}] not found");
                     response.Success = false;
                     response.Message = "User not found";
                 }
-                else if (!VerifyPassword(password, user.Pass))
+                else if (!verifyPassword(password, user.Pass))
                 {
-                    _logger.Debug("verifyPassword failed");
+                    _logger.Warning($"User [{username}] password is wrong");
                     response.Success = false;
                     response.Message = "Password incorrect";
                 }
                 else if (IsExpired(user.Expires))
                 {
-                    _logger.Debug("Expiration date expired");
+                    _logger.Warning($"User [{username}]: Expiration date is expired");
                     response.Success = false;
                     response.Message = "User expired";
                 }
                 else
                 {
-                    _logger.Debug("User successfully login");
+                    _logger.Information($"User [{username}] successfully logged-in");
 
                     //here we are creating token!
                     UserClaimsDataDto userData = new UserClaimsDataDto();
                     response.Data = userData;
 
-                    response.Data.Token = CreateToken(user, ref userData);
+                    response.Data.Token = createToken(user, ref userData);
 
                     Department department = _context.Departments
                         .Where(x => x.Id == user.Departmentid)
@@ -183,7 +185,8 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
-                _logger.Debug("Login user exception: " + ex.Message);
+                _logger.Error($"Login user [{username}] exception: " + ex.Message);
+
                 response.Success = false;
                 response.Message = ex.Message;
 

@@ -32,15 +32,14 @@ namespace EsignBackend.Services.CharacterService
             _appSettings = appSettings.Value;
         }
 
-        private bool IsUserIdAlreadyInUse(string username)
+        private bool isUserIdAlreadyInUse(string username)
         {
-            _logger.Debug("IsUserIdAlreadyInUse");
             return _context.Customers.Where(customer => customer.Idnumber.Equals(username)).Count() != 0;
         }
 
         public async Task<ServiceResponse<List<CustomerDTO>>> GetCustomers(int skip, int take)
         {
-            _logger.Debug("GetCustomers");
+            _logger.Debug($"Get customers: skip - {skip}, take - {take}");
 
             var serviceResponse = new ServiceResponse<List<CustomerDTO>>();
 
@@ -70,7 +69,7 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCustomers. {ex.Message}");
+                _logger.Error($"Get customers: Error while processing: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -95,7 +94,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<IEnumerable<CustomerDTO>>> SearchCustomers(CustomerAdvancedSearch customerAdvancedSearch, int skip, int take)
         {
-            _logger.Debug("SearchCustomers");
+            _logger.Debug($"Search customers: skip - {skip}, take - {take}");
 
             var serviceResponse = new ServiceResponse<IEnumerable<CustomerDTO>>();
 
@@ -129,7 +128,7 @@ namespace EsignBackend.Services.CharacterService
 
                 if ((serviceResponse.Amount > _appSettings.MaxRecordsForExport) && (take == UNLIMITED))
                 {
-                    _logger.Error($"Customers: Too many records for export: {serviceResponse.Amount}");
+                    _logger.Error($"Search customers: Too many records for export: {serviceResponse.Amount}");
 
                     serviceResponse.Data = null;
                     serviceResponse.Success = false;
@@ -149,7 +148,7 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in SearchCustomers. {ex.Message}");
+                _logger.Error($"Error while processing SearchCustomers: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -173,7 +172,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> GetAmountOfCustomers()
         {
-            _logger.Debug("GetAmountOfCustomers");
+            _logger.Debug("Get amount of customers");
             var serviceResponse = new ServiceResponse<int>();
 
             try
@@ -182,6 +181,8 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
+                _logger.Error($"Get amount of customers exception: {ex}");
+
                 serviceResponse.Data = -1;
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
@@ -191,7 +192,7 @@ namespace EsignBackend.Services.CharacterService
 
         public CustomerDTO GetCustomerById(int id)
         {
-            _logger.Debug("GetCustomerById");
+            _logger.Debug($"Get customer by id: {id}");
 
             //var serviceResponse = new ServiceResponse<CustomerDTO>();
             //serviceResponse.Amount = _cache.GetCounterByType(CacheType.Customers);
@@ -220,7 +221,8 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<List<Securityquestion>>> GetSecurityQuestions()
         {
-            _logger.Debug("GetSecurityQuestions");
+            _logger.Debug("Customers: Get security questions");
+
             var serviceResponse = new ServiceResponse<List<Securityquestion>>();
             var dbSecurityQuestions = await _context.Securityquestions.ToListAsync();
             serviceResponse.Data = dbSecurityQuestions;
@@ -229,7 +231,8 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> UpdateCustomer(Customer updatedCustomer)
         {
-            _logger.Debug($"UpdateCustomer: {updatedCustomer.Id}");
+            _logger.Information($"Update customer: ID - {updatedCustomer.Id}, ID Number - {updatedCustomer.Idnumber}");
+
             var serviceResponse = new ServiceResponse<int>();
             try
             {
@@ -242,7 +245,7 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception exception)
             {
-                _logger.Error("Exception detected while trying to UpdateCustomer: " + exception);
+                _logger.Error($"Exception detected while trying to update customer: {exception}");
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -252,7 +255,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> DeleteCustomers(List<Customer> custsToDelete)
         {
-            _logger.Debug($"DeleteCustomers: {String.Join(", ", custsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}");
+            _logger.Information($"Delete customers: {String.Join(", ", custsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -286,11 +289,13 @@ namespace EsignBackend.Services.CharacterService
                 if (validToDelete.Count == custsToDelete.Count)
                 {
                     serviceResponse.Message = $"{validToDelete.Count} customer(s) was deleted successfully.";
+                    _logger.Warning($"Delete customers success: {validToDelete.Count} customer(s) was deleted successfully.");
                 }
                 else
                 {
                     string notDeleted = string.Join(", ", invalidToDelete);
                     serviceResponse.Message = $"Some customer record(s) was not deleted: {notDeleted}";
+                    _logger.Warning($"Delete customers success. Some customer record(s) was not deleted: {notDeleted}");
                 }
 
                 serviceResponse.Success = true;
@@ -300,6 +305,7 @@ namespace EsignBackend.Services.CharacterService
             catch (Exception exception)
             {
                 _logger.Error("Exception detected while trying to delete customers: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Delete failed. {exception}";
                 serviceResponse.Data = -1;
@@ -309,15 +315,16 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> AddNewCustomer(Customer customer)
         {
-            _logger.Debug($"AddNewCustomer: {customer.Idnumber} - {customer.Lastname} - {customer.Firstname}");
+            _logger.Information($"Add new customer: {customer.Idnumber} - {customer.Lastname} - {customer.Firstname}");
 
             var serviceResponse = new ServiceResponse<int>();
-            var customerIdAlreadyInDb = IsUserIdAlreadyInUse(customer.Idnumber);
+            var customerIdAlreadyInDb = isUserIdAlreadyInUse(customer.Idnumber);
             if (customerIdAlreadyInDb)
             {
+                _logger.Error($"Customer {customer.Idnumber} is already exists");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Customer {customer.Idnumber} is already exists";
-                _logger.Error($"Customer {customer.Idnumber} is already exists");
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -344,7 +351,8 @@ namespace EsignBackend.Services.CharacterService
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("Exception detected while trying to AddNewCustomer: " + exception);
+                    _logger.Error("Exception detected while trying to add new customer: " + exception);
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Registration failed. {exception}";
                     serviceResponse.Data = -1;

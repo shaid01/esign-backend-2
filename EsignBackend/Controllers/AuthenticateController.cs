@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
@@ -28,13 +29,9 @@ namespace EsignBackend.Controllers
 
         //igorz, 12345
         [HttpPost("Login")]
-        //[HttpPost]
-        //[Route("Login")]
 
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
-            //var response = await _authenticateService.Login(request.UserName, request.Password);
-
             var response = await _authenticateService.Login(request.UserName, request.Password);
 
             if (response.Success)
@@ -45,22 +42,16 @@ namespace EsignBackend.Controllers
             }
 
             return Ok(response);
-            //return Ok();
-
-            //if (!response.Success)
-            //{
-            //    return BadRequest(response);
-            //}
-            //else
-            //{
-            //    return Ok(response);
-            //}
         }
 
         [HttpPost("Logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutDto request)
         {
+            _logger.Information($"Logout for user: [{HttpContext.User.FindFirst(ClaimTypes.Name).Value}] start");
+
             _authenticateService.DeleteCookie(request.CookieName, HttpContext);
+
+            _logger.Information($"Logout for user: [{HttpContext.User.FindFirst(ClaimTypes.Name).Value}] end");
 
             return Ok(true);
         }

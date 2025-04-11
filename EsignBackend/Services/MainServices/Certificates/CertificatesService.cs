@@ -67,9 +67,9 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public CertificateDetailsExtendedDTO GetCertificateExtendedDetails(int id)
         {
-            _logger.Debug("GetCertificateExtendedDetails");
+            _logger.Debug($"Get certificate extended details: {id}");
 
-            //22/12/2024 - of unknown use
+            //22/12/2024 - use unknown
             //var serviceResponse = new ServiceResponse<CertificateDetailsDTO>();
             //serviceResponse.Amount = _cache.GetCounterByType(CacheType.Certificate);
 
@@ -98,7 +98,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCertificatesDetails(int skip, int take)
         {
-            _logger.Debug("GetCertificatesDetails");
+            _logger.Debug($"Get certificate details: skip - [{skip}], take - [{take}]");
 
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
 
@@ -136,7 +136,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCertificatesDetails. {ex.Message}");
+                _logger.Error($"Error while processing DB query in GetCertificatesDetails: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -161,7 +161,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<IEnumerable<CertificateDetailsDTO>>> SearchCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
-            _logger.Debug("SearchCertificates");
+            _logger.Debug($"Search certificates: customer ID - {certificateAdvancedSearch.CustomerIdentifier}, skip - [{skip}], take - [{take}]");
             var serviceResponse = new ServiceResponse<IEnumerable<CertificateDetailsDTO>>();
 
             var searchQry = _context.SearchCertificates();
@@ -246,7 +246,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
                 if ((serviceResponse.Amount > _appSettings.MaxRecordsForExport) && (take == UNLIMITED))
                 {
-                    _logger.Error($"Certificates: Too many records for export: {serviceResponse.Amount}");
+                    _logger.Error($"Search certificates: Too many records for export: {serviceResponse.Amount}");
 
                     serviceResponse.Data = null;
                     serviceResponse.Success = false;
@@ -290,7 +290,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in SearchCertificates. {ex.Message}");
+                _logger.Error($"Error while processing SearchCertificates: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -353,7 +353,8 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<List<CertificateDetailsDTO>>> GetCustomerCertificates(double customerId)
         {
-            _logger.Debug("GetCustomerCertificates");
+            _logger.Debug($"Get customer certificates: {customerId}");
+
             var serviceResponse = new ServiceResponse<List<CertificateDetailsDTO>>();
             var customerCertificateList = new List<CertificateDetailsDTO>();
             var certificates = _context.Certificates
@@ -383,7 +384,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         // see https://learn.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver16
         public async Task<ServiceResponse<bool>> CheckSecurityAnswer(int cerId, string secAns, int question)
         {
-            _logger.Debug($"CheckSecurityAnswer: {cerId}, {question} - {secAns}");
+            _logger.Information($"Check security answer start: {cerId}, {question} - {secAns}");
 
             var serviceResponse = new ServiceResponse<bool>();
 
@@ -412,7 +413,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             if (!foundMatch)
             {
                 // Checking in all other customer's certificates.
-                _logger.Debug("Checking security answer in all customer's certificates");
+                _logger.Information("Checking security answer in all customer's certificates");
 
                 var customersCertificates = await _context.Certificates.Where(cer => (cer.Customerid == certificate.Customerid)).ToListAsync();
 
@@ -424,6 +425,15 @@ namespace EsignBackend.Services.MainServices.Certificates
                         break;
                     }
                 }
+            }
+
+            if (foundMatch)
+            {
+                _logger.Information($"Check security answer found");
+            }
+            else
+            {
+                _logger.Warning($"Check security answer not found");
             }
 
             serviceResponse.Data = foundMatch;
@@ -438,6 +448,7 @@ namespace EsignBackend.Services.MainServices.Certificates
             var cert = _context.Certificatesstatuses.FirstOrDefault(cer => cer.Title.Equals("פג תוקף"));
 
             var serviceResponse = new ServiceResponse<int>();
+
             if (cert != null)
             {
                 var certificateStatus = cert.Id;
@@ -454,13 +465,19 @@ namespace EsignBackend.Services.MainServices.Certificates
                     }
 
                     _context.SaveChanges();
+
                     serviceResponse.Data = expiredCertificates.Count();
                     serviceResponse.Message = "Updated expired certificates successfully";
                     serviceResponse.Success = true;
+
+                    if(expiredCertificates.Count > 0)
+                    {
+                        _logger.Information($"Hangfire Job - UpdateExpiredCertificates - {expiredCertificates.Count} was updated");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error("UpdateExpiredCertificates error, " + ex.Message);
+                    _logger.Error("UpdateExpiredCertificates error: " + ex);
                     serviceResponse.Success = false;
                     serviceResponse.Data = -1;
                     serviceResponse.Message = "Updating expired certificates failed. " + ex;
@@ -471,7 +488,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<int>> AddCertificate(Certificate certificate)
         {
-            _logger.Debug($"AddCertificate - {certificate.Company} - {certificate.Email}");
+            _logger.Debug($"Add certificate for company [{certificate.Company}] with email {certificate.Email}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -494,11 +511,14 @@ namespace EsignBackend.Services.MainServices.Certificates
                     _cache.Increment(CacheType.Certificate);
 
                     serviceResponse.Success = true;
+
+                    _logger.Information($"Certificate was successfully added for company [{certificate.Company}] with email {certificate.Email}");
+
                     return serviceResponse;
                 }
                 catch (Exception ex)
                 {
-                    _logger.Debug("Exception detected while trying to AddCertificate - " + ex);
+                    _logger.Error($"Exception detected while trying to add certificate for company [{certificate.Company}] with email {certificate.Email}: {ex}");
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding certificate failed. {ex}";
                     serviceResponse.Data = -1;
@@ -509,7 +529,7 @@ namespace EsignBackend.Services.MainServices.Certificates
 
         public async Task<ServiceResponse<int>> UpdateCertificate(Certificate updatedCertificate)
         {
-            _logger.Debug($"UpdateCertificate: ID - {updatedCertificate.Id}");
+            _logger.Debug($"Update certificate: ID - {updatedCertificate.Id}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -524,14 +544,16 @@ namespace EsignBackend.Services.MainServices.Certificates
                 serviceResponse.Data = updatedCertificateInDb.Entity.Id;
                 serviceResponse.Message = "Certificate updated successfully.";
                 serviceResponse.Success = true;
-                _logger.Debug("Changes have been saved");
+
+                _logger.Information($"Update certificate success: ID - {updatedCertificate.Id}");
             }
             catch (Exception exception)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = $"Updated failed. {exception}";
+                serviceResponse.Message = $"Update failed. {exception}";
                 serviceResponse.Data = -1;
-                _logger.Debug("UpdateCertificate failed " + exception);
+
+                _logger.Error($"Update certificate: ID - {updatedCertificate.Id} failed: {exception}");
             }
 
             return serviceResponse;
@@ -540,7 +562,7 @@ namespace EsignBackend.Services.MainServices.Certificates
         public async Task<ServiceResponse<int>> DeleteCertificates(List<Certificate> certsToDelete)
         {
 
-            _logger.Debug($"DeleteCertificates: {String.Join(", ", certsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}");
+            _logger.Information($"Delete certificates: {String.Join(", ", certsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -554,11 +576,12 @@ namespace EsignBackend.Services.MainServices.Certificates
                 serviceResponse.Message = $"{certsToDelete.Count} certificates was successfully deleted.";
                 serviceResponse.Success = true;
 
-                _logger.Debug("Changes have been saved");
+                _logger.Warning($"Delete certificates success: {String.Join(", ", certsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}");
             }
             catch (Exception exception)
             {
-                _logger.Error("Exception detected while trying to delete certificates: " + exception);
+                _logger.Error($"Delete certificates failure: {String.Join(", ", certsToDelete.Select(c => c.Id.ToString()).ToArray<string>())}. Exception: {exception}");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Delete failed. {exception}";
                 serviceResponse.Data = -1;
@@ -636,80 +659,6 @@ namespace EsignBackend.Services.MainServices.Certificates
         }
 
         #region Private Functions
-
-        private List<Certificate> getCertificateDbList(int offset, int limit)
-        {
-            using var scope = _scopeFactory.CreateScope();
-            {
-                var dependencyService = scope.ServiceProvider.GetService<IAppDbContext>();
-                var certificates = dependencyService.Certificates
-                .Include(cer => cer.RelatedCertificateissuer)
-                .Include(cer => cer.RelatedCertificatesstatus)
-                .Include(cer => cer.RelatedCustomer)
-                .Include(cer => cer.RelatedCustomerIdentifier)
-                .Include(cer => cer.RelatedDocsType)
-                .Include(cer => cer.RelatedExpiration)
-                .Include(cer => cer.RelatedIssuerPlace)
-                .Include(cer => cer.RelatedProject)
-                .Include(cer => cer.RelatedSecurityquestion)
-                .Include(cer => cer.RelatedSmartObject)
-                .Include(cer => cer.RelatedSubProject).Skip(offset).Take(limit).ToList();
-
-                return certificates;
-            }
-        }
-
-        private CertificateDetails generateCertificateDetailsFromId(double cerId)
-        {
-            _logger.Debug("GenerateCertificateDetailsFromId");
-
-            //var chosenCertificate = _context.Certificates.AsNoTracking()
-            //               .Include(cer => cer.RelatedCertificateissuer)
-            //               .Include(cer => cer.RelatedCertificatesstatus)
-            //               .Include(cer => cer.RelatedCustomer)//.ThenInclude(cus => cus.RelatedSecurityquestion)
-            //               .Include(cer => cer.RelatedCustomerIdentifier)
-            //               .Include(cer => cer.RelatedDocsType)
-            //               .Include(cer => cer.RelatedExpiration)
-            //               .Include(cer => cer.RelatedIssuerPlace)
-            //               .Include(cer => cer.RelatedProject)
-            //               //  .Include(cer => cer.RelatedSecurityquestion)
-            //               .Include(cer => cer.RelatedSmartObject)
-            //               .Include(cer => cer.RelatedSubProject)
-            //               .FirstOrDefault(cer => cer.Id.Equals(Convert.ToInt32(cerId)));
-            //var certificate = new CertificateDetails(chosenCertificate);
-            //return certificate;
-
-            using var scope = _scopeFactory.CreateScope();
-            {
-                var dependencyService = scope.ServiceProvider.GetService<IAppDbContext>();
-                var chosenCertificate = dependencyService.Certificates
-                    .Include(cer => cer.RelatedCertificateissuer)
-                    .Include(cer => cer.RelatedCertificatesstatus)
-                    .Include(cer => cer.RelatedCustomer)
-                    .Include(cer => cer.RelatedCustomerIdentifier)
-                    .Include(cer => cer.RelatedDocsType)
-                    .Include(cer => cer.RelatedExpiration)
-                    .Include(cer => cer.RelatedIssuerPlace)
-                    .Include(cer => cer.RelatedProject)
-                    .Include(cer => cer.RelatedSecurityquestion)
-                    .Include(cer => cer.RelatedSmartObject)
-                    .Include(cer => cer.RelatedSubProject)
-                    .FirstOrDefault(cer => cer.Id.Equals(Convert.ToInt32(cerId)));
-
-                var certificate = new CertificateDetails(chosenCertificate);
-                return certificate;
-            }
-        }
-
-        private int generateCertificateId()
-        {
-            _logger.Debug("GenerateCertificateId");
-            lock (_locker)
-            {
-                int maxId = _context.Certificates.OrderByDescending(cer => cer.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
 
         private bool isCertificateValid(CertificateDetailsDTO certificate)
         {

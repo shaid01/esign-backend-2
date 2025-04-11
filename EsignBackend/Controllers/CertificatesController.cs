@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
@@ -92,8 +93,12 @@ namespace EsignBackend.Controllers
         [HttpPost("export")]
         public async Task<IActionResult> ExportCertificates(CertificateAdvancedSearch certificateAdvancedSearch, int skip, int take)
         {
+            _logger.Information($"Certificates export request: User - [{HttpContext.User.FindFirst(ClaimTypes.Name).Value}]");
+
             var response = await _certificatesService.SearchCertificates(certificateAdvancedSearch, skip, take);
+
             var fileContent = _certificatesService.GenerateXlsxFile(response.Data);
+
             Response.Headers.Add("x-file-name", WebUtility.UrlEncode($"certificates_{DateTime.Now.Date.ToString("dd-MM-yyyy")}.xlsx"));
 
             return File(
