@@ -445,13 +445,13 @@ namespace EsignBackend.Services.MainServices.Certificates
         {
             _logger.Debug("Hangfire Job - *************** UpdateExpiredCertificates ***************");
 
-            var cert = _context.Certificatesstatuses.FirstOrDefault(cer => cer.Title.Equals("פג תוקף"));
+            var status = _context.Certificatesstatuses.FirstOrDefault(cer => cer.Title.Equals("פג תוקף"));
 
             var serviceResponse = new ServiceResponse<int>();
 
-            if (cert != null)
+            if (status != null)
             {
-                var certificateStatus = cert.Id;
+                var certificateStatus = status.Id;
                 var now = DateTime.Now.ToLocalTime();
 
                 var expiredCertificates = await _context.Certificates.OrderBy(x => x.Expiredate).Where(x => x.Expiredate < now && x.Certificatestatus != certificateStatus).ToListAsync();

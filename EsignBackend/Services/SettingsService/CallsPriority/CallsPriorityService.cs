@@ -22,16 +22,6 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             _logger = logger;
         }
 
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Callpriorities.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
-
         private bool isNameAlreadyInUse(int id, string title)
         {
             if (id >= 0)
@@ -46,7 +36,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 
         public async Task<ServiceResponse<int>> AddNewCallPriority(Callpriority callPriority)
         {
-            _logger.Debug("AddNewCallPriority");
+            _logger.Information($"Add new call priority: {callPriority.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -54,6 +44,8 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 
             if (nameIsAlreadyInUse)
             {
+                _logger.Warning($"Add new call priority: {callPriority.Title}. Call priority name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Call priority name is already taken";
                 serviceResponse.Data = -1;
@@ -77,7 +69,8 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewCallPriority: " + exception);
+                    _logger.Error($"Add new call priority: {callPriority.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new callPriority failed. {exception}";
                     serviceResponse.Data = -1;
@@ -88,7 +81,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 
         public ServiceResponse<List<CallpriorityDTO>> GetCallsPriority(int skip, int take)
         {
-            _logger.Debug("GetCallsPriority");
+            _logger.Debug($"Get calls priority: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<CallpriorityDTO>>();
             //var data = _context.Callpriorities.Skip(skip).Take(take).ToList();
@@ -115,7 +108,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCallsPriority. {ex.Message}");
+                _logger.Error($"Get calls priority error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -139,7 +132,7 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 
         public async Task<ServiceResponse<int>> UpdateCallPriority(Callpriority updatedCallPriority)
         {
-            _logger.Debug("UpdateCallPriority");
+            _logger.Information($"Update call priority ID {updatedCallPriority.Id} to {updatedCallPriority.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -147,6 +140,8 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
 
             if (nameIsAlreadyInUse)
             {
+                _logger.Warning($"Update call priority ID {updatedCallPriority.Id} to {updatedCallPriority.Title}. Call priority name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Call priority name is already taken";
                 serviceResponse.Data = -1;
@@ -164,7 +159,8 @@ namespace EsignBackend.Services.SettingsService.CallsPriority
             }
             catch (Exception exception)
             {
-                _logger.Debug("exception detected while trying to UpdateCallPriority: " + exception);
+                _logger.Error("Exception detected while trying to UpdateCallPriority: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;

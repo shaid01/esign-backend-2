@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.IssueLocation
@@ -19,16 +21,6 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
         {
             _context = context;
             _logger = logger;
-        }
-
-        private int GenerateId()
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = _context.Issplaces.OrderByDescending(item => item.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
         }
 
         private bool isNameAlreadyInUse(int id, string title)
@@ -46,7 +38,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
         public async Task<ServiceResponse<int>> AddNewIssueLocation(Issplace issueLocation)
         {
-            _logger.Debug("AddNewIssueLocation");
+            _logger.Information($"Add new Issue Location: {issueLocation.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -54,6 +46,8 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new issue location: {issueLocation.Title}. Issue location name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "IssueLocation name is already taken";
                 serviceResponse.Data = -1;
@@ -77,7 +71,8 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewIssueLocation: " + exception);
+                    _logger.Error($"Add new issue location: {issueLocation.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new issueLocation failed. {exception}";
                     serviceResponse.Data = -1;
@@ -88,7 +83,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
         public ServiceResponse<List<IssplaceDTO>> GetIssueLocations(int skip, int take)
         {
-            _logger.Debug("GetIssueLocations");
+            _logger.Debug($"Get issue locations: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
             //var outputList = new List<IssplaceDTO>();
@@ -117,7 +112,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetIssueLocations. {ex.Message}");
+                _logger.Error($"Get issue locations error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -141,7 +136,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
         public async Task<ServiceResponse<int>> UpdateIssueLocation(Issplace updatedIssueLocation)
         {
-            _logger.Debug("UpdateIssueLocation");
+            _logger.Information($"Update issue location ID {updatedIssueLocation.Id} to {updatedIssueLocation.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -149,6 +144,8 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update issue location ID {updatedIssueLocation.Id} to {updatedIssueLocation.Title}. Issue location name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "IssueLocation name is already taken";
                 serviceResponse.Data = -1;
@@ -166,7 +163,8 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateIssueLocation: " + exception);
+                _logger.Error("Exception detected while trying to UpdateIssueLocation: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -176,7 +174,7 @@ namespace EsignBackend.Services.SettingsService.IssueLocation
 
         public ServiceResponse<List<IssplaceDTO>> GetAllIssueLocations()
         {
-            _logger.Debug("GetAllIssueLocations");
+            _logger.Debug("Get all issue locations");
 
             var serviceResponse = new ServiceResponse<List<IssplaceDTO>>();
 

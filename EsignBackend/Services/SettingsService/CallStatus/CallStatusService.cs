@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.CallStatus
@@ -35,7 +37,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
 
         public async Task<ServiceResponse<int>> AddNewCallStatus(Callstatus callstatus)
         {
-            _logger.Debug("AddNewCallStatus");
+            _logger.Information($"Add new call status: {callstatus.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -43,8 +45,10 @@ namespace EsignBackend.Services.SettingsService.CallStatus
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new call status: {callstatus.Title}. Call status name is already taken");
+
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Callstatus name is already taken";
+                serviceResponse.Message = "Call status name is already taken";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -64,9 +68,10 @@ namespace EsignBackend.Services.SettingsService.CallStatus
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewCallStatus: " + exception);
+                    _logger.Error($"Add new call status: {callstatus.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
-                    serviceResponse.Message = $"Adding new expirationType failed. {exception}";
+                    serviceResponse.Message = $"Adding new call status failed. {exception}";
                     serviceResponse.Data = -1;
                     return serviceResponse;
                 }
@@ -75,7 +80,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
 
         public ServiceResponse<List<CallStatusDto>> GetCallsStatus(int skip, int take)
         {
-            _logger.Debug("GetCallsStatus");
+            _logger.Debug($"Get calls status: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<CallStatusDto>>();
             //serviceResponse.Amount = _context.Callstatuses.Count();
@@ -102,7 +107,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCallsStatus. {ex.Message}");
+                _logger.Error($"Get calls status error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -126,7 +131,7 @@ namespace EsignBackend.Services.SettingsService.CallStatus
 
         public async Task<ServiceResponse<int>> UpdateCallStatus(Callstatus updatedCallstatus)
         {
-            _logger.Debug("UpdateCallStatus");
+            _logger.Information($"Update call status ID {updatedCallstatus.Id} to {updatedCallstatus.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -134,8 +139,10 @@ namespace EsignBackend.Services.SettingsService.CallStatus
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update call status ID {updatedCallstatus.Id} to {updatedCallstatus.Title}. Call status name is already taken.");
+
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Callstatus name is already taken";
+                serviceResponse.Message = "Call status name is already taken";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -151,7 +158,8 @@ namespace EsignBackend.Services.SettingsService.CallStatus
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateCallStatus: " + exception);
+                _logger.Error("Exception detected while trying to UpdateCallStatus: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;

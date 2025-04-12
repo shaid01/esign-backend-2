@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using EsignBackend.Migrations;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
@@ -7,6 +8,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.Departments
@@ -38,7 +40,7 @@ namespace EsignBackend.Services.SettingsService.Departments
 
         public async Task<ServiceResponse<int>> AddNewDepartment(Models.Department department)
         {
-            _logger.Debug($"Add new Department {department.Id}, {department.Title}");
+            _logger.Information($"Add new department: {department.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -46,6 +48,8 @@ namespace EsignBackend.Services.SettingsService.Departments
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new department: {department.Title}. Department name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Department name is already taken";
                 serviceResponse.Data = -1;
@@ -66,7 +70,8 @@ namespace EsignBackend.Services.SettingsService.Departments
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewDepartment: " + exception);
+                    _logger.Error($"Add new department: {department.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new department failed. {exception}";
                     serviceResponse.Data = -1;
@@ -77,7 +82,7 @@ namespace EsignBackend.Services.SettingsService.Departments
 
         public async Task<ServiceResponse<int>> GetAmountOfDepartments()
         {
-            _logger.Debug("GetAmountOfDepartments");
+            _logger.Debug("Get amount of departments");
 
             var serviceResponse = new ServiceResponse<int>();
             serviceResponse.Data = _context.Departments.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
@@ -87,7 +92,7 @@ namespace EsignBackend.Services.SettingsService.Departments
 
         public ServiceResponse<List<DepartmentDTO>> GetDepartments(int skip, int take)
         {
-            _logger.Debug("GetDepartments");
+            _logger.Debug($"Get departments: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<DepartmentDTO>>();
             //var outputList = new List<DepartmentDTO>();
@@ -132,7 +137,7 @@ namespace EsignBackend.Services.SettingsService.Departments
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetDepartments. {ex.Message}");
+                _logger.Error($"Get departments error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -156,7 +161,7 @@ namespace EsignBackend.Services.SettingsService.Departments
 
         public async Task<ServiceResponse<int>> UpdateDepartment(Models.Department updatedDepartment)
         {
-            _logger.Debug("UpdateDepartment");
+            _logger.Information($"Update department ID {updatedDepartment.Id} to {updatedDepartment.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -164,6 +169,8 @@ namespace EsignBackend.Services.SettingsService.Departments
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update department ID {updatedDepartment.Id} to {updatedDepartment.Title}. Department name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Department name is already taken";
                 serviceResponse.Data = -1;
@@ -182,7 +189,8 @@ namespace EsignBackend.Services.SettingsService.Departments
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateDepartment: " + exception);
+                _logger.Error("Exception detected while trying to UpdateDepartment: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;

@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.SecurityQuestions
@@ -35,7 +37,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
         public async Task<ServiceResponse<int>> AddNewSecurityQuestion(Securityquestion securityQuestion)
         {
-            _logger.Debug("AddNewSecurityQuestion");
+            _logger.Information($"Add new Security Question: {securityQuestion.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -43,6 +45,8 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new Security Question: {securityQuestion.Title}. Security Question name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "SecurityQuestion name is already taken";
                 serviceResponse.Data = -1;
@@ -64,7 +68,8 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewSecurityQuestion: " + exception);
+                    _logger.Error($"Add new Security Question: {securityQuestion.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new expirationType failed. {exception}";
                     serviceResponse.Data = -1;
@@ -75,7 +80,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
         public ServiceResponse<List<SecurityquestionDTO>> GetSecurityQuestions(int skip, int take)
         {
-            _logger.Debug("GetSecurityQuestions");
+            _logger.Debug($"Get Security Questions: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
             //var outputList = new List<SecurityquestionDTO>();
@@ -102,7 +107,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetSecurityQuestions. {ex.Message}");
+                _logger.Error($"Get Security Questions error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -126,7 +131,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
         public async Task<ServiceResponse<int>> UpdateSecurityQuestion(Securityquestion updatedSecurityQuestion)
         {
-            _logger.Debug("UpdateSecurityQuestion");
+            _logger.Information($"Update Security Question ID {updatedSecurityQuestion.Id} to {updatedSecurityQuestion.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -134,6 +139,8 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update Security Question ID {updatedSecurityQuestion.Id} to {updatedSecurityQuestion.Title}. Security Question name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "SecurityQuestion name is already taken";
                 serviceResponse.Data = -1;
@@ -151,7 +158,8 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateSecurityQuestion: " + exception);
+                _logger.Error("Exception detected while trying to UpdateSecurityQuestion: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -161,7 +169,7 @@ namespace EsignBackend.Services.SettingsService.SecurityQuestions
 
         public ServiceResponse<List<SecurityquestionDTO>> GetAllSecurityQuestions()
         {
-            _logger.Debug("GetAllSecurityQuestions");
+            _logger.Debug("Get all security questions");
 
             var serviceResponse = new ServiceResponse<List<SecurityquestionDTO>>();
 

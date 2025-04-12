@@ -1,9 +1,11 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.CertificateIssuer
@@ -34,7 +36,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
         public async Task<ServiceResponse<int>> AddNewCertificateIssuer(Isscert certificateIssuer)
         {
-            _logger.Debug("AddNewCertificatesStatus");
+            _logger.Information($"Add new certificate issuer: {certificateIssuer.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -42,6 +44,8 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new certificate issuer: {certificateIssuer.Title}. Certificate issuer name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "CertificateIssuer name is already taken";
                 serviceResponse.Data = -1;
@@ -66,7 +70,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewCertificatesStatus: " + exception);
+                    _logger.Error($"Add new certificate issuer: {certificateIssuer.Title} exception: {exception}");
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new certificateIssuer failed. {exception}";
                     serviceResponse.Data = -1;
@@ -75,9 +79,29 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             }
         }
 
+        public ServiceResponse<List<IsscertDTO>> GetAllCertificateIssuers()
+        {
+            _logger.Debug("Get all certificate issuers");
+
+            var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
+
+            var outputList = new List<IsscertDTO>();
+
+            var data = _context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
+            foreach (var ci in data)
+            {
+                outputList.Add(new IsscertDTO(ci));
+            }
+
+            serviceResponse.Amount = outputList.Count();//_context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
+            serviceResponse.Data = outputList;
+            return serviceResponse;
+        }
+
         public ServiceResponse<List<IsscertDTO>> GetCertificateIssuers(int skip, int take)
         {
-            _logger.Debug("GetCertificateIssuers");
+            _logger.Debug($"Get certificate issuers: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
             //var issuers = new List<IsscertDTO>();
@@ -104,7 +128,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCertificateIssuers. {ex.Message}");
+                _logger.Error($"Get certificate issuers error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -128,7 +152,7 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
         public async Task<ServiceResponse<int>> UpdateCertificateIssuer(Isscert updatedCertificateIssuer)
         {
-            _logger.Debug("UpdateCertificateIssuer");
+            _logger.Information($"Update certificate issuer ID {updatedCertificateIssuer.Id} to {updatedCertificateIssuer.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -136,6 +160,8 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update certificate issuer ID {updatedCertificateIssuer.Id} to {updatedCertificateIssuer.Title}. Certificate issuer name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "CertificateIssuer name is already taken";
                 serviceResponse.Data = -1;
@@ -153,31 +179,12 @@ namespace EsignBackend.Services.SettingsService.CertificateIssuer
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateCustomerIdentifer: " + exception);
+                _logger.Error("Exception detected while trying to update certificate issuer: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
             }
-            return serviceResponse;
-        }
-
-        public ServiceResponse<List<IsscertDTO>> GetAllCertificateIssuers()
-        {
-            _logger.Debug("GetAllCertificateIssuers");
-
-            var serviceResponse = new ServiceResponse<List<IsscertDTO>>();
-
-            var outputList = new List<IsscertDTO>();
-
-            var data = _context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList();
-
-            foreach (var ci in data)
-            {
-                outputList.Add(new IsscertDTO(ci));
-            }
-
-            serviceResponse.Amount = outputList.Count();//_context.Isscerts.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
-            serviceResponse.Data = outputList;
             return serviceResponse;
         }
     }

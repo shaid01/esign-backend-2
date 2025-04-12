@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.CertificateRemarks
@@ -35,7 +37,8 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
         public async Task<ServiceResponse<int>> GetAmountOfCertificateRemarks()
         {
-            _logger.Debug("GetAmountOfCertificateRemarks");
+            _logger.Debug("Get amount of certificate remarks");
+
             var serviceResponse = new ServiceResponse<int>();
             serviceResponse.Data = _context.Certificatermearks.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
             return serviceResponse;
@@ -43,7 +46,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
         public ServiceResponse<List<CertificateremarkDTO>> GetCertificateRemarks(int skip, int take)
         {
-            _logger.Debug("GetCertificateRemarks");
+            _logger.Debug($"Get certificate remarks: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<CertificateremarkDTO>>();
             //var data = _context.Certificatermearks.Skip(skip).Take(take).ToList();
@@ -70,7 +73,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCertificateRemarks. {ex.Message}");
+                _logger.Error($"Get certificate remarks error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -94,7 +97,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
         public async Task<ServiceResponse<int>> UpdateCertificateRemarks(CertificateRemark updatedCertificateRemarks)
         {
-            _logger.Debug("UpdateCertificateRemarks");
+            _logger.Information($"Update certificate remarks ID {updatedCertificateRemarks.Id} to {updatedCertificateRemarks.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -102,8 +105,10 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update certificate remarks ID {updatedCertificateRemarks.Id} to {updatedCertificateRemarks.Title}. Certificate remarks name is already taken.");
+
                 serviceResponse.Success = false;
-                serviceResponse.Message = "ExpirationType name is already taken";
+                serviceResponse.Message = "Certificate remarks name is already taken";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -119,7 +124,8 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateCertificateRemarks: " + exception);
+                _logger.Error("Exception detected while trying to UpdateCertificateRemarks: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -129,7 +135,7 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
         public async Task<ServiceResponse<int>> AddNewCertificateRemarks(CertificateRemark certificateRemark)
         {
-            _logger.Debug("AddNewCertificateRemarks");
+            _logger.Information($"Add new certificate remark: {certificateRemark.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -137,8 +143,10 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new certificate remark: {certificateRemark.Title}. Certificate remark name is already taken");
+
                 serviceResponse.Success = false;
-                serviceResponse.Message = "ExpirationType name is already taken";
+                serviceResponse.Message = "Certificate remark name is already taken";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -160,7 +168,8 @@ namespace EsignBackend.Services.SettingsService.CertificateRemarks
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewCertificateRemarks: " + exception);
+                    _logger.Error("Exception detected while trying to AddNewCertificateRemarks: " + exception);
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new expirationType failed. {exception}";
                     serviceResponse.Data = -1;

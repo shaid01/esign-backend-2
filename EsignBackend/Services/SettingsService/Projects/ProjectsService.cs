@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Serilog;
 using System;
 using System.Collections.Generic;
 //using System.Data.Entity;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService
@@ -52,27 +54,9 @@ namespace EsignBackend.Services.SettingsService
             }
         }
 
-        private int GenerateId(projectType projectType)
-        {
-            _logger.Debug("GenerateId");
-            lock (_locker)
-            {
-                int maxId = 0;
-                if (projectType == projectType.SUBPROJECT)
-                {
-                    maxId = _context.Subprojects.OrderByDescending(subproject => subproject.Id).Take(1).ToList()[0].Id;
-                }
-                else
-                {
-                    maxId = _context.Projects.OrderByDescending(project => project.Id).Take(1).ToList()[0].Id;
-                }
-                return maxId + 1;
-            }
-        }
-
         public ServiceResponse<List<ProjectDTO>> GetProjects()
         {
-            _logger.Debug("GetProjects");
+            _logger.Debug("Get projects");
 
             var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
 
@@ -92,7 +76,7 @@ namespace EsignBackend.Services.SettingsService
 
         public async Task<ServiceResponse<int>> UpdateProject(Project updatedProject)
         {
-            _logger.Debug("UpdateProject");
+            _logger.Information($"Update project ID {updatedProject.Id} to {updatedProject.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -100,6 +84,8 @@ namespace EsignBackend.Services.SettingsService
 
             if (projectNameIsAlreadyTaken)
             {
+                _logger.Warning($"Update project ID {updatedProject.Id} to {updatedProject.Title}. Project name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Project name is already taken";
                 serviceResponse.Data = -1;
@@ -117,7 +103,8 @@ namespace EsignBackend.Services.SettingsService
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateProject: " + exception);
+                _logger.Error("Exception detected while trying to UpdateProject: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -127,7 +114,7 @@ namespace EsignBackend.Services.SettingsService
 
         public ServiceResponse<List<SubprojectDTO>> GetSubprojectsInRange(int skip, int take)
         {
-            _logger.Debug("GetSubprojectsInRange");
+            _logger.Debug($"Get subprojects in range: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
             //var outputList = new List<SubprojectDTO>();
@@ -154,7 +141,7 @@ namespace EsignBackend.Services.SettingsService
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetSubprojectsInRange. {ex.Message}");
+                _logger.Error($"Error while processing DB query in GetSubprojectsInRange: {ex.Message}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -178,7 +165,7 @@ namespace EsignBackend.Services.SettingsService
 
         public ServiceResponse<List<SubprojectDTO>> GetAllSubprojects(int projectId = -1)
         {
-            _logger.Debug("GetAllSubprojects");
+            _logger.Debug("Get all subprojects");
 
             var serviceResponse = new ServiceResponse<List<SubprojectDTO>>();
 
@@ -201,7 +188,7 @@ namespace EsignBackend.Services.SettingsService
 
         public ServiceResponse<List<ProjectDTO>> GetProjectsInRange(int skip, int take)
         {
-            _logger.Debug("GetProjectsInRange");
+            _logger.Debug($"Get projects in range: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<ProjectDTO>>();
             //var outputList = new List<ProjectDTO>();
@@ -228,7 +215,7 @@ namespace EsignBackend.Services.SettingsService
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetProjectsInRange. {ex.Message}");
+                _logger.Error($"Error while processing DB query in GetProjectsInRange: {ex.Message}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -252,7 +239,7 @@ namespace EsignBackend.Services.SettingsService
 
         public async Task<ServiceResponse<int>> UpdateSubproject(Subproject updatedSubproject)
         {
-            _logger.Debug("UpdateSubproject");
+            _logger.Information($"Update subproject ID {updatedSubproject.Id} to {updatedSubproject.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -260,6 +247,8 @@ namespace EsignBackend.Services.SettingsService
 
             if (subprojectNameIsAlreadyTaken)
             {
+                _logger.Warning($"Update subproject ID {updatedSubproject.Id} to {updatedSubproject.Title}. Subproject name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "SubProject name is already taken";
                 serviceResponse.Data = -1;
@@ -277,7 +266,8 @@ namespace EsignBackend.Services.SettingsService
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateSubproject: " + exception);
+                _logger.Error("Exception detected while trying to UpdateSubproject: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -287,7 +277,7 @@ namespace EsignBackend.Services.SettingsService
 
         public async Task<ServiceResponse<int>> AddNewProject(Project newProject)
         {
-            _logger.Debug("AddNewProject");
+            _logger.Information($"Add new project: {newProject.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -295,6 +285,8 @@ namespace EsignBackend.Services.SettingsService
 
             if (projectNameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new project: {newProject.Title}. Project name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Project name is already taken";
                 serviceResponse.Data = -1;
@@ -318,7 +310,8 @@ namespace EsignBackend.Services.SettingsService
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewProject: " + exception);
+                    _logger.Error($"Add new project: {newProject.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new project failed. {exception}";
                     serviceResponse.Data = -1;
@@ -329,7 +322,7 @@ namespace EsignBackend.Services.SettingsService
 
         public async Task<ServiceResponse<int>> AddNewSubroject(Subproject newSubproject)
         {
-            _logger.Debug("AddNewSubroject");
+            _logger.Information($"Add new subproject: {newSubproject.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -337,6 +330,8 @@ namespace EsignBackend.Services.SettingsService
 
             if (subprojectNameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new subproject: {newSubproject.Title}. Subproject name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "SubProject name is already taken";
                 serviceResponse.Data = -1;
@@ -358,7 +353,8 @@ namespace EsignBackend.Services.SettingsService
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewSubroject: " + exception);
+                    _logger.Error($"Add new subproject: {newSubproject.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new subproject failed. {exception}";
                     serviceResponse.Data = -1;

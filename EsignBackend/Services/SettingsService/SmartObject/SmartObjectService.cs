@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using EsignBackend.Migrations;
 using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.SmartObject
@@ -36,7 +38,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 
         public ServiceResponse<List<SmartobjectDTO>> GetSmartObjects(int skip, int take)
         {
-            _logger.Debug("GetSmartObjects");
+            _logger.Debug($"Get smart objects: skip - {skip}, take - {take}");
 
             var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
             serviceResponse.Amount = _context.Smartobjects.Where(x => !string.IsNullOrWhiteSpace(x.Title)).Count();
@@ -52,7 +54,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetSmartObjects. {ex.Message}");
+                _logger.Error($"Get smart objects error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -112,7 +114,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 
         public ServiceResponse<List<SmartobjectDTO>> GetAllSmartObjects()
         {
-            _logger.Debug("GetAllSmartObjects");
+            _logger.Debug("Get all smart objects");
 
             var serviceResponse = new ServiceResponse<List<SmartobjectDTO>>();
 
@@ -132,7 +134,7 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 
         public async Task<ServiceResponse<int>> UpdateSmartObject(Smartobject updatedSmartObject)
         {
-            _logger.Debug("UpdateSmartObject");
+            _logger.Information($"Update smart object ID {updatedSmartObject.Id} to {updatedSmartObject.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -140,6 +142,8 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 
             if (smartObjectNameIsAlreadyTaken)
             {
+                _logger.Warning($"Update smart object ID {updatedSmartObject.Id} to {updatedSmartObject.Title}. Smart object name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "SmartObject name is already taken";
                 serviceResponse.Data = -1;
@@ -157,7 +161,8 @@ namespace EsignBackend.Services.SettingsService.SmartObject
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateSmartObject: " + exception);
+                _logger.Error("Exception detected while trying to UpdateSmartObject: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -167,13 +172,16 @@ namespace EsignBackend.Services.SettingsService.SmartObject
 
         public async Task<ServiceResponse<int>> AddNewSmartObject(Smartobject smartobject)
         {
-            _logger.Debug("AddNewSmartObject");
+            _logger.Information($"Add new smart object: {smartobject.Title}");
+
             var serviceResponse = new ServiceResponse<int>();
 
             var smartObjectNameIsAlreadyTaken = isNameAlreadyInUse(-1, smartobject.Title);
 
             if (smartObjectNameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new smart object: {smartobject.Title}. Smart object name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "SmartObject name is already taken";
                 serviceResponse.Data = -1;
@@ -195,7 +203,8 @@ namespace EsignBackend.Services.SettingsService.SmartObject
                 }
                 catch (Exception exception)
                 {
-                    _logger.Debug("exception detected while trying to AddNewSmartObject: " + exception);
+                    _logger.Error($"Add new smart object: {smartobject.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new smartObject failed. {exception}";
                     serviceResponse.Data = -1;

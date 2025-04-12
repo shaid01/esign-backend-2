@@ -30,31 +30,19 @@ namespace EsignBackend.Services.CharacterService
             _cache = cache;
         }
 
-        private int GenerateUserId()
+        private bool isUserNameAlreadyInUse(string username)
         {
-            _logger.Debug("GenerateUserId");
-            lock (_locker)
-            {
-                int maxId = _context.Buusers.OrderByDescending(user => user.Id).Take(1).ToList()[0].Id;
-                return maxId + 1;
-            }
-        }
-
-        private bool IsUserNameAlreadyInUse(string username)
-        {
-            _logger.Debug("IsUserNameAlreadyInUse");
             return _context.Buusers.Where(user => user.Username.Equals(username)).Count() != 0;
         }
 
         private string encryptPass(String pass)
         {
-            _logger.Debug("encryptPass");
             return EncryptDecryptHandler.encryptUserPass(pass);
         }
 
         public async Task<ServiceResponse<List<UserDTO>>> GetAllUsers(int skip, int take)
         {
-            _logger.Debug("GetAllUsers");
+            _logger.Debug($"Get all users: skip - {skip}, take - {take}");
 
             var serviceResponse = new ServiceResponse<List<UserDTO>>();
 
@@ -73,7 +61,7 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetAllUsers. {ex.Message}");
+                _logger.Error($"Get all users: Error processing: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -97,7 +85,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<List<UserDTO>>> SearchUsers(UserAdvancedSearch userAdvancedSearch, int skip, int take)
         {
-            _logger.Debug("SearchUsers");
+            _logger.Debug($"Search users: skip - {skip}, take - {take}");
 
             var serviceResponse = new ServiceResponse<List<UserDTO>>();
 
@@ -128,7 +116,7 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in SearchUsers. {ex.Message}");
+                _logger.Error($"Search users - error while processing: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -157,7 +145,7 @@ namespace EsignBackend.Services.CharacterService
 
         public UserDTO GetUserByUsername(string username)
         {
-            _logger.Debug("GetUserByUsername");
+            _logger.Debug($"Get user by name: {username}");
 
             //var serviceResponse = new ServiceResponse<UserDTO>();
 
@@ -210,7 +198,8 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> GetAmountOfUsers()
         {
-            _logger.Debug("GetAmountOfUsers");
+            _logger.Debug("Get amount of users");
+
             var serviceResponse = new ServiceResponse<int>();
 
             try
@@ -219,6 +208,8 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception ex)
             {
+                _logger.Error($"Get amount of users error: {ex}");
+
                 serviceResponse.Data = -1;
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
@@ -237,29 +228,34 @@ namespace EsignBackend.Services.CharacterService
         /// <returns></returns>
         public async Task<ServiceResponse<int>> AddNewUser(Buuser newUser)
         {
-            _logger.Debug($"AddNewUser: {newUser.Username}");
+            _logger.Information($"Add new user: {newUser.Username}");
 
             var serviceResponse = new ServiceResponse<int>();
 
             string validateMessage = string.Empty;
 
-            if (!ValidateUserPassword(newUser.Pass, out validateMessage))
+            if (!validateUserPassword(newUser.Pass, out validateMessage))
             {
+                _logger.Warning($"Add new user - cannot accept password: {newUser.Username}");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = validateMessage;
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
 
-            var userNameIsAlreadyTaken = IsUserNameAlreadyInUse(newUser.Username);
+            var userNameIsAlreadyTaken = isUserNameAlreadyInUse(newUser.Username);
 
             if (userNameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new user - username is already taken: {newUser.Username}");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Username is already taken";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
+
             lock (_locker)
             {
                 //var newId = GenerateUserId();
@@ -267,7 +263,9 @@ namespace EsignBackend.Services.CharacterService
 
                 newUser.Pass = encryptPass(newUser.Pass);
                 newUser.Expires = newUser.Expires.Value.ToLocalTime();
+
                 var newUserInDb = _context.Buusers.Add(newUser);
+
                 try
                 {
                     _context.SaveChanges();
@@ -278,7 +276,8 @@ namespace EsignBackend.Services.CharacterService
                 }
                 catch (Exception ex)
                 {
-                    _logger.Debug("AddNewUser exception: " + ex);
+                    _logger.Error($"Add new user [{newUser.Username}] exception: {ex}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new user failed. {ex}";
                     serviceResponse.Data = -1;
@@ -289,7 +288,7 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> UpdateUser(Buuser updatedUser)
         {
-            _logger.Debug($"UpdateUser: {updatedUser.Username}");
+            _logger.Information($"Update user: {updatedUser.Username}");
 
             updatedUser.Updateddate = updatedUser.Updateddate.Value.ToLocalTime();
 
@@ -314,7 +313,8 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception exception)
             {
-                _logger.Debug("exception detected while trying to UpdateUser: " + exception);
+                _logger.Error($"Exception detected while trying to update user [{updatedUser.Username}]: {exception}");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated user failed. {exception}";
                 serviceResponse.Data = -1;
@@ -324,14 +324,16 @@ namespace EsignBackend.Services.CharacterService
 
         public async Task<ServiceResponse<int>> ChangeUserPassword(Buuser user)
         {
-            _logger.Debug($"ChangeUserPassword for user: {user.Username}");
+            _logger.Information($"Change user password for user: {user.Username}");
 
             var serviceResponse = new ServiceResponse<int>();
 
             string validateMessage = string.Empty;
 
-            if (!ValidateUserPassword(user.Pass, out validateMessage))
+            if (!validateUserPassword(user.Pass, out validateMessage))
             {
+                _logger.Warning($"Change user password - cannot accept password: {user.Username}");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = validateMessage;
                 serviceResponse.Data = -1;
@@ -343,6 +345,7 @@ namespace EsignBackend.Services.CharacterService
             user.Pass = encryptedPass;
 
             var updatedUserInDb = _context.Buusers.Update(user);
+
             try
             {
                 _context.SaveChangesAsync();
@@ -353,7 +356,8 @@ namespace EsignBackend.Services.CharacterService
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to ChangeUserPassword: " + exception);
+                _logger.Error($"Exception detected while trying to change user password: {exception}");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Change password failed. {exception}";
                 serviceResponse.Data = -1;
@@ -361,7 +365,7 @@ namespace EsignBackend.Services.CharacterService
             }
         }
 
-        private bool ValidateUserPassword(string plainPass, out string messageStr)
+        private bool validateUserPassword(string plainPass, out string messageStr)
         {
             messageStr = string.Empty;
 

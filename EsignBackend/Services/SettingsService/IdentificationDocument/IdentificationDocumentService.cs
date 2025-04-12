@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.IdentificationDocument
@@ -35,7 +37,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
         public async Task<ServiceResponse<int>> AddNewIdentificationDocument(Docstype identificationDocument)
         {
-            _logger.Debug("AddNewIdentificationDocument");
+            _logger.Information($"Add new Identification Document: {identificationDocument.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -43,6 +45,8 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new Identification Document: {identificationDocument.Title}. Identification Document name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "IdentificationDocument name is already taken";
                 serviceResponse.Data = -1;
@@ -66,7 +70,8 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewIdentificationDocument: " + exception);
+                    _logger.Error($"Add new Identification Document: {identificationDocument.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new identificationDocument failed. {exception}";
                     serviceResponse.Data = -1;
@@ -77,7 +82,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
         public ServiceResponse<List<DocstypeDTO>> GetIdentificationDocuments(int skip, int take)
         {
-            _logger.Debug("GetIdentificationDocuments");
+            _logger.Debug($"Get Identification Documents: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<DocstypeDTO>>();
             //var outputList = new List<DocstypeDTO>();
@@ -104,7 +109,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetIdentificationDocuments. {ex.Message}");
+                _logger.Error($"Get Identification Documents error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -128,7 +133,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
         public async Task<ServiceResponse<int>> UpdateIdentificationDocument(Docstype updatedIdentificationDocument)
         {
-            _logger.Debug("UpdateIdentificationDocument");
+            _logger.Information($"Update Identification Document ID {updatedIdentificationDocument.Id} to {updatedIdentificationDocument.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -136,6 +141,8 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update Identification Document ID {updatedIdentificationDocument.Id} to {updatedIdentificationDocument.Title}. Identification Document name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "IdentificationDocument name is already taken";
                 serviceResponse.Data = -1;
@@ -153,7 +160,8 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateIdentificationDocument: " + exception);
+                _logger.Error("Exception detected while trying to UpdateIdentificationDocument: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -163,7 +171,7 @@ namespace EsignBackend.Services.SettingsService.IdentificationDocument
 
         public ServiceResponse<List<DocstypeDTO>> GetAllIdentificationDocuments()
         {
-            _logger.Debug("GetAllIdentificationDocuments");
+            _logger.Debug("Get all identification documents");
 
             var serviceResponse = new ServiceResponse<List<DocstypeDTO>>();
 

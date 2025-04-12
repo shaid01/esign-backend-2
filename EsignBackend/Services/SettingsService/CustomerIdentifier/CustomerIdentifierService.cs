@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using EsignBackend.Models.DTOs.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.CustomerIdentifier
@@ -35,7 +37,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
         public async Task<ServiceResponse<int>> AddNewCustomerIdentifier(Custident customerIdentifer)
         {
-            _logger.Debug("AddNewCustomerIdentifier");
+            _logger.Information($"Add new customer identifier: {customerIdentifer.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -43,6 +45,8 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new customer identifier: {customerIdentifer.Title}. Customer identifier name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "CustomerIdentifer name is already taken";
                 serviceResponse.Data = -1;
@@ -64,7 +68,8 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error("exception detected while trying to AddNewCertificatesStatus: " + exception);
+                    _logger.Error($"Add new customer identifier: {customerIdentifer.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new customerIdentifer failed. {exception}";
                     serviceResponse.Data = -1;
@@ -75,7 +80,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
         public ServiceResponse<List<CustidentDTO>> GetCustomersIdentifiers(int skip, int take)
         {
-            _logger.Debug("GetCustomersIdentifiers");
+            _logger.Debug($"Get customers identifiers: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<CustidentDTO>>();
             //var outputList = new List<CustidentDTO>();
@@ -102,7 +107,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCustomersIdentifiers. {ex.Message}");
+                _logger.Error($"Get customers identifiers error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -126,7 +131,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
         public async Task<ServiceResponse<int>> UpdateCustomerIdentifer(Custident updatedCustomerIdentifer)
         {
-            _logger.Debug("UpdateCustomerIdentifer");
+            _logger.Information($"Update customer identifer ID {updatedCustomerIdentifer.Id} to {updatedCustomerIdentifer.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -134,6 +139,8 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update customer identifer ID {updatedCustomerIdentifer.Id} to {updatedCustomerIdentifer.Title}. Customer identifer name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "CustomerIdentifer name is already taken";
                 serviceResponse.Data = -1;
@@ -152,7 +159,8 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detection while trying to UpdateCustomerIdentifer: " + exception);
+                _logger.Error("Exception detection while trying to UpdateCustomerIdentifer: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -162,7 +170,7 @@ namespace EsignBackend.Services.SettingsService.CustomerIdentifier
 
         public ServiceResponse<List<CustidentDTO>> GetAllCustomerIdentifiers()
         {
-            _logger.Debug("GetAllCustomerIdentifiers");
+            _logger.Debug("Get all customer identifiers");
 
             var serviceResponse = new ServiceResponse<List<CustidentDTO>>();
 

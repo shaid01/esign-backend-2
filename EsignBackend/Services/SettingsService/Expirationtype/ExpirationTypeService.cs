@@ -1,10 +1,12 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.ExpirationType
@@ -43,7 +45,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
         public ServiceResponse<List<ExpirationtypeDTO>> GetExpirationTypes(int skip, int take)
         {
-            _logger.Debug("GetExpirationTypes");
+            _logger.Debug($"Get expiration types: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
             //var outputList = new List<ExpirationtypeDTO>();
@@ -70,7 +72,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetExpirationTypes. {ex.Message}");
+                _logger.Error($"Get expiration types error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -94,7 +96,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
         public async Task<ServiceResponse<int>> UpdateExpirationType(Models.Expirationtype updatedExpirationType)
         {
-            _logger.Debug("UpdateExpirationType");
+            _logger.Information($"Update expiration type ID {updatedExpirationType.Id} to {updatedExpirationType.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -102,6 +104,8 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Update expiration type ID {updatedExpirationType.Id} to {updatedExpirationType.Title}. Expiration type name is already taken.");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "ExpirationType name is already taken";
                 serviceResponse.Data = -1;
@@ -119,7 +123,9 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateExpirationType: " + exception);
+                _logger.Error("Exception detected while trying to UpdateExpirationType: " + exception);
+
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -129,7 +135,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
         public async Task<ServiceResponse<int>> AddNewExpirationType(Models.Expirationtype expirationType)
         {
-            _logger.Debug("AddNewExpirationType");
+            _logger.Information($"Add new expiration type: {expirationType.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -137,6 +143,8 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
             if (nameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new expiration type: {expirationType.Title}. Expiration type name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "ExpirationType name is already taken";
                 serviceResponse.Data = -1;
@@ -160,7 +168,8 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
                 }
                 catch (Exception exception)
                 {
-                    _logger.Debug("exception detected while trying to AddNewExpirationType: " + exception);
+                    _logger.Error($"Add new expiration type: {expirationType.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new expirationType failed. {exception}";
                     serviceResponse.Data = -1;
@@ -171,7 +180,7 @@ namespace EsignBackend.Services.SettingsService.ExpirationType
 
         public ServiceResponse<List<ExpirationtypeDTO>> GetAllExpirationTypes()
         {
-            _logger.Debug("GetAllExpirationTypes");
+            _logger.Debug("Get all expiration types");
 
             var serviceResponse = new ServiceResponse<List<ExpirationtypeDTO>>();
 

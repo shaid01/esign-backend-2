@@ -1,9 +1,11 @@
-﻿using EsignBackend.Models;
+﻿using EsignBackend.Migrations;
+using EsignBackend.Models;
 using EsignBackend.Models.DTOs;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EsignBackend.Services.SettingsService.CertificatesStatus
@@ -34,7 +36,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
         public ServiceResponse<List<CertificatesstatusDTO>> GetCertificatesStatus(int skip, int take)
         {
-            _logger.Debug("GetCertificatesStatus");
+            _logger.Debug($"Get certificates status: skip - {skip}, take - {take}");
 
             //var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
             //var outputList = new List<CertificatesstatusDTO>();
@@ -64,7 +66,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error while processing DB query in GetCertificatesStatus. {ex.Message}");
+                _logger.Error($"Get certificates status error: {ex}");
 
                 serviceResponse.Data = null;
                 serviceResponse.Success = false;
@@ -88,7 +90,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
         public ServiceResponse<List<CertificatesstatusDTO>> GetAllCertificatesStatus()
         {
-            _logger.Debug("GetAllCertificatesStatus");
+            _logger.Debug("Get all certificates status");
 
             var serviceResponse = new ServiceResponse<List<CertificatesstatusDTO>>();
 
@@ -108,7 +110,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
         public async Task<ServiceResponse<int>> UpdateCertificatesStatus(Certificatesstatus updatedCertificatestatus)
         {
-            _logger.Debug("UpdateCertificatesStatus");
+            _logger.Information($"Update certificates status ID {updatedCertificatestatus.Id} to {updatedCertificatestatus.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -116,8 +118,10 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
             if (certificatesStatusNameIsAlreadyTaken)
             {
+                _logger.Warning($"Update certificates status ID {updatedCertificatestatus.Id} to {updatedCertificatestatus.Title}. Certificates status name is already taken.");
+
                 serviceResponse.Success = false;
-                serviceResponse.Message = "certificatesStatus name is already taken";
+                serviceResponse.Message = "CertificatesStatus name is already taken";
                 serviceResponse.Data = -1;
                 return serviceResponse;
             }
@@ -133,7 +137,8 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
             }
             catch (Exception exception)
             {
-                _logger.Error("exception detected while trying to UpdateCertificatesStatus: " + exception);
+                _logger.Error("Exception detected while trying to UpdateCertificatesStatus: " + exception);
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"Updated failed. {exception}";
                 serviceResponse.Data = -1;
@@ -143,7 +148,7 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
         public async Task<ServiceResponse<int>> AddNewCertificatesStatus(Certificatesstatus certificatestatus)
         {
-            _logger.Debug("AddNewCertificatesStatus");
+            _logger.Information($"Add new certificates status: {certificatestatus.Title}");
 
             var serviceResponse = new ServiceResponse<int>();
 
@@ -151,6 +156,8 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
 
             if (certificatesStatusNameIsAlreadyTaken)
             {
+                _logger.Warning($"Add new certificates status: {certificatestatus.Title}. Certificates status name is already taken");
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = "certificatesStatus name is already taken";
                 serviceResponse.Data = -1;
@@ -172,7 +179,8 @@ namespace EsignBackend.Services.SettingsService.CertificatesStatus
                 }
                 catch (Exception exception)
                 {
-                    _logger.Debug("exception detected while trying to AddNewCertificatesStatus");
+                    _logger.Error($"Add new certificates status: {certificatestatus.Title} exception: {exception}");
+
                     serviceResponse.Success = false;
                     serviceResponse.Message = $"Adding new certificatesStatus failed. {exception}";
                     serviceResponse.Data = -1;
