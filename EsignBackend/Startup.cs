@@ -73,6 +73,7 @@ namespace EsignBackend
                     providerOptions =>
                     {
                         providerOptions.CommandTimeout(Convert.ToInt32(_config.GetSection("AppSettings:SqlServerWaitTimeToExecuteCommand").Value));
+                        providerOptions.EnableRetryOnFailure(3);
                     }
                 )
             );
