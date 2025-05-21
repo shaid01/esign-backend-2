@@ -348,7 +348,7 @@ namespace EsignBackend.Services.CharacterService
 
             try
             {
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 serviceResponse.Data = updatedUserInDb.Entity.Id;
                 serviceResponse.Message = "Password updated successfully.";
                 serviceResponse.Success = true;
