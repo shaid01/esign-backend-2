@@ -244,11 +244,27 @@ namespace EsignBackend
                 endpoints.MapHangfireDashboard();
             });
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            app.UseSwagger(options =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ESign API V1");
+                options.SerializeAsV2 = true;
             });
+
+            if(env.IsDevelopment())
+            {
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "ESign API V1");
+                    options.RoutePrefix = "swagger";
+                });
+            }
+            else
+            {
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/api/swagger/v1/swagger.json", "ESign API V1");
+                    options.RoutePrefix = "swagger";
+                });
+            }
 
             app.UseHangfireDashboard();
             backgroundJobs.Enqueue(() => certificatesService.UpdateExpiredCertificates());
