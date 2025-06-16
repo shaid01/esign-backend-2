@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using EsignBackend.Dtos.Login;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,12 +28,14 @@ namespace EsignBackend.Services.CharacterService
     {
         private readonly AppDbContext _context;
         private readonly ILogger _logger;
+        private readonly IWebHostEnvironment _env;
         private readonly AppSettings _appSettings;
 
-        public AuthenticationService(AppDbContext context, ILogger logger, IOptions<AppSettings> appSettings)
+        public AuthenticationService(AppDbContext context, ILogger logger, IOptions<AppSettings> appSettings, IWebHostEnvironment env)
         {
             _context = context;
             _logger = logger;
+            _env = env;
             _appSettings = appSettings.Value;
         }
 
@@ -127,6 +130,7 @@ namespace EsignBackend.Services.CharacterService
         public async Task<ServiceResponse<UserClaimsDataDto>> Login(string username, string password)
         {
             _logger.Information($"Login username: {username}");
+            _logger.Information($"Current Environment is: ({_env.EnvironmentName})");
 
             var response = new ServiceResponse<UserClaimsDataDto>();
 
