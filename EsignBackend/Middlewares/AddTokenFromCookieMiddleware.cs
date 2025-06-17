@@ -47,10 +47,10 @@ namespace EsignBackend.Middlewares
 
             // has no effect on the given call (the only useful outcome is investigating token structure)
 
-            if (!authHeaderExist && tokenCookie != null)
-            {
-                //context.Request.Headers.Add("Authorization", $"Bearer: {tokenCookie}");
-            }
+            //if (!authHeaderExist && tokenCookie != null)
+            //{
+            //    context.Request.Headers.Add("Authorization", $"Bearer: {tokenCookie}");
+            //}
 
             await next(context);
         }

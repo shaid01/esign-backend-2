@@ -58,8 +58,8 @@ namespace EsignBackend.Services.CharacterService
                     HttpOnly = true,
                     IsEssential = true,
                     Secure = true,
-                    // don't use SameSiteMode.Strict, it won't work with Angular!
-                    SameSite = SameSiteMode.Lax, //default value
+                    // don't use SameSiteMode.Strict or Lax, it won't work with Angular!
+                    SameSite = SameSiteMode.None,
                     MaxAge = null
                 });
 
