@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class IssueLocationController : ControllerBase
@@ -20,6 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _issueLocationService = issueLocationService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetIssueLocations")]
         public IActionResult GetIssueLocations(int skip, int take)
         {
@@ -40,6 +40,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _issueLocationService.AddNewIssueLocation(issueLocation));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAllIssueLocations")]
         public IActionResult GetAllIssueLocations()
         {

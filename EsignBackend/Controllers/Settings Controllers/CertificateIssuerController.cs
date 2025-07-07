@@ -19,7 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _certificateIssuerService = certificateIssuerService;
         }
 
-        [Authorize(Roles = "מנהל,מנפיק,תומך")]
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetCertificateIssuers")]
         public IActionResult GetCertificateIssuers(int skip, int take)
         {

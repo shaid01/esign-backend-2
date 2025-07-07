@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class DepartmentsController : ControllerBase
@@ -20,6 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _departmentService = departmentsService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetDepartments")]
         public IActionResult GetDepartments(int skip, int take)
         {

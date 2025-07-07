@@ -19,7 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _callsPriorityService = callsPriorityService;
         }
 
-        [Authorize(Roles = "מנהל,מנפיק,תומך")]
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetCallsPriority")]
         public IActionResult GetCallsPriority(int skip, int take)
         {

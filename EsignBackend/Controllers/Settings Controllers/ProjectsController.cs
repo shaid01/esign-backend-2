@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class ProjectsController : ControllerBase
@@ -21,12 +20,14 @@ namespace EsignBackend.Controllers
             _projectsService = projectsService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetProjectsInRange")]
         public IActionResult GetProjectsInRange(int skip, int take)
         {
             return Ok(_projectsService.GetProjectsInRange(skip, take));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetProjects")]
         public IActionResult GetProjects()
         {
@@ -40,6 +41,7 @@ namespace EsignBackend.Controllers
             return Ok(await _projectsService.UpdateProject(updatedProject));
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetSubprojects")]
         public IActionResult GetSubprojectsInRange(int skip, int take)
         {
@@ -67,6 +69,7 @@ namespace EsignBackend.Controllers
             return Ok(await _projectsService.AddNewSubroject(newSubproject));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAllSubprojects")]
         public IActionResult GetAllSubprojects(int projectId = -1)
         {

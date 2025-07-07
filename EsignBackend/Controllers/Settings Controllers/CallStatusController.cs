@@ -20,7 +20,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _callStatusService = callStatusService;
         }
 
-        [Authorize(Roles = "מנהל,מנפיק,תומך")]
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetCallsStatus")]
         public IActionResult GetCallsStatus(int skip, int take)
         {

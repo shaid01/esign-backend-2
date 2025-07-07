@@ -66,7 +66,9 @@ namespace EsignBackend
             services.AddHangfireServer();
 
             //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            //services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc();
+            services.AddFluentValidationAutoValidation();
 
             services.AddDbContext<AppDbContext>(config =>
                 config.UseSqlServer(_config.GetConnectionString("DefaultConnection"),

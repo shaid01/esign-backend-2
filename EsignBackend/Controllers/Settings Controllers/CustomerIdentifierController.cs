@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CustomerIdentifierController : ControllerBase
@@ -20,6 +19,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _customerIdentifierService = customerIdentifierService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetCustomersIdentifiers")]
         public IActionResult GetCustomersIdentifiers(int skip, int take)
         {
@@ -40,6 +40,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _customerIdentifierService.AddNewCustomerIdentifier(customerIdentifer));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAllCustomerIdentifiers")]
         public IActionResult GetAllCustomerIdentifiers()
         {

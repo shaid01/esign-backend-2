@@ -142,13 +142,13 @@ namespace EsignBackend.Services.CharacterService
                 {
                     _logger.Warning($"User [{username}] not found");
                     response.Success = false;
-                    response.Message = "User not found";
+                    response.Message = "User name not found or password incorrect";
                 }
                 else if (!verifyPassword(password, user.Pass))
                 {
                     _logger.Warning($"User [{username}] password is wrong");
                     response.Success = false;
-                    response.Message = "Password incorrect";
+                    response.Message = "User name not found or password incorrect";
                 }
                 else if (IsExpired(user.Expires))
                 {

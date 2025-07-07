@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class SecurityQuestionsController : ControllerBase
@@ -19,6 +18,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             this._securityQuestionsService = securityQuestionsService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetSecurityQuestions")]
         public IActionResult GetSecurityQuestions(int skip, int take)
         {
@@ -39,6 +39,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _securityQuestionsService.AddNewSecurityQuestion(securityQuestion));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAllSecurityQuestions")]
         public IActionResult GetAllSecurityQuestions()
         {

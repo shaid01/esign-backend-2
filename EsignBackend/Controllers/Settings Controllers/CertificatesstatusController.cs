@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CertificatesstatusController : ControllerBase
@@ -21,6 +20,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             _certificatesstatusService = certificatesstatusService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetCertificatesStatus")]
         public IActionResult GetCertificatesStatus(int skip, int take)
         {
@@ -41,6 +41,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _certificatesstatusService.AddNewCertificatesStatus(certificatestatus));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAllCertificatesStatus")]
         public IActionResult GetAllCertificatesStatus()
         {         

@@ -31,7 +31,7 @@ namespace EsignBackend.Controllers
             return Ok(await _usersService.GetAllUsers(skip, take));
         }
 
-        [Authorize(Roles = "מנהל,מנפיק,תומך")]
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetUserByUsername")]
         public IActionResult GetUserByUsername(string username)
         {

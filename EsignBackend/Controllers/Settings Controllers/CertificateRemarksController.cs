@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[controller]")]
     public class CertificateRemarksController : ControllerBase
@@ -21,6 +20,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             this._certificateRemarksService = certificateRemarksService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetCertificateRemarks")]
         public IActionResult GetCertificateRemarks(int skip, int take)
         {

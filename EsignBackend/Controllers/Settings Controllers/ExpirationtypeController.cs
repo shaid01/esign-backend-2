@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EsignBackend.Controllers.Settings_Controllers
 {
-    [Authorize(Roles = "מנהל,מנפיק,תומך")]
     [ApiController]
     [Route("[Controller]")]
     public class ExpirationtypeController : ControllerBase
@@ -21,6 +20,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             this._expirationTypeService = expirationTypeService;
         }
 
+        [Authorize(Roles = "מנהל")]
         [HttpGet("GetExpirationTypes")]
         public IActionResult GetExpirationTypes(int skip, int take)
         {
@@ -41,6 +41,7 @@ namespace EsignBackend.Controllers.Settings_Controllers
             return Ok(await _expirationTypeService.AddNewExpirationType(expirationType));
         }
 
+        [Authorize(Roles = "מנהל,מנפיק,תומך")]
         [HttpGet("GetAllExpirationTypes")]
         public IActionResult GetAllExpirationTypes()
         {

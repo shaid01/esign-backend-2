@@ -234,6 +234,18 @@ namespace EsignBackend.Services.CharacterService
 
             string validateMessage = string.Empty;
 
+            if (!validateUserName(newUser.Username, out validateMessage))
+            {
+                _logger.Warning($"Add new user - cannot accept user name: {newUser.Username}");
+
+                serviceResponse.Success = false;
+                serviceResponse.Message = validateMessage;
+                serviceResponse.Data = -1;
+                return serviceResponse;
+            }
+
+            validateMessage = string.Empty;
+
             if (!validateUserPassword(newUser.Pass, out validateMessage))
             {
                 _logger.Warning($"Add new user - cannot accept password: {newUser.Username}");
@@ -365,6 +377,33 @@ namespace EsignBackend.Services.CharacterService
             }
         }
 
+        private bool validateUserName(string userName, out string messageStr)
+        {
+            messageStr = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                messageStr = "שם המשתמש לא הוזן";
+                return false;
+            }
+
+            if (userName.Length < 3)
+            {
+                messageStr = "אורך שם המשתמש המינימלי חייב להיות לפחות 3 תווים";
+                return false;
+            }
+
+            bool isNotValid = Regex.IsMatch(userName, @"[!@#$%^&*\(\)_\+\-\={}<>,\.\|""'~`:;\\?\/\[\] ]");
+
+            if (isNotValid)
+            {
+                messageStr = "שם משתמש יכול להכיל רק אותיות באנגלית ומספרים";
+                return false;
+            }
+
+            return true;
+        }
+
         private bool validateUserPassword(string plainPass, out string messageStr)
         {
             messageStr = string.Empty;
@@ -381,14 +420,43 @@ namespace EsignBackend.Services.CharacterService
                 return false;
             }
 
-            bool isValid =
-                plainPass.Any(ch => char.IsLower(ch)) &&
-                plainPass.Any(ch => char.IsDigit(ch)) &&
-                !plainPass.Any(ch => char.IsUpper(ch));
+            //bool isValid =
+            //    plainPass.Any(ch => char.IsLower(ch)) &&
+            //    plainPass.Any(ch => char.IsDigit(ch)) &&
+            //    plainPass.Any(ch => char.IsUpper(ch));
+
+            // (?=.*[a-z]) : Should have at least one lower case
+            // (?=.*[A-Z]) : Should have at least one upper case
+            // (?=.*\d) : Should have at least one number
+            // (?=.*[#$^+=!*()@%&] ) : Should have at least one special character
+            // .{8,} : Minimum 8 characters
+            //bool isValid = Regex.IsMatch(plainPass, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,}$");
+
+            int counter = 0;
+            List<string> patterns = new List<string>
+            {
+                @"[a-z]", // lowercase  
+                @"[A-Z]", // uppercase  
+                @"[0-9]", // digits  
+                //@"[!@#$%^&*\(\)_\+\-\={}<>,\.\|""'~`:;\\?\/\[\] ]" // special symbols
+                @"[#$^+=!*()@%&]" // special symbols
+            };
+
+            // count type of different chars in password  
+            foreach (string p in patterns)
+            {
+                if (Regex.IsMatch(plainPass, p))
+                {
+                    counter++;
+                }
+            }
+
+            bool isValid = counter >= 3;
 
             if (!isValid)
             {
-                messageStr = "סיסמה יכול להכיל רק אותיות קטנות באנגלית ומספרים";
+                //messageStr = "סיסמה יכול להכיל רק אותיות באנגלית ומספרים";
+                messageStr = "השתמשו תווים לפחות מ-3 הקבוצות הללו: אותיות קטנות, אותיות גדולות, ספרות וסמלים מיוחדים";
                 return false;
             }
 
