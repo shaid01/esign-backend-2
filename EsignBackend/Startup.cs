@@ -41,6 +41,8 @@ using Serilog.Events;
 
 namespace EsignBackend
 {
+    //asp.net core header exposes windows full version
+    //https://stackoverflow.com/questions/52452194/remove-server-header-from-asp-net-core-2-1-application
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
