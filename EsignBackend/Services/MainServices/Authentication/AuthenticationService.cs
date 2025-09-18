@@ -131,6 +131,7 @@ namespace EsignBackend.Services.CharacterService
         {
             _logger.Information($"Login username: {username}");
             _logger.Information($"Current Environment is: ({_env.EnvironmentName})");
+            _logger.Information($"Runtime version: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
 
             var response = new ServiceResponse<UserClaimsDataDto>();
 

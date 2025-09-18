@@ -164,11 +164,8 @@ namespace EsignBackend
 
             services.AddHttpContextAccessor();
 
-            services.AddHandlers(_env);
-            // services.AddScoped<ICharacterService, CharacterService>();
-
             var configuration = new ConfigurationBuilder()
-                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)                           
+                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                               .Build();
 
             services.AddSingleton<ILogger>(
@@ -181,6 +178,9 @@ namespace EsignBackend
                 //      restrictedToMinimumLevel: LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .CreateLogger());
+
+            services.AddHandlers(_env);
+            // services.AddScoped<ICharacterService, CharacterService>();
 
             services.AddRateLimiting(_config);
 
