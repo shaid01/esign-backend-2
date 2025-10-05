@@ -33,6 +33,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.76.0" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.76.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
