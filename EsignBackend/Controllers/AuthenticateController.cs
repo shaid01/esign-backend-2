@@ -47,11 +47,13 @@ namespace EsignBackend.Controllers
         [HttpPost("Logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutDto request)
         {
-            _logger.Information($"Logout for user: [{HttpContext.User.FindFirst(ClaimTypes.Name).Value}] start");
+            var userContext = HttpContext.User.FindFirst(ClaimTypes.Name);
+
+            _logger.Information($"Logout for user: {(userContext != null ? userContext.Value : "unknown")} start");
 
             _authenticateService.DeleteCookie(request.CookieName, HttpContext);
 
-            _logger.Information($"Logout for user: [{HttpContext.User.FindFirst(ClaimTypes.Name).Value}] end");
+            _logger.Information($"Logout for user: {(userContext != null ? userContext.Value : "unknown")} end");
 
             return Ok(true);
         }

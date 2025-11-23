@@ -1,5 +1,7 @@
-﻿using EsignBackend.Models;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using EsignBackend.Models;
 using FluentValidation;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +32,7 @@ namespace EsignBackend.Validation
             //RuleFor(x => x.Identify).NotEmpty().GreaterThanOrEqualTo(0).WithMessage("מזהה הלקוח חסר");
 
             RuleFor(x => x.Licenceid).Matches(@"^[0-9]*$").WithMessage("מספר רישיון לא תקין");
+
             //RuleFor(x => x.Hpnumber).Matches(@"^[0-9]*$").WithMessage("מספר ח.פ. לא תקין");
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Core;
 using DocumentFormat.OpenXml.Spreadsheet;
+using EsignBackend.Common;
 using EsignBackend.Dtos.Login;
 using EsignBackend.Extensions.EncryptDecrypt;
 using EsignBackend.Models;
@@ -84,11 +85,21 @@ namespace EsignBackend.Services.CharacterService
             {
                 if (cookieKey.Equals(cookieName))
                 {
-                    //context.Response.Cookies.Delete(cookieKey);
+                    ////this one works
+                    //context.Response.Cookies.Delete(cookieKey, new CookieOptions
+                    //{
+                    //    // Ensure you specify the same Path and Domain as when the cookie was created
+                    //    // if they were explicitly set. Otherwise, the default will usually work.
+                    //    Path = "/",
+                    //    // Domain = "yourdomain.com", // Uncomment and set if necessary
+                    //    IsEssential = true // Mark as essential if it's an authentication cookie
+                    //});
+
                     context.Response.Cookies.Append(cookieKey, "",
                         new CookieOptions
                         {
                             Expires = DateTime.Now.AddDays(-1)
+                            //MaxAge = TimeSpan.FromSeconds(0) 
                         });
                 }
             }
@@ -108,7 +119,13 @@ namespace EsignBackend.Services.CharacterService
                 new Claim(ClaimTypes.Role , user.Usergroup.ToString())
             };
 
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Token));
+            //SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Token));
+
+            //var comp_var_name = "ESIGN_PRV_KEY";
+            //var comp_var_val = Environment.GetEnvironmentVariable(comp_var_name, EnvironmentVariableTarget.Machine);//Environment.GetEnvironmentVariable(comp_var_name, EnvironmentVariableTarget.User);
+
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utils.GetEsignPrvKeyValue()));
+
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor

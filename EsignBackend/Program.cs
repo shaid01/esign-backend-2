@@ -28,6 +28,13 @@ namespace EsignBackend
             IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             builder.Services.AddConfiguration(config);
 
+            //Log.Logger =
+            //    new LoggerConfiguration()
+            //    .ReadFrom.Configuration(builder.Configuration)
+            //    .Enrich.FromLogContext()
+            //    .CreateLogger();
+
+
             CreateHostBuilder(args).Build().Run();
         }
 

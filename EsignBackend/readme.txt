@@ -1,4 +1,6 @@
-﻿-- to see all ports already used by another processes: netsh interface ipv4 show excludedportrange protocol=tcp
+﻿-- delete "AccessToken" cookie with token from Microsoft Edge: Inspect -> Application -> Cookies -> Delete
+
+-- to see all ports already used by another processes: netsh interface ipv4 show excludedportrange protocol=tcp
 
 HTTP Error 405 - see "web.config":
 	  <modules runAllManagedModulesForAllRequests="false">

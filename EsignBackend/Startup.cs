@@ -1,43 +1,45 @@
 
+using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
+using EsignBackend.Common;
+using EsignBackend.Extensions;
+using EsignBackend.Extensions.CacheHandlers;
+using EsignBackend.Middlewares;
+using EsignBackend.Models;
 using EsignBackend.Services.CharacterService;
+using EsignBackend.Services.MainServices.Certificates;
+using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Context;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EsignBackend.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using EsignBackend.Services.MainServices.Certificates;
-using EsignBackend.Extensions;
-using FluentValidation.AspNetCore;
-using Serilog;
-using EsignBackend.Middlewares;
-using Microsoft.OpenApi.Models;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Hangfire;
-using Hangfire.SqlServer;
-using Hangfire.MemoryStorage;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Text;
 using System.Text.Json;
-using EsignBackend.Extensions.CacheHandlers;
 using System.Threading;
-using Microsoft.Extensions.Options;
-using Serilog.Context;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-using DocumentFormat.OpenXml.InkML;
-using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace EsignBackend
 {
@@ -67,10 +69,38 @@ namespace EsignBackend
             // Add the processing server as IHostedService
             services.AddHangfireServer();
 
+            var configuration = new ConfigurationBuilder()
+                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                              .Build();
+
+            var serilogLoggerConfiguration = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                //.WriteTo.EventLog(
+                //      logName: "Application",
+                //      source: "Esign",
+                //      manageEventSource: true,
+                //      restrictedToMinimumLevel: LogEventLevel.Information)
+
+                //to reduce volume of Microsoft.Extensions.Logging.ILogger log
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+
+                .Enrich.FromLogContext()
+                .CreateLogger();
+
+            services.AddSingleton<Serilog.ILogger>(serilogLoggerConfiguration);
+
+            // Add the Serilog logging provider to Microsoft.Extensions.Logging
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders(); // Clear default providers if desired
+                loggingBuilder.AddSerilog(serilogLoggerConfiguration);
+            });
+
             //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddMvc().AddFluentValidation().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc();
-            services.AddFluentValidationAutoValidation();
+            //services.AddFluentValidationAutoValidation();
 
             services.AddDbContext<AppDbContext>(config =>
                 config.UseSqlServer(_config.GetConnectionString("DefaultConnection"),
@@ -92,7 +122,40 @@ namespace EsignBackend
                 }
                 );
 
-        services.AddControllers();
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        // Access the logger
+                        var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                        var logger = loggerFactory.CreateLogger(context.ActionDescriptor.DisplayName);
+
+                        // Get the error messages
+                        var errorMessages = string.Join(" | ", context.ModelState.Values
+                            .SelectMany(x => x.Errors)
+                            .Select(x => x.ErrorMessage));
+
+                        var request = context.HttpContext.Request;
+
+                        // Log the details
+                        logger.LogError("Automatic Bad Request occurred." +
+                                        $"{Environment.NewLine}Error(s): {errorMessages}" +
+                                        $"{Environment.NewLine}|{request.Method}| Full URL: {request.Path}{request.QueryString}");
+
+                        var serviceResponse = new ServiceResponse<int>();
+
+                        serviceResponse.Success = false;
+                        serviceResponse.Message = $"Update failed. {errorMessages}";
+                        serviceResponse.Data = -1;
+
+                        // Return the default bad request response
+                        return new OkObjectResult(serviceResponse); //new BadRequestObjectResult(context.ModelState);
+                    };
+                });
+
+        services.AddFluentValidationAutoValidation();
+
 
         services.AddAutoMapper(typeof(Startup));
 
@@ -127,6 +190,9 @@ namespace EsignBackend
 
             //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 
+            //var comp_var_name = "ESIGN_PRV_KEY";
+            //var comp_var_val = Environment.GetEnvironmentVariable(comp_var_name, EnvironmentVariableTarget.Machine);//Environment.GetEnvironmentVariable(comp_var_name, EnvironmentVariableTarget.User);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //services.AddAuthentication(options =>
             //{
@@ -138,7 +204,8 @@ namespace EsignBackend
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("AppSettings:Token").Value)),
+                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("AppSettings:Token").Value)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Utils.GetEsignPrvKeyValue())),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
@@ -163,21 +230,6 @@ namespace EsignBackend
             });
 
             services.AddHttpContextAccessor();
-
-            var configuration = new ConfigurationBuilder()
-                              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                              .Build();
-
-            services.AddSingleton<ILogger>(
-                new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                //.WriteTo.EventLog(
-                //      logName: "Application",
-                //      source: "Esign",
-                //      manageEventSource: true,
-                //      restrictedToMinimumLevel: LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .CreateLogger());
 
             services.AddHandlers(_env);
             // services.AddScoped<ICharacterService, CharacterService>();
